@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">FriedChickenRating</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_signup">SignUp</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_recipes">Recipes</string>
+
+    <!-- Strings related to login -->
+    <string name="error_invalid_email">Not a valid email</string>
+    <string name="error_invalid_password">Password must be a valid min 6 characters</string>
+    <string name="login_failed">"Login failed, please enter a valid email and password or sign up"</string>
+
+</resources>

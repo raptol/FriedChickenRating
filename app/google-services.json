@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "337362918321",
+    "project_id": "friedchickenrating",
+    "storage_bucket": "friedchickenrating.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337362918321:android:2aee248ff6719f00873b90",
+        "android_client_info": {
+          "package_name": "com.example.friedchickenrating"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "337362918321-jegffelmc1iafujtakb9tkc17hslei7e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA8yMt0fuxPn1Be_dEP4-xo7-6Le015PI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "337362918321-jegffelmc1iafujtakb9tkc17hslei7e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
