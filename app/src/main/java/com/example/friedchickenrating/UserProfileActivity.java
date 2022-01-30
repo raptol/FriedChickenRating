@@ -89,9 +89,8 @@ public class UserProfileActivity extends AppCompatActivity {
             finish();
         });
 
-        binding.btnLogout.setOnClickListener((View view) -> {
-            auth.signOut();
-            startActivity((new Intent(UserProfileActivity.this, LoginActivity.class)));
+        binding.btnClose.setOnClickListener((View view) -> {
+            startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
             finish();
         });
     }

@@ -99,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
         navUserProfile.setOnClickListener((View view) -> {
             startActivity(new Intent(MainActivity.this, UserProfileActivity.class));
         });
+
+        binding.btnLogout.setOnClickListener((View view) -> {
+            auth.signOut();
+            startActivity((new Intent(MainActivity.this, LoginActivity.class)));
+            finish();
+        });
     }
 
     @Override
