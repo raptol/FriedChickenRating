@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/nav_recipes"
-        android:name="com.example.friedchickenrating.fragments.Recipes.RecipesFragment"
+        android:name="com.example.friedchickenrating.fragments.recipes.RecipesFragment"
         android:label="@string/menu_recipes"
         tools:layout="@layout/fragment_recipes" />
 

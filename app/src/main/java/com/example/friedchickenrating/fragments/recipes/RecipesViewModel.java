@@ -1,4 +1,4 @@
-package com.example.friedchickenrating.fragments.Recipes;
+package com.example.friedchickenrating.fragments.recipes;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -10,7 +10,7 @@ public class RecipesViewModel extends ViewModel {
 
     public RecipesViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is Recipes fragment");
+        mText.setValue("This is recipes fragment");
     }
 
     public LiveData<String> getText() {

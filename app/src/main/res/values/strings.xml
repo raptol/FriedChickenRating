@@ -7,6 +7,12 @@
 
     <string name="menu_signup">SignUp</string>
     <string name="menu_home">Home</string>
+    <string name="menu_my_favorites">My Favorites</string>
+    <string name="menu_my_ratings">My Ratings</string>
+    <string name="menu_my_recipes">My Recipes</string>
+    <string name="menu_maps">Restaurants Map</string>
+    <string name="menu_roulette">Roulette</string>
+    <string name="menu_ratings">Ratings</string>
     <string name="menu_recipes">Recipes</string>
 
     <!-- Strings related to login -->

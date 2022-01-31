@@ -1,4 +1,4 @@
-package com.example.friedchickenrating.fragments.Recipes;
+package com.example.friedchickenrating.fragments.recipes;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
