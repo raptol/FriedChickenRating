@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/nav_maps"
+        android:name="com.example.friedchickenrating.fragments.maps.MapsFragment"
+        android:label="@string/menu_maps"
+        tools:layout="@layout/fragment_maps" />
+
+    <fragment
         android:id="@+id/nav_recipes"
         android:name="com.example.friedchickenrating.fragments.recipes.RecipesFragment"
         android:label="@string/menu_recipes"

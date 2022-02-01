@@ -20,4 +20,6 @@
     <string name="error_invalid_password">Password must be a valid min 6 characters</string>
     <string name="login_failed">"Login failed, please enter a valid email and password or sign up"</string>
 
+    <string name="api_key">AIzaSyB8yATPT1khu3A5ZWl9jBRNG4gazB1bnuY</string>
+
 </resources>
