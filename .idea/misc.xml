@@ -29,10 +29,12 @@
         <entry key="..\:/GitRepo/AndroidStudioProjects/CSIS4495AR/FriedChickenRating_navigation_drawer/app/src/main/res/layout/nav_header_main.xml" value="0.4824074074074074" />
         <entry key="..\:/GitRepo/AndroidStudioProjects/CSIS4495AR/FriedChickenRating_navigation_drawer/app/src/main/res/menu/activity_main_drawer.xml" value="0.5225641025641026" />
         <entry key="..\:/GitRepo/AndroidStudioProjects/CSIS4495AR/FriedChickenRating_navigation_drawer/app/src/main/res/menu/main.xml" value="0.4824074074074074" />
+        <entry key="..\:/Users/avril/FriedChickenRating/app/src/main/res/drawable/ic_menu_home.xml" value="0.34270833333333334" />
+        <entry key="..\:/Users/avril/FriedChickenRating/app/src/main/res/layout/fragment_home.xml" value="0.32153846153846155" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
