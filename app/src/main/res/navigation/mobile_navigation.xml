@@ -9,18 +9,58 @@
         android:id="@+id/nav_home"
         android:name="com.example.friedchickenrating.fragments.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_newRating"
+            app:destination="@id/nav_newRating" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_maps"
+            app:destination="@id/nav_maps" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_recipes"
+            app:destination="@id/nav_recipes" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_ratings"
+            app:destination="@id/nav_ratings" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_maps"
         android:name="com.example.friedchickenrating.fragments.maps.MapsFragment"
         android:label="@string/menu_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps" >
+        <action
+            android:id="@+id/action_nav_maps_to_nav_newRating"
+            app:destination="@id/nav_newRating" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_ratings"
+        android:name="com.example.friedchickenrating.fragments.ratings.RatingListFragment"
+        android:label="@string/menu_ratings"
+        tools:layout="@layout/fragment_rating_list" >
+        <action
+            android:id="@+id/action_nav_ratings_to_nav_newRating"
+            app:destination="@id/nav_newRating" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_recipes"
         android:name="com.example.friedchickenrating.fragments.recipes.RecipesFragment"
         android:label="@string/menu_recipes"
         tools:layout="@layout/fragment_recipes" />
+
+    <fragment
+        android:id="@+id/nav_newRating"
+        android:name="com.example.friedchickenrating.fragments.ratings.NewRatingFragment"
+        android:label="fragment_new_rating"
+        tools:layout="@layout/fragment_new_rating" >
+        <action
+            android:id="@+id/action_nav_newRating_to_nav_ratings"
+            app:destination="@id/nav_ratings" />
+        <action
+            android:id="@+id/action_nav_newRating_to_nav_maps"
+            app:destination="@id/nav_maps" />
+    </fragment>
 
 </navigation>

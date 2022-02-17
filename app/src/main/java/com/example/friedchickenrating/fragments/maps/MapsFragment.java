@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentMapsBinding;
+import com.example.friedchickenrating.fragments.ratings.NewRatingFragment;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
@@ -65,7 +68,7 @@ public class MapsFragment extends Fragment {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    Log.d(TAG, "onLocationChanged, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
+//                    Log.d(TAG, "onLocationChanged, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
                 }
             };
 
@@ -109,10 +112,30 @@ public class MapsFragment extends Fragment {
                 map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
 
-                //map.setMyLocationEnabled(true);
+                map.setMyLocationEnabled(true);
                 map.getUiSettings().setMyLocationButtonEnabled(true);
                 map.getUiSettings().setZoomControlsEnabled(true);
                 map.getUiSettings().setZoomGesturesEnabled(true);
+
+                map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
+                    @Override
+                    public void onPoiClick(@NonNull PointOfInterest pointOfInterest) {
+                        Log.d(TAG, "onPoiClick, latitude: " + pointOfInterest.latLng.latitude
+                                            + ", longitude: " + pointOfInterest.latLng.longitude
+                                            + ", pointOfInterest.name: " + pointOfInterest.name
+                                            + ", pointOfInterest.placeId: " + pointOfInterest.placeId);
+                        Bundle result = new Bundle();
+                        result.putString("placeId", pointOfInterest.placeId);
+                        result.putString("placeName", pointOfInterest.name);
+                        result.putString("latitude", String.valueOf(pointOfInterest.latLng.latitude));
+                        result.putString("longitude", String.valueOf(pointOfInterest.latLng.longitude));
+
+                        getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
+
+                        NavHostFragment.findNavController(MapsFragment.this)
+                                .navigate(R.id.action_nav_maps_to_nav_newRating);
+                    }
+                });
 
                 map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
@@ -157,9 +180,6 @@ public class MapsFragment extends Fragment {
         binding = FragmentMapsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-        fab.setVisibility(View.INVISIBLE);
-
         return root;
     }
 
@@ -203,6 +223,17 @@ public class MapsFragment extends Fragment {
                     Log.i(TAG, "An error occurred: " + status);
                 }
             });
+
+            FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+            fab.setVisibility(View.INVISIBLE);
         }
+    }
+
+    @Override
+    public void onStop() {
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
+
+        super.onStop();
     }
 }
