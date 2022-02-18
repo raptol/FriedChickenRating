@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -115,5 +118,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     public void onListItemClick(Rating rating, int position) {
         ratingViewModel.setSelectedRating(rating);
         ratingViewModel.setSelectedRatingId(ratingList.get(position).getId());
+
+        NavHostFragment.findNavController(RatingListFragment.this)
+                .navigate(R.id.action_nav_ratings_to_nav_viewRatings);
     }
 }
