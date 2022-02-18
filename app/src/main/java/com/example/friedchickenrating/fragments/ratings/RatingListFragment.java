@@ -38,7 +38,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ratingViewModel = new ViewModelProvider(this).get(RatingViewModel.class);
+        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
 
         binding = FragmentRatingListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

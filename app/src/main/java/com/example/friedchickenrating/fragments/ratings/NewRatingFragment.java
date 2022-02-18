@@ -5,7 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Location;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -32,7 +33,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -70,7 +70,7 @@ public class NewRatingFragment extends Fragment {
         binding = FragmentNewRatingBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
 
-        ratingViewModel = new ViewModelProvider(this).get(RatingViewModel.class);
+        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
 
         return rootView;
     }
@@ -79,10 +79,10 @@ public class NewRatingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        imgViewNewPhoto = binding.imgViewPicture;
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
-
         Place placeData = new Place();
 
         //Register result listener to get place info from map
@@ -105,11 +105,33 @@ public class NewRatingFragment extends Fragment {
 
                         binding.newRatingPlaceName.setText(placeData.getName());
                         binding.newRatingRegion.setText(placeData.getRegion());
+
+                        //recover stored data before switching from new rating to map
+                        filePath = ratingViewModel.getSelectedRatingImageFilePath().getValue();
+                        Log.d(TAG, "filePath==> " + filePath);
+
+                        ImageView tempPhoto = ratingViewModel.getSelectedRatingImage().getValue();
+                        BitmapDrawable drawable = (BitmapDrawable)tempPhoto.getDrawable();
+                        Bitmap bitmap = drawable.getBitmap();
+                        binding.imgViewPicture.setImageBitmap(bitmap);
+                        binding.imgViewPicture.invalidate();
+
+                        Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
+                        binding.newRatingTitle.setText(recoverRatingData.getTitle());
+                        binding.newRatingChickenType.setText(recoverRatingData.getType());
+                        binding.newRatingRegion.setText(recoverRatingData.getRegion());
+                        binding.newRatingOtherItems.setText(recoverRatingData.getOtheritems());
+                        binding.newRatingNotes.setText(recoverRatingData.getNotes());
+                        binding.ratingBarFlavor.setRating(recoverRatingData.getStarflavor());
+                        binding.ratingBarCrunch.setRating(recoverRatingData.getStarcrunch());
+                        binding.ratingBarSpiciness.setRating(recoverRatingData.getStarspiciness());
+                        binding.ratingBarPortion.setRating(recoverRatingData.getStarportion());
+                        binding.ratingBarPrice.setRating(recoverRatingData.getStarprice());
+                        binding.ratingBarOverall.setRating(recoverRatingData.getStaroverall());
                     }
                 });
 
         //event handler for upload picture
-        imgViewNewPhoto = binding.imgViewPicture;
         binding.btnUploadPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,6 +149,26 @@ public class NewRatingFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
+                //store data before switching from new rating to map
+                Rating saveRatingData = new Rating("",
+                        binding.newRatingTitle.getText().toString(),
+                        binding.newRatingChickenType.getText().toString(),
+                        binding.newRatingRegion.getText().toString(),
+                        placeData.getPlaceid(),
+                        user.getUid(),
+                        binding.newRatingOtherItems.getText().toString(),
+                        binding.newRatingNotes.getText().toString(),
+                        new HashMap<String, Object>(),
+                        binding.ratingBarFlavor.getRating(),
+                        binding.ratingBarCrunch.getRating(),
+                        binding.ratingBarSpiciness.getRating(),
+                        binding.ratingBarPortion.getRating(),
+                        binding.ratingBarPrice.getRating(),
+                        binding.ratingBarOverall.getRating());
+
+                ratingViewModel.setSelectedRating(saveRatingData);
+                ratingViewModel.setSelectedRatingImage(binding.imgViewPicture);
+                ratingViewModel.setSelectedRatingImageFilePath(filePath);
                 NavHostFragment.findNavController(NewRatingFragment.this)
                         .navigate(R.id.action_nav_newRating_to_nav_maps);
 
@@ -155,6 +197,7 @@ public class NewRatingFragment extends Fragment {
                 Rating newRatingData = new Rating(ratingsDocId,
                                             binding.newRatingTitle.getText().toString(),
                                             binding.newRatingChickenType.getText().toString(),
+                                            binding.newRatingRegion.getText().toString(),
                                             placeData.getPlaceid(),
                                             user.getUid(),
                                             binding.newRatingOtherItems.getText().toString(),
@@ -162,6 +205,7 @@ public class NewRatingFragment extends Fragment {
                                             photoValues,
                                             binding.ratingBarFlavor.getRating(),
                                             binding.ratingBarCrunch.getRating(),
+                                            binding.ratingBarSpiciness.getRating(),
                                             binding.ratingBarPortion.getRating(),
                                             binding.ratingBarPrice.getRating(),
                                             binding.ratingBarOverall.getRating());

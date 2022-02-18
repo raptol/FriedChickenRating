@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.annotation.GlideModule;
 import com.example.friedchickenrating.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -91,6 +92,7 @@ public class RatingListAdapter extends RecyclerView.Adapter {
                         Glide.with(holder.itemView.getContext())
                                 .load(task.getResult())
                                 .into(((RatingViewHolder) holder).imgItemPhoto);
+                        ((RatingViewHolder) holder).imgItemPhoto.invalidate();
                     } else {
                         Toast.makeText(holder.itemView.getContext(),
                                 "Fail to load image", Toast.LENGTH_SHORT).show();
