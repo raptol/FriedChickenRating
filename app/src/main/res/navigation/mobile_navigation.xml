@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_nav_maps_to_nav_newRating"
             app:destination="@id/nav_newRating" />
+        <action
+            android:id="@+id/action_nav_maps_to_nav_viewRatings"
+            app:destination="@id/nav_viewRatings" />
     </fragment>
 
     <fragment
@@ -42,6 +45,9 @@
         <action
             android:id="@+id/action_nav_ratings_to_nav_newRating"
             app:destination="@id/nav_newRating" />
+        <action
+            android:id="@+id/action_nav_ratings_to_nav_viewRatings"
+            app:destination="@id/nav_viewRatings" />
     </fragment>
 
     <fragment
@@ -61,6 +67,20 @@
         <action
             android:id="@+id/action_nav_newRating_to_nav_maps"
             app:destination="@id/nav_maps" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_viewRatings"
+        android:name="com.example.friedchickenrating.fragments.ratings.ViewRatingFragment"
+        android:label="ViewRatingFragment" >
+        <action
+            android:id="@+id/action_viewRatingFragment_to_nav_newRating"
+            app:destination="@id/nav_newRating" />
+        <action
+            android:id="@+id/action_nav_viewRatings_to_nav_maps2"
+            app:destination="@id/nav_maps" />
+        <action
+            android:id="@+id/action_nav_viewRatings_to_nav_ratings"
+            app:destination="@id/nav_ratings" />
     </fragment>
 
 </navigation>

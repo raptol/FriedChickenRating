@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imgViewPicture"
+                    tools:src="@tools:sample/avatars"
+                    android:layout_width="100dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="0.8" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/viewRatingPlaceName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:paddingLeft="4dp"
+                    android:text="Pelican Chicken"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/viewRatingRegion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:paddingLeft="4dp"
+                    android:text="Burnaby"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/viewRatingChickenType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:paddingLeft="4dp"
+                    android:text="Korean"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/viewRatingTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:paddingLeft="4dp"
+                    android:ems="10"
+                    android:minHeight="48dp"
+                    android:text="Spicy Chicken 15pcs"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/btnOpenMap"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/img" />
+
+                <Button
+                    android:id="@+id/btnDoneNewRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:text="Edit" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="My Ratings" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Flavor" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarFlavor"
+                    android:layout_width="240dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="false"
+                    android:contextClickable="false"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Crunch" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarCrunch"
+                    android:layout_width="240dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Spiciness" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarSpiciness"
+                    android:layout_width="240dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Portion" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarPortion"
+                    android:layout_width="240dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Price" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarPrice"
+                    android:layout_width="240dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Overall Value" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarOverall"
+                    android:layout_width="240dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Other Items" />
+
+            <TextView
+                android:id="@+id/viewRatingOtherItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:ems="10"
+                android:minHeight="48dp"
+                android:text="Other items..." />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notes" />
+
+            <TextView
+                android:id="@+id/viewRatingNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="65dp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:minHeight="48dp"
+                android:text="Notes..." />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
