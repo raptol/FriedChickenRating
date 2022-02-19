@@ -89,7 +89,7 @@
                     android:src="@drawable/img" />
 
                 <Button
-                    android:id="@+id/btnDoneNewRating"
+                    android:id="@+id/btnEditRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="50dp"

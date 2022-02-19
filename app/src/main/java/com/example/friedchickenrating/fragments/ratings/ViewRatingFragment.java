@@ -2,20 +2,32 @@ package com.example.friedchickenrating.fragments.ratings;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
+import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewRatingFragment extends Fragment {
 
@@ -28,6 +40,9 @@ public class ViewRatingFragment extends Fragment {
     private Uri filePath;
     private String fileName;
 
+    private List<Rating> ratingList;
+    private List<Place> placeList;
+
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
     static final int REQUEST_IMAGE_SELECT = 0;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -36,16 +51,93 @@ public class ViewRatingFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
         binding = FragmentViewRatingBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
-
-        ratingViewModel = new ViewModelProvider(this).get(RatingViewModel.class);
-
         return rootView;
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        db = FirebaseFirestore.getInstance();
+
+        ratingList = new ArrayList<>();
+        placeList = new ArrayList<>();
+
+
+        // Listen for realtime updates of the places
+        db.collection("places")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
+                        if(error != null) {
+                            Log.w(TAG, "Listen failed.", error);
+                            return;
+                        }
+
+                        placeList.clear();
+                        for(QueryDocumentSnapshot document: value) {
+                            if (document != null) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                Place place = document.toObject(Place.class);
+                                placeList.add(place);
+                            }
+                        }
+//                        binding.viewRatingPlaceName.setText(placeData.getName());
+//                        binding.newRatingRegion.setText(placeData.getRegion());
+                        Rating curRating = ratingViewModel.getSelectedRating().getValue();
+                        binding.viewRatingTitle.setText(curRating.toString());
+
+                    }
+                });
+
+        // Listen for realtime updates of the ratings
+        db.collection("ratings")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
+                        if(error != null) {
+                            Log.w(TAG, "Listen failed.", error);
+                            return;
+                        }
+
+                        ratingList.clear();
+                        for(QueryDocumentSnapshot document: value) {
+                            if (document != null) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                Rating rating = document.toObject(Rating.class);
+                                ratingList.add(rating);
+                            }
+                        }
+//                        ratingListAdapter.setRatingList(ratingList, placeList);
+                    }
+                });
+
+        //event handler for edit button
+        binding.btnEditRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
+
 }
