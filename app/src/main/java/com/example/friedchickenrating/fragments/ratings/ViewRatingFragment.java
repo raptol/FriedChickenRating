@@ -20,6 +20,7 @@ import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
 import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -74,31 +75,31 @@ public class ViewRatingFragment extends Fragment {
         ratingList = new ArrayList<>();
         placeList = new ArrayList<>();
 
+        Rating curRating = ratingViewModel.getSelectedRating().getValue();
+
+        Log.d(TAG, "curRating.id: " + curRating.getPlaceid());
+        Log.d(TAG, "curRating.title: " + curRating.getTitle());
+        Log.d(TAG, "curRating.region: " + curRating.getRegion());
 
         // Listen for realtime updates of the places
-        db.collection("places")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("places").document(curRating.getPlaceid())
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
+                    public void onEvent(@Nullable DocumentSnapshot value,
                                         @Nullable FirebaseFirestoreException error) {
                         if(error != null) {
                             Log.w(TAG, "Listen failed.", error);
                             return;
                         }
 
-                        placeList.clear();
-                        for(QueryDocumentSnapshot document: value) {
-                            if (document != null) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Place place = document.toObject(Place.class);
-                                placeList.add(place);
-                            }
-                        }
-//                        binding.viewRatingPlaceName.setText(placeData.getName());
-//                        binding.newRatingRegion.setText(placeData.getRegion());
-                        Rating curRating = ratingViewModel.getSelectedRating().getValue();
-                        binding.viewRatingTitle.setText(curRating.toString());
+                        //binding.viewRatingTitle.setText(curRating.toString());
 
+                        String placeName = value.getString("name");
+                        Log.d(TAG, "curRating.placeName: " + placeName);
+
+                        binding.viewRatingTitle.setText(curRating.getTitle());
+                        binding.viewRatingPlaceName.setText(placeName);
+                        binding.viewRatingRegion.setText(curRating.getRegion());
                     }
                 });
 
