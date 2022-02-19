@@ -5,8 +5,11 @@ import static android.app.Activity.RESULT_OK;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,16 +22,25 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AddressComponent;
+import com.google.android.libraries.places.api.model.AddressComponents;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,9 +52,12 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class NewRatingFragment extends Fragment {
 
@@ -54,6 +69,8 @@ public class NewRatingFragment extends Fragment {
     private ImageView imgViewNewPhoto;
     private Uri filePath;
     private String fileName;
+
+    private Place placeData;
 
     private static final String TAG = NewRatingFragment.class.getSimpleName();
     static final int REQUEST_IMAGE_SELECT = 0;
@@ -79,11 +96,47 @@ public class NewRatingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        placeData = new Place();
         imgViewNewPhoto = binding.imgViewPicture;
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
-        Place placeData = new Place();
+
+        // Initiate the SDK for Places
+        String apiKey = getString(R.string.api_key);
+        if(!Places.isInitialized()) {
+            Places.initialize(getContext(), apiKey);
+        }
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getChildFragmentManager().findFragmentById(R.id.placename_autocomplete_fragment);
+        autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
+        EditText editTextPlaceName = (EditText) autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_input);
+        editTextPlaceName.setHint("Restaurant name");
+        editTextPlaceName.setGravity(Gravity.LEFT);
+        //editTextPlaceName.setBackgroundColor(Color.GRAY);
+        autocompleteFragment.setCountries("CA");
+        autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG));
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull com.google.android.libraries.places.api.model.Place place) {
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                placeData.setPlaceid(place.getId());
+                placeData.setName(place.getName());
+                placeData.setLatitude(String.valueOf(place.getLatLng().latitude));
+                placeData.setLongitude(String.valueOf(place.getLatLng().longitude));
+//                AddressComponents addresses = place.getAddressComponents();
+//                if(addresses != null && addresses.asList().size() > 0) {
+//                    placeData.setRegion(addresses.asList().get(0).toString());
+//                }
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
 
         //Register result listener to get place info from map
         getParentFragmentManager().setFragmentResultListener("requestMapPlaceInfo", this,
@@ -103,7 +156,7 @@ public class NewRatingFragment extends Fragment {
                         placeData.setLongitude(longitude);
                         placeData.setRegion("");
 
-                        binding.newRatingPlaceName.setText(placeData.getName());
+                        editTextPlaceName.setText(placeData.getName());
                         binding.newRatingRegion.setText(placeData.getRegion());
 
                         //recover stored data before switching from new rating to map
@@ -111,10 +164,12 @@ public class NewRatingFragment extends Fragment {
                         Log.d(TAG, "filePath==> " + filePath);
 
                         ImageView tempPhoto = ratingViewModel.getSelectedRatingImage().getValue();
-                        BitmapDrawable drawable = (BitmapDrawable)tempPhoto.getDrawable();
-                        Bitmap bitmap = drawable.getBitmap();
-                        binding.imgViewPicture.setImageBitmap(bitmap);
-                        binding.imgViewPicture.invalidate();
+                        BitmapDrawable tempPhotoDrawable = (BitmapDrawable)tempPhoto.getDrawable();
+                        if(tempPhotoDrawable != null) {
+                            Bitmap bitmap = tempPhotoDrawable.getBitmap();
+                            binding.imgViewPicture.setImageBitmap(bitmap);
+                            binding.imgViewPicture.invalidate();
+                        }
 
                         Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
                         binding.newRatingTitle.setText(recoverRatingData.getTitle());
@@ -179,6 +234,21 @@ public class NewRatingFragment extends Fragment {
         binding.btnDoneNewRating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(imgViewNewPhoto.getDrawable() == null) {
+                    Toast.makeText(getContext(), "Please upload a picture of chicken menu.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(editTextPlaceName.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(getContext(), "Please enter chicken restaurant name.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(binding.newRatingTitle.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(getContext(), "Please enter title of chicken menu.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 //upload image to Google Firebase Storage
                 uploadImageToFirebaseStorage();
@@ -249,6 +319,7 @@ public class NewRatingFragment extends Fragment {
                             }
                         });
 
+                //myAdapter.notifyItemRangeChanged()
                 NavHostFragment.findNavController(NewRatingFragment.this)
                         .navigate(R.id.action_nav_newRating_to_nav_ratings);
             }

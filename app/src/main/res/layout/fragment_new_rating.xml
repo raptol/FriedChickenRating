@@ -43,14 +43,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/newRatingPlaceName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="Chicken restaurant name"
-                    android:inputType="textPersonName"
-                    tools:text="Pelocan Chicken" />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="200dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:backgroundTint="@color/cardview_light_background">
+
+                    <fragment
+                        android:id="@+id/placename_autocomplete_fragment"
+                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </androidx.cardview.widget.CardView>
 
                 <EditText
                     android:id="@+id/newRatingRegion"
@@ -59,6 +63,7 @@
                     android:ems="10"
                     android:hint="Region: Burnaby"
                     android:inputType="textPersonName"
+                    android:gravity="center"
                     tools:text="Burnaby" />
 
                 <EditText
@@ -68,6 +73,7 @@
                     android:ems="10"
                     android:hint="Type: Korean, Japanese"
                     android:inputType="textPersonName"
+                    android:gravity="center"
                     tools:text="Korean" />
 
                 <EditText
@@ -75,9 +81,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Menu name"
+                    android:hint="Chicken menu title"
                     android:inputType="textPersonName"
                     android:minHeight="48dp"
+                    android:gravity="center"
                     tools:text="Spicy Chicken 15pcs" />
             </LinearLayout>
 
