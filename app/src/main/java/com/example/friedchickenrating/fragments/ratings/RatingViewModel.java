@@ -24,6 +24,7 @@ public class RatingViewModel extends ViewModel {
     private MutableLiveData<String> selectedRatingId = new MutableLiveData<>();;
     private MutableLiveData<ImageView> selectedRatingImage = new MutableLiveData<>();
     private MutableLiveData<Uri> selectedRatingImageFilePath = new MutableLiveData<>();
+    private MutableLiveData<Integer> mapRequestCode = new MutableLiveData<>();
 
     private static final String TAG = RatingViewModel.class.getSimpleName();
 
@@ -33,11 +34,17 @@ public class RatingViewModel extends ViewModel {
     public LiveData<Rating> getSelectedRating() {
         return selectedRating;
     }
+    public LiveData<String> getSelectedRatingId() {
+        return selectedRatingId;
+    }
     public LiveData<ImageView> getSelectedRatingImage() {
         return selectedRatingImage;
     }
     public LiveData<Uri> getSelectedRatingImageFilePath() {
         return selectedRatingImageFilePath;
+    }
+    public LiveData<Integer> getMapRequestCode() {
+        return mapRequestCode;
     }
 
     public void setSelectedRating(Rating selectedRating) {
@@ -54,5 +61,9 @@ public class RatingViewModel extends ViewModel {
 
     public void setSelectedRatingImageFilePath(Uri selectedRatingImageFilePath) {
         this.selectedRatingImageFilePath.setValue(selectedRatingImageFilePath);
+    }
+
+    public void setMapRequestCode(Integer mapRequestCode) {
+        this.mapRequestCode.setValue(mapRequestCode);
     }
 }

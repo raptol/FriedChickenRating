@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
@@ -27,6 +28,8 @@ import android.widget.Toast;
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentMapsBinding;
 import com.example.friedchickenrating.fragments.ratings.NewRatingFragment;
+import com.example.friedchickenrating.fragments.ratings.Rating;
+import com.example.friedchickenrating.fragments.ratings.RatingViewModel;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -48,9 +51,12 @@ import java.util.Arrays;
 
 public class MapsFragment extends Fragment {
 
+    private RatingViewModel ratingViewModel;
     private FragmentMapsBinding binding;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
+
     private GoogleMap map;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -124,16 +130,20 @@ public class MapsFragment extends Fragment {
                                             + ", longitude: " + pointOfInterest.latLng.longitude
                                             + ", pointOfInterest.name: " + pointOfInterest.name
                                             + ", pointOfInterest.placeId: " + pointOfInterest.placeId);
-                        Bundle result = new Bundle();
-                        result.putString("placeId", pointOfInterest.placeId);
-                        result.putString("placeName", pointOfInterest.name);
-                        result.putString("latitude", String.valueOf(pointOfInterest.latLng.latitude));
-                        result.putString("longitude", String.valueOf(pointOfInterest.latLng.longitude));
 
-                        getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
+                        Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
+                        if(requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
+                            Bundle result = new Bundle();
+                            result.putString("placeId", pointOfInterest.placeId);
+                            result.putString("placeName", pointOfInterest.name);
+                            result.putString("latitude", String.valueOf(pointOfInterest.latLng.latitude));
+                            result.putString("longitude", String.valueOf(pointOfInterest.latLng.longitude));
 
-                        NavHostFragment.findNavController(MapsFragment.this)
-                                .navigate(R.id.action_nav_maps_to_nav_newRating);
+                            getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
+
+                            NavHostFragment.findNavController(MapsFragment.this)
+                                    .navigate(R.id.action_nav_maps_to_nav_newRating);
+                        }
                     }
                 });
 
@@ -186,6 +196,8 @@ public class MapsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
+
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
@@ -216,6 +228,10 @@ public class MapsFragment extends Fragment {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
                     Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                    LatLng userLocation = new LatLng(place.getLatLng().latitude,
+                            place.getLatLng().longitude);
+                    map.addMarker(new MarkerOptions().position(userLocation).title(place.getName()));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
                 }
 
                 @Override
