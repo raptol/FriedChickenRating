@@ -5,17 +5,19 @@ import java.util.Map;
 public class Place {
     private String placeid;
     private String name;
-    private String latitude;
-    private String longitude;
+    private Double latitude;
+    private Double longitude;
+    private String geohash;
     private String region;
 
     public Place() {}
 
-    public Place(String placeid, String name, String latitude, String longitude, String region) {
+    public Place(String placeid, String name, Double latitude, Double longitude, String geohash, String region) {
         this.placeid = placeid;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.geohash = geohash;
         this.region = region;
     }
 
@@ -35,20 +37,28 @@ public class Place {
         this.name = name;
     }
 
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getGeohash() {
+        return geohash;
+    }
+
+    public void setGeohash(String geohash) {
+        this.geohash = geohash;
     }
 
     public String getRegion() {

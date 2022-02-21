@@ -33,6 +33,8 @@ import android.widget.Toast;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -125,8 +127,11 @@ public class NewRatingFragment extends Fragment {
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
                 placeData.setPlaceid(place.getId());
                 placeData.setName(place.getName());
-                placeData.setLatitude(String.valueOf(place.getLatLng().latitude));
-                placeData.setLongitude(String.valueOf(place.getLatLng().longitude));
+                placeData.setLatitude(place.getLatLng().latitude);
+                placeData.setLongitude(place.getLatLng().longitude);
+                placeData.setGeohash(
+                        GeoFireUtils.getGeoHashForLocation(
+                                new GeoLocation(place.getLatLng().latitude, place.getLatLng().longitude)));
 //                AddressComponents addresses = place.getAddressComponents();
 //                if(addresses != null && addresses.asList().size() > 0) {
 //                    placeData.setRegion(addresses.asList().get(0).toString());
@@ -148,8 +153,8 @@ public class NewRatingFragment extends Fragment {
 
                         String placeId = result.getString("placeId");
                         String placeName = result.getString("placeName");
-                        String latitude = result.getString("latitude");
-                        String longitude = result.getString("longitude");
+                        Double latitude = result.getDouble("latitude");
+                        Double longitude = result.getDouble("longitude");
                         Log.d(TAG, "ResultListener, latitude: " + latitude + ", longitude: " + longitude);
                         Log.d(TAG, "ResultListener, placeId: " + placeId + ", placeName: " + placeName);
 
@@ -157,6 +162,11 @@ public class NewRatingFragment extends Fragment {
                         placeData.setName(placeName);
                         placeData.setLatitude(latitude);
                         placeData.setLongitude(longitude);
+                        placeData.setLatitude(latitude);
+                        placeData.setLongitude(longitude);
+                        placeData.setGeohash(
+                                GeoFireUtils.getGeoHashForLocation(
+                                        new GeoLocation(latitude, longitude)));
                         placeData.setRegion("");
 
                         editTextPlaceName.setText(placeData.getName());

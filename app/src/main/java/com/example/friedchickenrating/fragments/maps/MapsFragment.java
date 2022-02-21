@@ -35,6 +35,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -60,8 +61,95 @@ public class MapsFragment extends Fragment {
     private GoogleMap map;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private Marker currentMarker = null;
 
     private static final String TAG = "MapsFragment";
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+
+        binding = FragmentMapsBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
+
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(mapReadyCallback);
+
+            // Initiate the SDK for Places
+            String apiKey = getString(R.string.api_key);
+            if(!Places.isInitialized()) {
+                Places.initialize(getContext(), apiKey);
+            }
+
+            PlacesClient placesClient = Places.createClient(getContext());
+
+            // Initialize the AutocompleteSupportFragment.
+            AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                    getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+//            // Set location bound for autocomplete to Vancouver city
+//            autocompleteFragment.setLocationBias(RectangularBounds.newInstance(
+//                    new LatLng(49.261111, -123.113889),
+//                    new LatLng(49.261111, -123.113889)
+//            ));
+
+            autocompleteFragment.setCountries("CA");
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull Place place) {
+                    Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                    LatLng userLocation = new LatLng(place.getLatLng().latitude,
+                            place.getLatLng().longitude);
+                    map.addMarker(new MarkerOptions().position(userLocation).title(place.getName()));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
+
+                    Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
+                    if(requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
+                        Bundle result = new Bundle();
+                        result.putString("placeId", place.getId());
+                        result.putString("placeName", place.getName());
+                        result.putDouble("latitude", place.getLatLng().latitude);
+                        result.putDouble("longitude", place.getLatLng().longitude);
+
+                        getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
+
+                        NavHostFragment.findNavController(MapsFragment.this)
+                                .navigate(R.id.action_nav_maps_to_nav_newRating);
+                    }
+                }
+
+                @Override
+                public void onError(@NonNull Status status) {
+                    Log.i(TAG, "An error occurred: " + status);
+                }
+            });
+
+            FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+            fab.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
+
+        super.onStop();
+    }
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
         @Override
@@ -127,17 +215,17 @@ public class MapsFragment extends Fragment {
                     @Override
                     public void onPoiClick(@NonNull PointOfInterest pointOfInterest) {
                         Log.d(TAG, "onPoiClick, latitude: " + pointOfInterest.latLng.latitude
-                                            + ", longitude: " + pointOfInterest.latLng.longitude
-                                            + ", pointOfInterest.name: " + pointOfInterest.name
-                                            + ", pointOfInterest.placeId: " + pointOfInterest.placeId);
+                                + ", longitude: " + pointOfInterest.latLng.longitude
+                                + ", pointOfInterest.name: " + pointOfInterest.name
+                                + ", pointOfInterest.placeId: " + pointOfInterest.placeId);
 
                         Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
-                        if(requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
+                        if(requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
                             Bundle result = new Bundle();
                             result.putString("placeId", pointOfInterest.placeId);
                             result.putString("placeName", pointOfInterest.name);
-                            result.putString("latitude", String.valueOf(pointOfInterest.latLng.latitude));
-                            result.putString("longitude", String.valueOf(pointOfInterest.latLng.longitude));
+                            result.putDouble("latitude", pointOfInterest.latLng.latitude);
+                            result.putDouble("longitude", pointOfInterest.latLng.longitude);
 
                             getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
 
@@ -161,7 +249,26 @@ public class MapsFragment extends Fragment {
 
                         String markerName = marker.getTitle();
                         Toast.makeText(getContext(), "Clicked location is " + markerName, Toast.LENGTH_SHORT).show();
-                        return false;
+
+                        if(marker.isInfoWindowShown()){
+                            marker.hideInfoWindow();
+                        }else {
+                            marker.showInfoWindow();
+                        }
+                        return true;
+                    }
+                });
+
+                //Register event handler of Map Layer Image Button
+                binding.btnMapLayer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(currentMarker == null) {
+                            placeMarkerOnMap();
+                        } else {
+                            currentMarker.remove();
+                            currentMarker = null;
+                        }
                     }
                 });
             }
@@ -170,86 +277,25 @@ public class MapsFragment extends Fragment {
         }
     }
 
-    private ActivityResultLauncher<String> permissionResultCallback = registerForActivityResult(
-        new ActivityResultContracts.RequestPermission(),
-        new ActivityResultCallback<Boolean>() {
-            @Override
-            public void onActivityResult(Boolean result) {
-                if(result) { // permission granted
-                    enableMyLocation();
-                }
-            }
-        });
+    private void placeMarkerOnMap() {
+//        currentMarker = map.addMarker(new MarkerOptions().position(userLocation)
+//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-
-        binding = FragmentMapsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        return root;
+//        LatLng location = new LatLng();
+//        MarkerOptions markerOptions = new MarkerOptions().position(location);
+//        markerOptions.title(placeName);
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+//        currentMarker = map.addMarker(markerOptions);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
-
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(mapReadyCallback);
-
-            // Initiate the SDK for Places
-            String apiKey = getString(R.string.api_key);
-            if(!Places.isInitialized()) {
-                Places.initialize(getContext(), apiKey);
-            }
-
-            PlacesClient placesClient = Places.createClient(getContext());
-
-            // Initialize the AutocompleteSupportFragment.
-            AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-                    getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-
-//            // Set location bound for autocomplete to Vancouver city
-//            autocompleteFragment.setLocationBias(RectangularBounds.newInstance(
-//                    new LatLng(49.261111, -123.113889),
-//                    new LatLng(49.261111, -123.113889)
-//            ));
-
-            autocompleteFragment.setCountries("CA");
-            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+    private ActivityResultLauncher<String> permissionResultCallback = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
                 @Override
-                public void onPlaceSelected(@NonNull Place place) {
-                    Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                    LatLng userLocation = new LatLng(place.getLatLng().latitude,
-                            place.getLatLng().longitude);
-                    map.addMarker(new MarkerOptions().position(userLocation).title(place.getName()));
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
-                }
-
-                @Override
-                public void onError(@NonNull Status status) {
-                    Log.i(TAG, "An error occurred: " + status);
+                public void onActivityResult(Boolean result) {
+                    if(result) { // permission granted
+                        enableMyLocation();
+                    }
                 }
             });
-
-            FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-            fab.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    @Override
-    public void onStop() {
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-        fab.setVisibility(View.VISIBLE);
-
-        super.onStop();
-    }
 }
