@@ -30,6 +30,9 @@ import com.example.friedchickenrating.databinding.FragmentMapsBinding;
 import com.example.friedchickenrating.fragments.ratings.NewRatingFragment;
 import com.example.friedchickenrating.fragments.ratings.Rating;
 import com.example.friedchickenrating.fragments.ratings.RatingViewModel;
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQueryBounds;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,6 +43,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
@@ -47,13 +53,23 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MapsFragment extends Fragment {
 
     private RatingViewModel ratingViewModel;
     private FragmentMapsBinding binding;
+    private FirebaseFirestore db;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
@@ -61,7 +77,7 @@ public class MapsFragment extends Fragment {
     private GoogleMap map;
     private LocationManager locationManager;
     private LocationListener locationListener;
-    private Marker currentMarker = null;
+    private Boolean isShowCustomMarker = false;
 
     private static final String TAG = "MapsFragment";
 
@@ -81,6 +97,7 @@ public class MapsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
+        db = FirebaseFirestore.getInstance();
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -90,7 +107,7 @@ public class MapsFragment extends Fragment {
 
             // Initiate the SDK for Places
             String apiKey = getString(R.string.api_key);
-            if(!Places.isInitialized()) {
+            if (!Places.isInitialized()) {
                 Places.initialize(getContext(), apiKey);
             }
 
@@ -118,7 +135,7 @@ public class MapsFragment extends Fragment {
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
 
                     Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
-                    if(requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
+                    if (requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
                         Bundle result = new Bundle();
                         result.putString("placeId", place.getId());
                         result.putString("placeName", place.getName());
@@ -176,7 +193,7 @@ public class MapsFragment extends Fragment {
         int hasCoarseLocationPermission =
                 ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        if(hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
@@ -193,9 +210,9 @@ public class MapsFragment extends Fragment {
 
     private void enableMyLocation() {
 
-        if(checkPermission()) {
+        if (checkPermission()) {
 
-            if(map != null) {
+            if (map != null) {
                 //Get current location
                 locationManager.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -203,7 +220,7 @@ public class MapsFragment extends Fragment {
                 Location lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 LatLng userLocation = new LatLng(lastUserKnownLocation.getLatitude(),
                         lastUserKnownLocation.getLongitude());
-                map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
+                //map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
 
                 map.setMyLocationEnabled(true);
@@ -220,7 +237,7 @@ public class MapsFragment extends Fragment {
                                 + ", pointOfInterest.placeId: " + pointOfInterest.placeId);
 
                         Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
-                        if(requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
+                        if (requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
                             Bundle result = new Bundle();
                             result.putString("placeId", pointOfInterest.placeId);
                             result.putString("placeName", pointOfInterest.name);
@@ -250,9 +267,9 @@ public class MapsFragment extends Fragment {
                         String markerName = marker.getTitle();
                         Toast.makeText(getContext(), "Clicked location is " + markerName, Toast.LENGTH_SHORT).show();
 
-                        if(marker.isInfoWindowShown()){
+                        if (marker.isInfoWindowShown()) {
                             marker.hideInfoWindow();
-                        }else {
+                        } else {
                             marker.showInfoWindow();
                         }
                         return true;
@@ -263,11 +280,12 @@ public class MapsFragment extends Fragment {
                 binding.btnMapLayer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(currentMarker == null) {
-                            placeMarkerOnMap();
+                        if (isShowCustomMarker == false) {
+                            placeMarkerOnMap(userLocation);
+                            isShowCustomMarker = true;
                         } else {
-                            currentMarker.remove();
-                            currentMarker = null;
+                            map.clear();
+                            isShowCustomMarker = false;
                         }
                     }
                 });
@@ -277,15 +295,61 @@ public class MapsFragment extends Fragment {
         }
     }
 
-    private void placeMarkerOnMap() {
-//        currentMarker = map.addMarker(new MarkerOptions().position(userLocation)
-//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+    private void placeMarkerOnMap(LatLng currentLocation) {
 
-//        LatLng location = new LatLng();
-//        MarkerOptions markerOptions = new MarkerOptions().position(location);
-//        markerOptions.title(placeName);
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//        currentMarker = map.addMarker(markerOptions);
+        //find places to be matched with user's current location
+        final GeoLocation center = new GeoLocation(currentLocation.latitude, currentLocation.longitude);
+        final double radiusInMeter = 5 * 1000; //find places within 5km
+
+        List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInMeter);
+        final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+        for (GeoQueryBounds b : bounds) {
+            Query q = db.collection("places")
+                    .orderBy("geohash")
+                    .startAt(b.startHash)
+                    .endAt(b.endHash);
+
+            tasks.add(q.get());
+        }
+
+        List<com.example.friedchickenrating.fragments.ratings.Place> placeList = new ArrayList<>();
+        Tasks.whenAllComplete(tasks)
+                .addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Task<?>>> t) {
+                        List<DocumentSnapshot> matchingPlaceDocs = new ArrayList<>();
+
+                        for (Task<QuerySnapshot> task : tasks) {
+                            QuerySnapshot snap = task.getResult();
+                            for (DocumentSnapshot doc : snap.getDocuments()) {
+                                double latitude = doc.getDouble("latitude");
+                                double longitude = doc.getDouble("longitude");
+
+                                // We have to filter out a few false positives due to GeoHash
+                                // accuracy, but most will match
+                                GeoLocation docLocation = new GeoLocation(latitude, longitude);
+                                double distanceInMeter = GeoFireUtils.getDistanceBetween(docLocation, center);
+                                if (distanceInMeter <= radiusInMeter) {
+                                    matchingPlaceDocs.add(doc);
+                                    com.example.friedchickenrating.fragments.ratings.Place place = doc.toObject(
+                                            com.example.friedchickenrating.fragments.ratings.Place.class);
+                                    placeList.add(place);
+                                }
+                            }
+                        }
+
+                        // matching Docs with places
+                        for (int i = 0; i < placeList.size(); i++) {
+                            LatLng location = new LatLng(placeList.get(i).getLatitude(), placeList.get(i).getLongitude());
+                            MarkerOptions markerOptions = new MarkerOptions().position(location);
+                            markerOptions.title(placeList.get(i).getName());
+                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+                            Marker marker = map.addMarker(markerOptions);
+                            marker.showInfoWindow();
+                        }
+                    }
+                });
     }
 
     private ActivityResultLauncher<String> permissionResultCallback = registerForActivityResult(
@@ -293,7 +357,7 @@ public class MapsFragment extends Fragment {
             new ActivityResultCallback<Boolean>() {
                 @Override
                 public void onActivityResult(Boolean result) {
-                    if(result) { // permission granted
+                    if (result) { // permission granted
                         enableMyLocation();
                     }
                 }
