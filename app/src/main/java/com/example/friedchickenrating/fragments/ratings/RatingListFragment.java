@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -35,6 +38,12 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private RatingListAdapter ratingListAdapter;
 
     private static final String TAG = RatingListFragment.class.getSimpleName();
+
+    private static final int SORT_OPTION_LOCATION = 1;
+    private static final int SORT_OPTION_ASCENDING = 2;
+    private static final int SORT_OPTION_DESCENDING = 3;
+    private static final int SORT_OPTION_LATEST = 4;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -61,6 +70,54 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         binding.recyclerViewRatingList.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
         binding.recyclerViewRatingList.setAdapter(ratingListAdapter);
 
+        displayPlaceList();
+        displayRatingList(SORT_OPTION_LOCATION); //default sorting option: location
+
+        binding.btnSortLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_LOCATION);
+            }
+        });
+
+        binding.btnSortAscending.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_ASCENDING);
+            }
+        });
+
+        binding.btnSortDescending.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_DESCENDING);
+            }
+        });
+
+        binding.btnSortLatest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_LATEST);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onListItemClick(Rating rating, int position) {
+        ratingViewModel.setSelectedRating(rating);
+        ratingViewModel.setSelectedRatingId(ratingList.get(position).getId());
+
+        NavHostFragment.findNavController(RatingListFragment.this)
+                .navigate(R.id.action_nav_ratings_to_nav_viewRatings);
+    }
+
+    private void displayPlaceList() {
         // Listen for realtime updates of the places
         db.collection("places")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -83,43 +140,49 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                         ratingListAdapter.setRatingList(ratingList, placeList);
                     }
                 });
+    }
+
+    private void displayRatingList(int sortOption) {
+
+        Query query;
+
+        switch(sortOption) {
+            case SORT_OPTION_ASCENDING:
+                query = db.collection("ratings").orderBy("title", Query.Direction.ASCENDING);
+                break;
+
+            case SORT_OPTION_DESCENDING:
+                query = db.collection("ratings").orderBy("title", Query.Direction.DESCENDING);
+                break;
+
+            case SORT_OPTION_LATEST:
+                query = db.collection("ratings");
+                break;
+
+            default:
+                query = db.collection("ratings");
+        }
 
         // Listen for realtime updates of the ratings
-        db.collection("ratings")
-            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot value,
-                                    @Nullable FirebaseFirestoreException error) {
-                    if(error != null) {
-                        Log.w(TAG, "Listen failed.", error);
-                        return;
-                    }
-
-                    ratingList.clear();
-                    for(QueryDocumentSnapshot document: value) {
-                        if (document != null) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
-                            Rating rating = document.toObject(Rating.class);
-                            ratingList.add(rating);
-                        }
-                    }
-                    ratingListAdapter.setRatingList(ratingList, placeList);
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value,
+                                @Nullable FirebaseFirestoreException error) {
+                if(error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
                 }
-            });
-    }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
-    @Override
-    public void onListItemClick(Rating rating, int position) {
-        ratingViewModel.setSelectedRating(rating);
-        ratingViewModel.setSelectedRatingId(ratingList.get(position).getId());
-
-        NavHostFragment.findNavController(RatingListFragment.this)
-                .navigate(R.id.action_nav_ratings_to_nav_viewRatings);
+                ratingList.clear();
+                for(QueryDocumentSnapshot document: value) {
+                    if (document != null) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        Rating rating = document.toObject(Rating.class);
+                        ratingList.add(rating);
+                    }
+                }
+                ratingListAdapter.setRatingList(ratingList, placeList);
+            }
+        });
     }
 }
