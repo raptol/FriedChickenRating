@@ -3,7 +3,6 @@ package com.example.friedchickenrating.fragments.ratings;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -22,10 +20,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.example.friedchickenrating.R;
@@ -33,10 +29,7 @@ import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQueryBounds;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -50,13 +43,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class RatingListFragment extends Fragment implements RatingListAdapter.ItemClickListener{
 
+    private static RatingListFragment instance = null;
     private RatingViewModel ratingViewModel;
     private FragmentRatingListBinding binding;
 
     private FirebaseFirestore db;
 
     private List<Rating> ratingList;
-    private List<Place> placeList;
+    private List<RatingPlace> placeList;
     private RatingListAdapter ratingListAdapter;
 
     private static final String TAG = RatingListFragment.class.getSimpleName();
@@ -70,6 +64,16 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private LocationListener locationListener;
     private LatLng userLocation;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        instance = this;
+    }
+
+    public static RatingListFragment getInstance() {
+        return instance;
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -231,13 +235,21 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                         for(QueryDocumentSnapshot document: value) {
                             if (document != null) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
-                                Place place = document.toObject(Place.class);
+                                RatingPlace place = document.toObject(RatingPlace.class);
                                 placeList.add(place);
                             }
                         }
                         ratingListAdapter.setRatingList(ratingList, placeList);
                     }
                 });
+    }
+
+    public void readRatingListBySpecificPlace(RatingPlace place) {
+        placeList.clear();
+        placeList.add(place);
+
+        Query query = db.collection("ratings").whereEqualTo("placeid", place.getPlaceid());
+        readRatingList(query);
     }
 
     private void readRatingList(Query query) {
@@ -307,8 +319,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                                 double distanceInMeter = GeoFireUtils.getDistanceBetween(docLocation, center);
                                 if (distanceInMeter <= radiusInMeter) {
                                     matchingPlaceDocs.add(doc);
-                                    com.example.friedchickenrating.fragments.ratings.Place place = doc.toObject(
-                                            com.example.friedchickenrating.fragments.ratings.Place.class);
+                                    RatingPlace place = doc.toObject(
+                                            RatingPlace.class);
                                     placeList.add(place);
                                     curLocPlaceIds.add(place.getPlaceid());
                                     Log.d(TAG, "placeList: "+ place.getName());

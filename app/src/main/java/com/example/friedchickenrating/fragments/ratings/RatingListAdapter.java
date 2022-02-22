@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.annotation.GlideModule;
 import com.example.friedchickenrating.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,13 +22,12 @@ import com.google.firebase.storage.StorageReference;
 
 import com.bumptech.glide.Glide;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RatingListAdapter extends RecyclerView.Adapter {
     private List<Rating> ratingList;
-    private List<Place> placeList;
+    private List<RatingPlace> placeList;
     private ItemClickListener mListener;
 
     private static final String TAG = RatingListAdapter.class.getSimpleName();
@@ -42,12 +40,12 @@ public class RatingListAdapter extends RecyclerView.Adapter {
         this.mListener = mListener;
     }
 
-    public RatingListAdapter(List<Rating> ratingList, List<Place> placeList) {
+    public RatingListAdapter(List<Rating> ratingList, List<RatingPlace> placeList) {
         this.ratingList = ratingList;
         this.placeList = placeList;
     }
 
-    public void setRatingList(List<Rating> ratingList, List<Place> placeList) {
+    public void setRatingList(List<Rating> ratingList, List<RatingPlace> placeList) {
         this.ratingList = ratingList;
         this.placeList = placeList;
         notifyDataSetChanged();
@@ -67,7 +65,7 @@ public class RatingListAdapter extends RecyclerView.Adapter {
 
         RatingViewHolder ratingViewHolder = (RatingViewHolder) holder;
         Rating curRating = ratingList.get(position);
-        Place place = getPlace(curRating.getPlaceid());
+        RatingPlace place = getPlace(curRating.getPlaceid());
 
         ratingViewHolder.txtItemTitle.setText(curRating.getTitle());
         ratingViewHolder.txtItemPlace.setText(place.getName());
@@ -116,8 +114,8 @@ public class RatingListAdapter extends RecyclerView.Adapter {
         return ratingList.size();
     }
 
-    private Place getPlace(String placeid) {
-        Place place = new Place();
+    private RatingPlace getPlace(String placeid) {
+        RatingPlace place = new RatingPlace();
 
         for(int i = 0; i < placeList.size(); i++) {
             if(placeList.get(i).getPlaceid() != null) {

@@ -13,15 +13,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -36,8 +32,8 @@ import android.widget.Toast;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentMapsBinding;
-import com.example.friedchickenrating.fragments.ratings.NewRatingFragment;
-import com.example.friedchickenrating.fragments.ratings.Rating;
+import com.example.friedchickenrating.fragments.ratings.RatingListFragment;
+import com.example.friedchickenrating.fragments.ratings.RatingPlace;
 import com.example.friedchickenrating.fragments.ratings.RatingViewModel;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
@@ -58,25 +54,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class MapsFragment extends Fragment {
 
@@ -281,6 +271,17 @@ public class MapsFragment extends Fragment {
                                 txtBottomPlaceName.setText(pointOfInterest.name);
                                 txtBottomPlaceAddress.setText(region);
 
+                                RatingPlace ratingPlace = new RatingPlace(
+                                        pointOfInterest.placeId,
+                                        pointOfInterest.name,
+                                        pointOfInterest.latLng.latitude,
+                                        pointOfInterest.latLng.longitude,
+                                        "",
+                                        region
+                                );
+
+                                RatingListFragment.getInstance().readRatingListBySpecificPlace(ratingPlace);
+
                                 bottomSheetDialog.show();
                             }
                         }
@@ -353,7 +354,7 @@ public class MapsFragment extends Fragment {
             tasks.add(q.get());
         }
 
-        List<com.example.friedchickenrating.fragments.ratings.Place> placeList = new ArrayList<>();
+        List<RatingPlace> placeList = new ArrayList<>();
         Tasks.whenAllComplete(tasks)
                 .addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
                     @Override
@@ -372,8 +373,8 @@ public class MapsFragment extends Fragment {
                                 double distanceInMeter = GeoFireUtils.getDistanceBetween(docLocation, center);
                                 if (distanceInMeter <= radiusInMeter) {
                                     matchingPlaceDocs.add(doc);
-                                    com.example.friedchickenrating.fragments.ratings.Place place = doc.toObject(
-                                            com.example.friedchickenrating.fragments.ratings.Place.class);
+                                    RatingPlace place = doc.toObject(
+                                            RatingPlace.class);
                                     placeList.add(place);
                                 }
                             }

@@ -2,7 +2,7 @@ package com.example.friedchickenrating.fragments.ratings;
 
 import java.util.Map;
 
-public class Place {
+public class RatingPlace {
     private String placeid;
     private String name;
     private Double latitude;
@@ -10,9 +10,9 @@ public class Place {
     private String geohash;
     private String region;
 
-    public Place() {}
+    public RatingPlace() {}
 
-    public Place(String placeid, String name, Double latitude, Double longitude, String geohash, String region) {
+    public RatingPlace(String placeid, String name, Double latitude, Double longitude, String geohash, String region) {
         this.placeid = placeid;
         this.name = name;
         this.latitude = latitude;
