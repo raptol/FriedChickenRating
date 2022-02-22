@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -118,6 +120,7 @@ public class NewRatingFragment extends Fragment {
         EditText editTextPlaceName = (EditText) autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_input);
         editTextPlaceName.setHint("Restaurant name");
         editTextPlaceName.setGravity(Gravity.LEFT);
+
         //editTextPlaceName.setBackgroundColor(Color.GRAY);
         autocompleteFragment.setCountries("CA");
         autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG));
@@ -132,10 +135,15 @@ public class NewRatingFragment extends Fragment {
                 placeData.setGeohash(
                         GeoFireUtils.getGeoHashForLocation(
                                 new GeoLocation(place.getLatLng().latitude, place.getLatLng().longitude)));
-//                AddressComponents addresses = place.getAddressComponents();
-//                if(addresses != null && addresses.asList().size() > 0) {
-//                    placeData.setRegion(addresses.asList().get(0).toString());
-//                }
+
+                String region = ratingViewModel.getRegionFromLatLng(requireContext(),
+                        place.getLatLng().latitude, place.getLatLng().longitude);
+                Log.d(TAG, "region: " + region);
+
+                placeData.setRegion(region);
+
+                editTextPlaceName.setText(placeData.getName());
+                binding.newRatingRegion.setText(placeData.getRegion());
             }
 
             @Override
@@ -155,8 +163,10 @@ public class NewRatingFragment extends Fragment {
                         String placeName = result.getString("placeName");
                         Double latitude = result.getDouble("latitude");
                         Double longitude = result.getDouble("longitude");
+                        String region = result.getString("region");
                         Log.d(TAG, "ResultListener, latitude: " + latitude + ", longitude: " + longitude);
                         Log.d(TAG, "ResultListener, placeId: " + placeId + ", placeName: " + placeName);
+                        Log.d(TAG, "ResultListener, region: " + region );
 
                         placeData.setPlaceid(placeId);
                         placeData.setName(placeName);
@@ -167,10 +177,7 @@ public class NewRatingFragment extends Fragment {
                         placeData.setGeohash(
                                 GeoFireUtils.getGeoHashForLocation(
                                         new GeoLocation(latitude, longitude)));
-                        placeData.setRegion("");
-
-                        editTextPlaceName.setText(placeData.getName());
-                        binding.newRatingRegion.setText(placeData.getRegion());
+                        placeData.setRegion(region);
 
                         //recover stored data before switching from new rating to map
                         filePath = ratingViewModel.getSelectedRatingImageFilePath().getValue();
@@ -184,10 +191,12 @@ public class NewRatingFragment extends Fragment {
                             binding.imgViewPicture.invalidate();
                         }
 
+                        editTextPlaceName.setText(placeData.getName());
+                        binding.newRatingRegion.setText(placeData.getRegion());
+
                         Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
                         binding.newRatingTitle.setText(recoverRatingData.getTitle());
                         binding.newRatingChickenType.setText(recoverRatingData.getType());
-                        binding.newRatingRegion.setText(recoverRatingData.getRegion());
                         binding.newRatingOtherItems.setText(recoverRatingData.getOtheritems());
                         binding.newRatingNotes.setText(recoverRatingData.getNotes());
                         binding.ratingBarFlavor.setRating(recoverRatingData.getStarflavor());

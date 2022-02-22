@@ -61,9 +61,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:gravity="center"
                     android:hint="Region: Burnaby"
                     android:inputType="textPersonName"
-                    android:gravity="center"
+                    android:minHeight="48dp"
                     tools:text="Burnaby" />
 
                 <EditText
@@ -71,9 +72,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:gravity="center"
                     android:hint="Type: Korean, Japanese"
                     android:inputType="textPersonName"
-                    android:gravity="center"
+                    android:minHeight="48dp"
                     tools:text="Korean" />
 
                 <EditText

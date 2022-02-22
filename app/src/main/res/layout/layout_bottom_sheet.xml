@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheetContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Place Details"
+        android:textColor="@color/bottomSheetPrimaryText"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/bottomSheetDivider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_menu_ratings" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtBottomPlaceName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mark's Chicken"
+                android:textColor="@color/bottomSheetPrimaryText"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtBottomPlaceAttributes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="..."
+                android:textColor="@color/bottomSheetSecondaryText"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/txtBottomPlaceAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address:"
+                android:textColor="@color/bottomSheetAccent"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/bottomSheetDivider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_menu_favorites"
+            app:tint="@color/bottomSheetSecondaryText" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="25dp"
+            android:text="Add to favorites"
+            android:textColor="@color/bottomSheetPrimaryText"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnRatings"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/button_background"
+            android:text="Rating"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/button_background"
+            android:text="Share"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+    </LinearLayout>
+</LinearLayout>
