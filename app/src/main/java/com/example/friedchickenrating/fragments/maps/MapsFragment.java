@@ -207,7 +207,7 @@ public class MapsFragment extends Fragment {
                 LatLng userLocation = new LatLng(lastUserKnownLocation.getLatitude(),
                         lastUserKnownLocation.getLongitude());
                 //map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
 
                 map.setMyLocationEnabled(true);
                 map.getUiSettings().setMyLocationButtonEnabled(true);

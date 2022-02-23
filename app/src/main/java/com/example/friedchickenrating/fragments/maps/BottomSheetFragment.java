@@ -1,5 +1,6 @@
 package com.example.friedchickenrating.fragments.maps;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -55,6 +56,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     private RatingViewModel ratingViewModel;
     private FragmentBottomSheetDialogBinding binding;
 
+    List<Rating> ratingList;
+
     public static BottomSheetFragment newInstance(String placeid, String placename, String region) {
         final BottomSheetFragment fragment = new BottomSheetFragment();
         final Bundle args = new Bundle();
@@ -78,7 +81,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        List<Rating> ratingList = new ArrayList<>();
+        ratingList = new ArrayList<>();
         String placeid = getArguments().getString(ARG_PLACE_ID);
         String placename = getArguments().getString(ARG_PLACE_NAME);
         String region = getArguments().getString(ARG_PLACE_REGION);
@@ -188,7 +191,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             Rating curRating = ratingList.get(position);
 
             holder.txtItemTitle.setText(curRating.getTitle());
@@ -222,19 +225,23 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                 });
             }
 
+            holder.imgItemPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-//            ratingViewHolder.imgItemPhoto.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    mListener.onListItemClick(curRating, position);
-//                }
-//            });
+                    ratingViewModel.setSelectedRating(curRating);
+                    ratingViewModel.setSelectedRatingId(ratingList.get(position).getId());
+
+                    dismiss();
+                    NavHostFragment.findNavController(BottomSheetFragment.this)
+                            .navigate(R.id.action_nav_maps_to_nav_viewRatings);
+                }
+            });
         }
 
         @Override
         public int getItemCount() {
             return ratingList.size();
         }
-
     }
 }
