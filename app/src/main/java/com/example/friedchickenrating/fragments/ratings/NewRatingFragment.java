@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
+import com.example.friedchickenrating.fragments.maps.MapsFragment;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.api.Status;
@@ -96,51 +97,6 @@ public class NewRatingFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
 
-        // Initiate the SDK for Places
-        String apiKey = getString(R.string.api_key);
-        if(!Places.isInitialized()) {
-            Places.initialize(getContext(), apiKey);
-        }
-
-        // Initialize the AutocompleteSupportFragment.
-        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-                getChildFragmentManager().findFragmentById(R.id.placename_autocomplete_fragment);
-        autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
-        EditText editTextPlaceName = (EditText) autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_input);
-        editTextPlaceName.setHint("Restaurant name");
-        editTextPlaceName.setGravity(Gravity.LEFT);
-
-        //editTextPlaceName.setBackgroundColor(Color.GRAY);
-        autocompleteFragment.setCountries("CA");
-        autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG));
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(@NonNull com.google.android.libraries.places.api.model.Place place) {
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                placeData.setPlaceid(place.getId());
-                placeData.setName(place.getName());
-                placeData.setLatitude(place.getLatLng().latitude);
-                placeData.setLongitude(place.getLatLng().longitude);
-                placeData.setGeohash(
-                        GeoFireUtils.getGeoHashForLocation(
-                                new GeoLocation(place.getLatLng().latitude, place.getLatLng().longitude)));
-
-                String region = ratingViewModel.getRegionFromLatLng(requireContext(),
-                        place.getLatLng().latitude, place.getLatLng().longitude);
-                Log.d(TAG, "region: " + region);
-
-                placeData.setRegion(region);
-
-                editTextPlaceName.setText(placeData.getName());
-                binding.newRatingRegion.setText(placeData.getRegion());
-            }
-
-            @Override
-            public void onError(@NonNull Status status) {
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
-
         //Register result listener to get place info from map
         getParentFragmentManager().setFragmentResultListener("requestMapPlaceInfo", this,
                 new FragmentResultListener() {
@@ -180,7 +136,7 @@ public class NewRatingFragment extends Fragment {
                             binding.imgViewPicture.invalidate();
                         }
 
-                        editTextPlaceName.setText(placeData.getName());
+                        binding.newRatingPlaceName.setText(placeData.getName());
                         binding.newRatingRegion.setText(placeData.getRegion());
 
                         Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
@@ -194,6 +150,8 @@ public class NewRatingFragment extends Fragment {
                         binding.ratingBarPortion.setRating(recoverRatingData.getStarportion());
                         binding.ratingBarPrice.setRating(recoverRatingData.getStarprice());
                         binding.ratingBarOverall.setRating(recoverRatingData.getStaroverall());
+
+                        getChildFragmentManager().popBackStack();
                     }
                 });
 
@@ -253,8 +211,13 @@ public class NewRatingFragment extends Fragment {
                     return;
                 }
 
-                if(editTextPlaceName.getText().toString().trim().isEmpty()) {
+                if( binding.newRatingPlaceName.getText().toString().trim().isEmpty()) {
                     Toast.makeText(getContext(), "Please enter chicken restaurant name.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(placeData != null && placeData.getPlaceid() == null) {
+                    Toast.makeText(getContext(), "Please search and click chicken restaurant name in the map.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
