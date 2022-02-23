@@ -129,27 +129,31 @@ public class NewRatingFragment extends Fragment {
                         Log.d(TAG, "filePath==> " + filePath);
 
                         ImageView tempPhoto = ratingViewModel.getSelectedRatingImage().getValue();
-                        BitmapDrawable tempPhotoDrawable = (BitmapDrawable)tempPhoto.getDrawable();
-                        if(tempPhotoDrawable != null) {
-                            Bitmap bitmap = tempPhotoDrawable.getBitmap();
-                            binding.imgViewPicture.setImageBitmap(bitmap);
-                            binding.imgViewPicture.invalidate();
+                        if(tempPhoto != null) {
+                            BitmapDrawable tempPhotoDrawable = (BitmapDrawable) tempPhoto.getDrawable();
+                            if (tempPhotoDrawable != null) {
+                                Bitmap bitmap = tempPhotoDrawable.getBitmap();
+                                binding.imgViewPicture.setImageBitmap(bitmap);
+                                binding.imgViewPicture.invalidate();
+                            }
                         }
 
                         binding.newRatingPlaceName.setText(placeData.getName());
                         binding.newRatingRegion.setText(placeData.getRegion());
 
                         Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
-                        binding.newRatingTitle.setText(recoverRatingData.getTitle());
-                        binding.newRatingChickenType.setText(recoverRatingData.getType());
-                        binding.newRatingOtherItems.setText(recoverRatingData.getOtheritems());
-                        binding.newRatingNotes.setText(recoverRatingData.getNotes());
-                        binding.ratingBarFlavor.setRating(recoverRatingData.getStarflavor());
-                        binding.ratingBarCrunch.setRating(recoverRatingData.getStarcrunch());
-                        binding.ratingBarSpiciness.setRating(recoverRatingData.getStarspiciness());
-                        binding.ratingBarPortion.setRating(recoverRatingData.getStarportion());
-                        binding.ratingBarPrice.setRating(recoverRatingData.getStarprice());
-                        binding.ratingBarOverall.setRating(recoverRatingData.getStaroverall());
+                        if(recoverRatingData != null) {
+                            binding.newRatingTitle.setText(recoverRatingData.getTitle());
+                            binding.newRatingChickenType.setText(recoverRatingData.getType());
+                            binding.newRatingOtherItems.setText(recoverRatingData.getOtheritems());
+                            binding.newRatingNotes.setText(recoverRatingData.getNotes());
+                            binding.ratingBarFlavor.setRating(recoverRatingData.getStarflavor());
+                            binding.ratingBarCrunch.setRating(recoverRatingData.getStarcrunch());
+                            binding.ratingBarSpiciness.setRating(recoverRatingData.getStarspiciness());
+                            binding.ratingBarPortion.setRating(recoverRatingData.getStarportion());
+                            binding.ratingBarPrice.setRating(recoverRatingData.getStarprice());
+                            binding.ratingBarOverall.setRating(recoverRatingData.getStaroverall());
+                        }
 
                         getChildFragmentManager().popBackStack();
                     }

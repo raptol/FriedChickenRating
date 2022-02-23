@@ -29,6 +29,10 @@
             android:icon="@drawable/ic_menu_roulette"
             android:title="@string/menu_roulette" />
         <item
+            android:id="@+id/nav_newRating"
+            android:icon="@drawable/ic_menu_newrating"
+            android:title="@string/menu_newRating" />
+        <item
             android:id="@+id/nav_ratings"
             android:icon="@drawable/ic_menu_ratings"
             android:title="@string/menu_ratings" />

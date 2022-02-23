@@ -12,6 +12,7 @@
     <string name="menu_my_recipes">My Recipes</string>
     <string name="menu_maps">Restaurants Map</string>
     <string name="menu_roulette">Roulette</string>
+    <string name="menu_newRating">New Rating</string>
     <string name="menu_ratings">Ratings</string>
     <string name="menu_recipes">Recipes</string>
 
@@ -21,5 +22,7 @@
     <string name="login_failed">"Login failed, please enter a valid email and password or sign up"</string>
 
     <string name="api_key">AIzaSyB8yATPT1khu3A5ZWl9jBRNG4gazB1bnuY</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

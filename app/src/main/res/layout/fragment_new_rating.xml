@@ -43,18 +43,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="200dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="10dp"
-                    android:backgroundTint="@color/cardview_light_background">
-
-                    <fragment
-                        android:id="@+id/placename_autocomplete_fragment"
-                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </androidx.cardview.widget.CardView>
+                <EditText
+                    android:id="@+id/newRatingPlaceName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="Chicken restaurant name"
+                    android:inputType="textPersonName"
+                    tools:text="Pelocan Chicken" />
 
                 <EditText
                     android:id="@+id/newRatingRegion"

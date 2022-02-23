@@ -35,6 +35,9 @@
         <action
             android:id="@+id/action_nav_maps_to_nav_viewRatings"
             app:destination="@id/nav_viewRatings" />
+        <action
+            android:id="@+id/action_nav_maps_to_bottomSheetFragment"
+            app:destination="@id/bottomSheetFragment" />
     </fragment>
 
     <fragment
@@ -59,7 +62,7 @@
     <fragment
         android:id="@+id/nav_newRating"
         android:name="com.example.friedchickenrating.fragments.ratings.NewRatingFragment"
-        android:label="fragment_new_rating"
+        android:label="@string/menu_newRating"
         tools:layout="@layout/fragment_new_rating" >
         <action
             android:id="@+id/action_nav_newRating_to_nav_ratings"
@@ -81,6 +84,18 @@
         <action
             android:id="@+id/action_nav_viewRatings_to_nav_ratings"
             app:destination="@id/nav_ratings" />
+    </fragment>
+    <fragment
+        android:id="@+id/bottomSheetFragment"
+        android:name="com.example.friedchickenrating.fragments.ratings.BottomSheetFragment"
+        android:label="fragment_bottom_sheet_dialog"
+        tools:layout="@layout/fragment_bottom_sheet_dialog" >
+        <action
+            android:id="@+id/action_bottomSheetFragment_to_nav_newRating"
+            app:destination="@id/nav_newRating" />
+        <action
+            android:id="@+id/action_bottomSheetFragment_to_nav_viewRatings"
+            app:destination="@id/nav_viewRatings" />
     </fragment>
 
 </navigation>

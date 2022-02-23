@@ -23,16 +23,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentMapsBinding;
-import com.example.friedchickenrating.fragments.ratings.RatingListFragment;
+import com.example.friedchickenrating.fragments.ratings.BottomSheetFragment;
 import com.example.friedchickenrating.fragments.ratings.RatingPlace;
 import com.example.friedchickenrating.fragments.ratings.RatingViewModel;
 import com.firebase.geofire.GeoFireUtils;
@@ -217,30 +215,6 @@ public class MapsFragment extends Fragment {
                 map.getUiSettings().setZoomControlsEnabled(true);
                 map.getUiSettings().setZoomGesturesEnabled(true);
 
-                //create Bottom sheet dialog of the map
-                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
-                        getActivity(), R.style.Theme_BottomSheetDialog);
-                View bottomSheetView = LayoutInflater.from(getContext()).inflate(R.layout.layout_bottom_sheet,
-                        (LinearLayout)binding.getRoot().findViewById(R.id.bottomSheetContainer));
-                TextView txtBottomPlaceName = (TextView)bottomSheetView.findViewById(R.id.txtBottomPlaceName);
-                TextView txtBottomPlaceAddress = (TextView)bottomSheetView.findViewById(R.id.txtBottomPlaceAddress);
-
-                bottomSheetView.findViewById(R.id.btnRatings).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getContext(), "popup Rating", Toast.LENGTH_SHORT).show();
-                        bottomSheetDialog.dismiss();
-                    }
-                });
-                bottomSheetView.findViewById(R.id.btnShare).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getContext(), "popup Share", Toast.LENGTH_SHORT).show();
-                        bottomSheetDialog.dismiss();
-                    }
-                });
-                bottomSheetDialog.setContentView(bottomSheetView);
-
                 //register event handler to click icon of place
                 map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
                     @Override
@@ -267,23 +241,21 @@ public class MapsFragment extends Fragment {
                             NavHostFragment.findNavController(MapsFragment.this)
                                     .navigate(R.id.action_nav_maps_to_nav_newRating);
                         }else {
-                            if(!bottomSheetDialog.isShowing()) {
-                                txtBottomPlaceName.setText(pointOfInterest.name);
-                                txtBottomPlaceAddress.setText(region);
+                            RatingPlace ratingPlace = new RatingPlace(
+                                    pointOfInterest.placeId,
+                                    pointOfInterest.name,
+                                    pointOfInterest.latLng.latitude,
+                                    pointOfInterest.latLng.longitude,
+                                    "",
+                                    region);
 
-                                RatingPlace ratingPlace = new RatingPlace(
-                                        pointOfInterest.placeId,
-                                        pointOfInterest.name,
-                                        pointOfInterest.latLng.latitude,
-                                        pointOfInterest.latLng.longitude,
-                                        "",
-                                        region
-                                );
-
-                                RatingListFragment.getInstance().readRatingListBySpecificPlace(ratingPlace);
-
-                                bottomSheetDialog.show();
-                            }
+                            ratingViewModel.setSelectedRatingPlace(ratingPlace);
+                            BottomSheetFragment bottomSheetFragment
+                                    = BottomSheetFragment.newInstance(
+                                            pointOfInterest.placeId,
+                                            pointOfInterest.name,
+                                            region);
+                            bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
                         }
                     }
                 });
@@ -294,9 +266,6 @@ public class MapsFragment extends Fragment {
                     public void onMapClick(@NonNull LatLng latLng) {
                         //map.addMarker(new MarkerOptions().position(latLng).title("Selected Place"));
                         Log.d(TAG, "onMapClick, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
-
-                        if(bottomSheetDialog.isShowing())
-                            bottomSheetDialog.dismiss();
                     }
                 });
 

@@ -28,10 +28,9 @@ import java.util.Map;
 
 public class RatingViewModel extends ViewModel {
 
+    private MutableLiveData<RatingPlace> selectedRatingPlace = new MutableLiveData<>();
     private MutableLiveData<Rating> selectedRating = new MutableLiveData<>();
-    ;
     private MutableLiveData<String> selectedRatingId = new MutableLiveData<>();
-    ;
     private MutableLiveData<ImageView> selectedRatingImage = new MutableLiveData<>();
     private MutableLiveData<Uri> selectedRatingImageFilePath = new MutableLiveData<>();
     private MutableLiveData<Integer> mapRequestCode = new MutableLiveData<>();
@@ -41,6 +40,9 @@ public class RatingViewModel extends ViewModel {
     public RatingViewModel() {
     }
 
+    public LiveData<RatingPlace> getSelectedRatingPlace() {
+        return selectedRatingPlace;
+    }
     public LiveData<Rating> getSelectedRating() {
         return selectedRating;
     }
@@ -59,6 +61,10 @@ public class RatingViewModel extends ViewModel {
 
     public LiveData<Integer> getMapRequestCode() {
         return mapRequestCode;
+    }
+
+    public void setSelectedRatingPlace(RatingPlace selectedRatingPlace) {
+        this.selectedRatingPlace.setValue(selectedRatingPlace);
     }
 
     public void setSelectedRating(Rating selectedRating) {

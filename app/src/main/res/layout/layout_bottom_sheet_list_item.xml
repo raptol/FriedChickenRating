@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="260dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imgItemPhoto"
+            android:layout_width="330dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="fitXY"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="40dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtItemTitle"
+                android:layout_width="150dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="6dp"
+                android:layout_weight="1"
+                android:text="TextView" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                android:layout_width="180dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:numStars="5"></RatingBar>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
