@@ -25,19 +25,13 @@
                     android:layout_marginStart="15dp"
                     android:text="Location"
                     android:textSize="10sp" />
+
                 <Button
-                    android:id="@+id/btnSortAscending"
+                    android:id="@+id/btnSortHighRates"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="Ascending"
-                    android:textSize="10sp" />
-                <Button
-                    android:id="@+id/btnSortDescending"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="Descending"
+                    android:text="High Rates"
                     android:textSize="10sp" />
                 <Button
                     android:id="@+id/btnSortLatest"
@@ -45,6 +39,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:text="Latest"
+                    android:textSize="10sp" />
+
+                <Button
+                    android:id="@+id/btnSortMyRates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="My Rates"
                     android:textSize="10sp" />
 
             </LinearLayout>

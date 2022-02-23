@@ -33,6 +33,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,6 +50,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private FragmentRatingListBinding binding;
 
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     private List<Rating> ratingList;
     private List<RatingPlace> placeList;
@@ -56,8 +60,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private static final String TAG = RatingListFragment.class.getSimpleName();
 
     private static final int SORT_OPTION_LOCATION = 1;
-    private static final int SORT_OPTION_ASCENDING = 2;
-    private static final int SORT_OPTION_DESCENDING = 3;
+    private static final int SORT_OPTION_MY_RATING = 2;
+    private static final int SORT_OPTION_HIGH_STARS = 3;
     private static final int SORT_OPTION_LATEST = 4;
 
     private LocationManager locationManager;
@@ -90,6 +94,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         super.onViewCreated(view, savedInstanceState);
 
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
         ratingList = new ArrayList<>();
         placeList = new ArrayList<>();
@@ -132,17 +138,17 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
             }
         });
 
-        binding.btnSortAscending.setOnClickListener(new View.OnClickListener() {
+        binding.btnSortMyRates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_ASCENDING);
+                displayRatingList(SORT_OPTION_MY_RATING);
             }
         });
 
-        binding.btnSortDescending.setOnClickListener(new View.OnClickListener() {
+        binding.btnSortHighRates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_DESCENDING);
+                displayRatingList(SORT_OPTION_HIGH_STARS);
             }
         });
 
@@ -196,14 +202,16 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         Query query;
 
         switch(sortOption) {
-            case SORT_OPTION_ASCENDING:
-                query = db.collection("ratings").orderBy("title", Query.Direction.ASCENDING);
+            case SORT_OPTION_MY_RATING:
+                query = db.collection("ratings")
+                        .whereEqualTo("userid", user.getUid())
+                        .orderBy("timestamp", Query.Direction.DESCENDING);
                 readPlaceList();
                 readRatingList(query);
                 break;
 
-            case SORT_OPTION_DESCENDING:
-                query = db.collection("ratings").orderBy("title", Query.Direction.DESCENDING);
+            case SORT_OPTION_HIGH_STARS:
+                query = db.collection("ratings").orderBy("staroverall", Query.Direction.DESCENDING);
                 readPlaceList();
                 readRatingList(query);
                 break;
