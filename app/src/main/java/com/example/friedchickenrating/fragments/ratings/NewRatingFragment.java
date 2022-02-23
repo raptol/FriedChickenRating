@@ -38,8 +38,10 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -192,7 +194,8 @@ public class NewRatingFragment extends Fragment {
                         binding.ratingBarSpiciness.getRating(),
                         binding.ratingBarPortion.getRating(),
                         binding.ratingBarPrice.getRating(),
-                        binding.ratingBarOverall.getRating());
+                        binding.ratingBarOverall.getRating(),
+                        Timestamp.now());
 
                 ratingViewModel.setSelectedRating(saveRatingData);
                 ratingViewModel.setSelectedRatingImage(binding.imgViewPicture);
@@ -258,7 +261,8 @@ public class NewRatingFragment extends Fragment {
                                             binding.ratingBarSpiciness.getRating(),
                                             binding.ratingBarPortion.getRating(),
                                             binding.ratingBarPrice.getRating(),
-                                            binding.ratingBarOverall.getRating());
+                                            binding.ratingBarOverall.getRating(),
+                                            Timestamp.now());
 
                 db.collection("ratings").document(ratingsDocId)
                         .set(newRatingData)

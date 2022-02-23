@@ -1,5 +1,8 @@
 package com.example.friedchickenrating.fragments.ratings;
 
+import com.google.firebase.Timestamp;
+
+import java.util.Date;
 import java.util.Map;
 
 public class Rating {
@@ -18,11 +21,12 @@ public class Rating {
     private float starportion;
     private float starprice;
     private float staroverall;
+    private Timestamp timestamp;
 
     public Rating() { }
     public Rating(String id, String title, String type, String region, String placeid, String userid,
                   String otheritems, String notes, Map<String, Object> pictures,
-                  float starflavor, float starcrunch, float starspiciness, float starportion, float starprice, float staroverall) {
+                  float starflavor, float starcrunch, float starspiciness, float starportion, float starprice, float staroverall, Timestamp timestamp) {
         this.id = id;
         this.title = title;
         this.type = type;
@@ -38,6 +42,7 @@ public class Rating {
         this.starportion = starportion;
         this.starprice = starprice;
         this.staroverall = staroverall;
+        this.timestamp = timestamp;
     }
 
     public String getId() {
@@ -158,5 +163,13 @@ public class Rating {
 
     public void setStaroverall(float staroverall) {
         this.staroverall = staroverall;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }

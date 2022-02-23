@@ -209,7 +209,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 break;
 
             case SORT_OPTION_LATEST:
-                query = db.collection("ratings");
+                query = db.collection("ratings").orderBy("timestamp", Query.Direction.DESCENDING);
                 readPlaceList();
                 readRatingList(query);
                 break;
