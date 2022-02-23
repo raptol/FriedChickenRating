@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentMapsBinding;
+import com.example.friedchickenrating.fragments.ratings.Rating;
 import com.example.friedchickenrating.fragments.ratings.RatingPlace;
 import com.example.friedchickenrating.fragments.ratings.RatingViewModel;
 import com.firebase.geofire.GeoFireUtils;
@@ -48,6 +49,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.libraries.places.api.Places;
@@ -57,8 +59,11 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -347,16 +352,57 @@ public class MapsFragment extends Fragment {
                         // matching Docs with places
                         for (int i = 0; i < placeList.size(); i++) {
                             LatLng location = new LatLng(placeList.get(i).getLatitude(), placeList.get(i).getLongitude());
-                            MarkerOptions markerOptions = new MarkerOptions().position(location);
-                            markerOptions.title(placeList.get(i).getName());
+                            String placeName = placeList.get(i).getName();
 
-                            //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                            Drawable drawableIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.emoticons5, null);
-                            BitmapDescriptor icon = getMarkerIconFromDrawable(drawableIcon);
-                            markerOptions.icon(icon);
+                            //query rating list with place id
+                            Query query = db.collection("ratings").whereEqualTo("placeid", placeList.get(i).getPlaceid());
+                            query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable QuerySnapshot value,
+                                                    @Nullable FirebaseFirestoreException error) {
+                                    if(error != null) {
+                                        Log.w(TAG, "Listen failed.", error);
+                                        return;
+                                    }
 
-                            Marker marker = map.addMarker(markerOptions);
-                            marker.showInfoWindow();
+                                    Double sum = 0.0;
+                                    for(QueryDocumentSnapshot document: value) {
+                                        if (document != null) {
+                                            Log.d(TAG, document.getId() + " => " + document.getData());
+                                            Rating rating = document.toObject(Rating.class);
+
+                                            sum += rating.getStaroverall();
+                                            Log.d(TAG, "sum: " + sum + ", each star overall: " + rating.getStaroverall());
+                                        }
+                                    }
+
+                                    int starDrawable;
+                                    Double overallStar = sum / value.size();
+                                    Log.d(TAG, "overallStar: " + overallStar);
+                                    if(overallStar > 4.0 && overallStar <= 5.0) {
+                                        starDrawable = R.drawable.emoticons5;
+                                    } else if(overallStar > 3.0 && overallStar <= 4.0) {
+                                        starDrawable = R.drawable.emoticons4;
+                                    } else if(overallStar > 2.0 && overallStar <= 3.0) {
+                                        starDrawable = R.drawable.emoticons3;
+                                    } else if(overallStar > 1.0 && overallStar <= 2.0) {
+                                        starDrawable = R.drawable.emoticons2;
+                                    } else {
+                                        starDrawable = R.drawable.emoticons1;
+                                    }
+
+                                    MarkerOptions markerOptions = new MarkerOptions().position(location);
+                                    markerOptions.title(placeName);
+
+                                    //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                    Drawable drawableIcon = ResourcesCompat.getDrawable(getResources(), starDrawable, null);
+                                    BitmapDescriptor icon = getMarkerIconFromDrawable(drawableIcon);
+                                    markerOptions.icon(icon);
+
+                                    Marker marker = map.addMarker(markerOptions);
+                                    marker.showInfoWindow();
+                                }
+                            });
                         }
                     }
                 });
