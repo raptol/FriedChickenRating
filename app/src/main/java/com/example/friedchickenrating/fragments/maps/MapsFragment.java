@@ -27,10 +27,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentMapsBinding;
-import com.example.friedchickenrating.fragments.ratings.BottomSheetFragment;
 import com.example.friedchickenrating.fragments.ratings.RatingPlace;
 import com.example.friedchickenrating.fragments.ratings.RatingViewModel;
 import com.firebase.geofire.GeoFireUtils;
@@ -55,7 +55,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -276,13 +275,9 @@ public class MapsFragment extends Fragment {
                     @Override
                     public boolean onMarkerClick(@NonNull Marker marker) {
 
-//                        String markerName = marker.getTitle();
-//                        Toast.makeText(getContext(), "Clicked location is " + markerName, Toast.LENGTH_SHORT).show();
-//
-//                        if(!bottomSheetDialog.isShowing())
-//                            bottomSheetDialog.show();
-//
-//                        return true;
+                        String markerName = marker.getTitle();
+                        Toast.makeText(getContext(), "Clicked location is " + markerName, Toast.LENGTH_SHORT).show();
+
                         return false;
                     }
                 });

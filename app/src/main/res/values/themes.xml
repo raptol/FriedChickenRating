@@ -22,12 +22,4 @@
     <style name="Theme.FriedChickenRating.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.FriedChickenRating.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="Theme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/Theme.BottomSheetStyle</item>
-    </style>
-
-    <style name="Theme.BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@android:color/transparent</item>
-    </style>
 </resources>

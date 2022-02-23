@@ -7,17 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.example.friedchickenrating.R;
-import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
-import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -42,7 +37,7 @@ public class ViewRatingFragment extends Fragment {
     private String fileName;
 
     private List<Rating> ratingList;
-    private List<Place> placeList;
+    private List<RatingPlace> placeList;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
     static final int REQUEST_IMAGE_SELECT = 0;

@@ -22,7 +22,4 @@
     <string name="login_failed">"Login failed, please enter a valid email and password or sign up"</string>
 
     <string name="api_key">AIzaSyB8yATPT1khu3A5ZWl9jBRNG4gazB1bnuY</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ratings.BottomSheetFragment">
+    tools:context=".fragments.maps.BottomSheetFragment">
 
     <LinearLayout
         android:id="@+id/bottomSheetContainer"
@@ -40,7 +40,7 @@
             android:clipToPadding="false"
             android:paddingTop="@dimen/list_item_spacing_half"
             android:paddingBottom="@dimen/list_item_spacing_half"
-            tools:context=".fragments.ratings.BottomSheetFragment"
+            tools:context=".fragments.maps.BottomSheetFragment"
             tools:listitem="@layout/layout_bottom_sheet_list_item" />
 
     </LinearLayout>

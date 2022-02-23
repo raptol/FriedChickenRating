@@ -1,4 +1,4 @@
-package com.example.friedchickenrating.fragments.ratings;
+package com.example.friedchickenrating.fragments.maps;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,7 +8,9 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 import com.example.friedchickenrating.R;
-import com.example.friedchickenrating.fragments.maps.MapsFragment;
+import com.example.friedchickenrating.fragments.ratings.Rating;
+import com.example.friedchickenrating.fragments.ratings.RatingPlace;
+import com.example.friedchickenrating.fragments.ratings.RatingViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -33,7 +35,6 @@ import com.example.friedchickenrating.databinding.FragmentBottomSheetDialogBindi
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
