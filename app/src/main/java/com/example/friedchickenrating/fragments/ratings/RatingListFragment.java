@@ -252,13 +252,13 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 });
     }
 
-    public void readRatingListBySpecificPlace(RatingPlace place) {
-        placeList.clear();
-        placeList.add(place);
-
-        Query query = db.collection("ratings").whereEqualTo("placeid", place.getPlaceid());
-        readRatingList(query);
-    }
+//    public void readRatingListBySpecificPlace(RatingPlace place) {
+//        placeList.clear();
+//        placeList.add(place);
+//
+//        Query query = db.collection("ratings").whereEqualTo("placeid", place.getPlaceid());
+//        readRatingList(query);
+//    }
 
     private void readRatingList(Query query) {
         // Listen for realtime updates of the ratings
