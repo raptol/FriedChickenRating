@@ -122,12 +122,6 @@ public class MapsFragment extends Fragment {
             AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                     getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-//            // Set location bound for autocomplete to Vancouver city
-//            autocompleteFragment.setLocationBias(RectangularBounds.newInstance(
-//                    new LatLng(49.261111, -123.113889),
-//                    new LatLng(49.261111, -123.113889)
-//            ));
-
             autocompleteFragment.setCountries("CA");
             autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -136,7 +130,6 @@ public class MapsFragment extends Fragment {
                     Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
                     LatLng userLocation = new LatLng(place.getLatLng().latitude,
                             place.getLatLng().longitude);
-                    //map.addMarker(new MarkerOptions().position(userLocation).title(place.getName()));
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 20));
                 }
 
@@ -279,11 +272,41 @@ public class MapsFragment extends Fragment {
                 map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(@NonNull Marker marker) {
+                        //String markerName = marker.getTitle();
+                        //Toast.makeText(getContext(), "Clicked location is " + markerName + ", marker id: " + marker.getId(), Toast.LENGTH_SHORT).show();
 
-                        String markerName = marker.getTitle();
-                        Toast.makeText(getContext(), "Clicked location is " + markerName, Toast.LENGTH_SHORT).show();
+                        String placeId = marker.getSnippet();
+                        if(!placeId.equals("")) {
+                            db.collection("places").whereEqualTo("placeid", placeId)
+                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable QuerySnapshot value,
+                                                            @Nullable FirebaseFirestoreException error) {
+                                            if (error != null) {
+                                                Log.w(TAG, "Listen failed.", error);
+                                                return;
+                                            }
 
-                        return false;
+                                            if(!value.isEmpty()) {
+                                                QueryDocumentSnapshot document = (QueryDocumentSnapshot) value.getDocuments().get(0);
+                                                if (document != null) {
+                                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                                    RatingPlace place = document.toObject(RatingPlace.class);
+
+                                                    ratingViewModel.setSelectedRatingPlace(place);
+                                                    BottomSheetFragment bottomSheetFragment
+                                                            = BottomSheetFragment.newInstance(
+                                                            place.getPlaceid(),
+                                                            place.getName(),
+                                                            place.getRegion());
+                                                    bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
+                                                }
+                                            }
+                                        }
+                                    });
+                        }
+
+                        return true;
                     }
                 });
 
@@ -353,9 +376,10 @@ public class MapsFragment extends Fragment {
                         for (int i = 0; i < placeList.size(); i++) {
                             LatLng location = new LatLng(placeList.get(i).getLatitude(), placeList.get(i).getLongitude());
                             String placeName = placeList.get(i).getName();
+                            String placeId = placeList.get(i).getPlaceid();
 
                             //query rating list with place id
-                            Query query = db.collection("ratings").whereEqualTo("placeid", placeList.get(i).getPlaceid());
+                            Query query = db.collection("ratings").whereEqualTo("placeid", placeId);
                             query.addSnapshotListener(new EventListener<QuerySnapshot>() {
                                 @Override
                                 public void onEvent(@Nullable QuerySnapshot value,
@@ -400,6 +424,8 @@ public class MapsFragment extends Fragment {
                                     markerOptions.icon(icon);
 
                                     Marker marker = map.addMarker(markerOptions);
+                                    marker.setSnippet(placeId);
+                                    marker.setZIndex(10);
                                     marker.showInfoWindow();
                                 }
                             });
