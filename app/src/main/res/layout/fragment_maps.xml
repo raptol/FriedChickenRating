@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -39,5 +40,42 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:contentDescription="Map Layer Button"
+        android:minHeight="48dp"
         app:srcCompat="@drawable/ic_map_layer" />
+
+    <ImageButton
+        android:id="@+id/btnMapLayerGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="110dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="Map Layer People Emoji Button"
+        android:minHeight="48dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_map_layer_group"
+        tools:visibility="visible" />
+
+    <ImageButton
+        android:id="@+id/btnMapLayerPerson"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="Map Layer Your Emoji Button"
+        android:minHeight="48dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_map_layer_person"
+        tools:visibility="visible" />
 </RelativeLayout>

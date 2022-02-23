@@ -58,6 +58,8 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -75,6 +77,8 @@ public class MapsFragment extends Fragment {
     private RatingViewModel ratingViewModel;
     private FragmentMapsBinding binding;
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
@@ -103,6 +107,8 @@ public class MapsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -315,12 +321,34 @@ public class MapsFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if (isShowCustomMarker == false) {
-                            placeMarkerOnMap(userLocation);
+                            binding.btnMapLayerGroup.setVisibility(View.VISIBLE);
+                            binding.btnMapLayerPerson.setVisibility(View.VISIBLE);
+
+                            placeMarkerOnMap(userLocation, 1); // Default: rating places of all user
                             isShowCustomMarker = true;
                         } else {
+                            binding.btnMapLayerGroup.setVisibility(View.GONE);
+                            binding.btnMapLayerPerson.setVisibility(View.GONE);
+
                             map.clear();
                             isShowCustomMarker = false;
                         }
+                    }
+                });
+
+                binding.btnMapLayerGroup.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        map.clear();
+                        placeMarkerOnMap(userLocation, 1); // rating places of all user
+                    }
+                });
+
+                binding.btnMapLayerPerson.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        map.clear();
+                        placeMarkerOnMap(userLocation, 2); // rating places of only login user
                     }
                 });
             }
@@ -329,7 +357,7 @@ public class MapsFragment extends Fragment {
         }
     }
 
-    private void placeMarkerOnMap(LatLng currentLocation) {
+    private void placeMarkerOnMap(LatLng currentLocation, int filter) {
 
         //find places to be matched with user's current location
         final GeoLocation center = new GeoLocation(currentLocation.latitude, currentLocation.longitude);
@@ -379,7 +407,14 @@ public class MapsFragment extends Fragment {
                             String placeId = placeList.get(i).getPlaceid();
 
                             //query rating list with place id
-                            Query query = db.collection("ratings").whereEqualTo("placeid", placeId);
+                            Query query;
+                            if(filter == 1) { // rating places of all user
+                                query = db.collection("ratings").whereEqualTo("placeid", placeId);
+                            } else { // rating places of only login user
+                                query = db.collection("ratings")
+                                                .whereEqualTo("placeid", placeId)
+                                                .whereEqualTo("userid", user.getUid());
+                            }
                             query.addSnapshotListener(new EventListener<QuerySnapshot>() {
                                 @Override
                                 public void onEvent(@Nullable QuerySnapshot value,
@@ -389,44 +424,46 @@ public class MapsFragment extends Fragment {
                                         return;
                                     }
 
-                                    Double sum = 0.0;
-                                    for(QueryDocumentSnapshot document: value) {
-                                        if (document != null) {
-                                            Log.d(TAG, document.getId() + " => " + document.getData());
-                                            Rating rating = document.toObject(Rating.class);
+                                    if(value.size() > 0) {
+                                        Double sum = 0.0;
+                                        for (QueryDocumentSnapshot document : value) {
+                                            if (document != null) {
+                                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                                Rating rating = document.toObject(Rating.class);
 
-                                            sum += rating.getStaroverall();
-                                            Log.d(TAG, "sum: " + sum + ", each star overall: " + rating.getStaroverall());
+                                                sum += rating.getStaroverall();
+                                                Log.d(TAG, "sum: " + sum + ", each star overall: " + rating.getStaroverall());
+                                            }
                                         }
+
+                                        int starDrawable;
+                                        Double overallStar = sum / value.size();
+                                        Log.d(TAG, "overallStar: " + overallStar);
+                                        if (overallStar > 4.0 && overallStar <= 5.0) {
+                                            starDrawable = R.drawable.emoticons5;
+                                        } else if (overallStar > 3.0 && overallStar <= 4.0) {
+                                            starDrawable = R.drawable.emoticons4;
+                                        } else if (overallStar > 2.0 && overallStar <= 3.0) {
+                                            starDrawable = R.drawable.emoticons3;
+                                        } else if (overallStar > 1.0 && overallStar <= 2.0) {
+                                            starDrawable = R.drawable.emoticons2;
+                                        } else {
+                                            starDrawable = R.drawable.emoticons1;
+                                        }
+
+                                        MarkerOptions markerOptions = new MarkerOptions().position(location);
+                                        markerOptions.title(placeName);
+
+                                        //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                        Drawable drawableIcon = ResourcesCompat.getDrawable(getResources(), starDrawable, null);
+                                        BitmapDescriptor icon = getMarkerIconFromDrawable(drawableIcon);
+                                        markerOptions.icon(icon);
+
+                                        Marker marker = map.addMarker(markerOptions);
+                                        marker.setSnippet(placeId);
+                                        marker.setZIndex(10);
+                                        marker.showInfoWindow();
                                     }
-
-                                    int starDrawable;
-                                    Double overallStar = sum / value.size();
-                                    Log.d(TAG, "overallStar: " + overallStar);
-                                    if(overallStar > 4.0 && overallStar <= 5.0) {
-                                        starDrawable = R.drawable.emoticons5;
-                                    } else if(overallStar > 3.0 && overallStar <= 4.0) {
-                                        starDrawable = R.drawable.emoticons4;
-                                    } else if(overallStar > 2.0 && overallStar <= 3.0) {
-                                        starDrawable = R.drawable.emoticons3;
-                                    } else if(overallStar > 1.0 && overallStar <= 2.0) {
-                                        starDrawable = R.drawable.emoticons2;
-                                    } else {
-                                        starDrawable = R.drawable.emoticons1;
-                                    }
-
-                                    MarkerOptions markerOptions = new MarkerOptions().position(location);
-                                    markerOptions.title(placeName);
-
-                                    //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                                    Drawable drawableIcon = ResourcesCompat.getDrawable(getResources(), starDrawable, null);
-                                    BitmapDescriptor icon = getMarkerIconFromDrawable(drawableIcon);
-                                    markerOptions.icon(icon);
-
-                                    Marker marker = map.addMarker(markerOptions);
-                                    marker.setSnippet(placeId);
-                                    marker.setZIndex(10);
-                                    marker.showInfoWindow();
                                 }
                             });
                         }
