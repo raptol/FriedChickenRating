@@ -8,7 +8,6 @@ import java.util.Map;
 public class Rating {
     private String id; //rating id
     private String title; //menu title
-    private String region; //region
     private String type; //chicken type
     private String placeid; //place id
     private String userid; //user id
@@ -24,13 +23,12 @@ public class Rating {
     private Timestamp timestamp;
 
     public Rating() { }
-    public Rating(String id, String title, String type, String region, String placeid, String userid,
+    public Rating(String id, String title, String type, String placeid, String userid,
                   String otheritems, String notes, Map<String, Object> pictures,
                   float starflavor, float starcrunch, float starspiciness, float starportion, float starprice, float staroverall, Timestamp timestamp) {
         this.id = id;
         this.title = title;
         this.type = type;
-        this.region = region;
         this.placeid = placeid;
         this.userid = userid;
         this.otheritems = otheritems;
@@ -67,14 +65,6 @@ public class Rating {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     public String getPlaceid() {

@@ -74,7 +74,7 @@ public class ViewRatingFragment extends Fragment {
 
         Log.d(TAG, "curRating.id: " + curRating.getPlaceid());
         Log.d(TAG, "curRating.title: " + curRating.getTitle());
-        Log.d(TAG, "curRating.region: " + curRating.getRegion());
+//        Log.d(TAG, "curRating.region: " + curRating.getRegion());
 
         // Listen for realtime updates of the places
         db.collection("places").document(curRating.getPlaceid())
@@ -94,7 +94,7 @@ public class ViewRatingFragment extends Fragment {
 
                         binding.viewRatingTitle.setText(curRating.getTitle());
                         binding.viewRatingPlaceName.setText(placeName);
-                        binding.viewRatingRegion.setText(curRating.getRegion());
+//                        binding.viewRatingRegion.setText(curRating.getRegion());
                     }
                 });
 
