@@ -1,5 +1,7 @@
 package com.example.friedchickenrating.fragments.ratings;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,12 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.example.friedchickenrating.R;
+import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
+import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ViewRatingFragment extends Fragment {
 
@@ -87,14 +96,36 @@ public class ViewRatingFragment extends Fragment {
                             return;
                         }
 
-                        //binding.viewRatingTitle.setText(curRating.toString());
-
                         String placeName = value.getString("name");
                         Log.d(TAG, "curRating.placeName: " + placeName);
 
+                        Map<String, Object> pictures = curRating.getPictures();
+                        String filename = String.valueOf(pictures.get("filename"));
+                        Log.d(TAG, "filename: " + filename);
+
+                        ImageView tempPhoto = ratingViewModel.getSelectedRatingImage().getValue();
+                        BitmapDrawable tempPhotoDrawable = (BitmapDrawable)tempPhoto.getDrawable();
+                        if(tempPhotoDrawable != null) {
+                            Bitmap bitmap = tempPhotoDrawable.getBitmap();
+                            binding.imgViewPicture.setImageBitmap(bitmap);
+                            binding.imgViewPicture.invalidate();
+                        }
+
+//                        binding.imgViewPicture.setImageResource();
+//                        binding.imgViewPicture.setImageBitmap(bitmap);
                         binding.viewRatingTitle.setText(curRating.getTitle());
                         binding.viewRatingPlaceName.setText(placeName);
 //                        binding.viewRatingRegion.setText(curRating.getRegion());
+                        binding.viewRatingChickenType.setText(curRating.getType());
+                        binding.ratingBarFlavor.setRating(curRating.getStarflavor());
+                        binding.ratingBarCrunch.setRating(curRating.getStarcrunch());
+                        binding.ratingBarSpiciness.setRating(curRating.getStarspiciness());
+                        binding.ratingBarPortion.setRating(curRating.getStarportion());
+                        binding.ratingBarPrice.setRating(curRating.getStarprice());
+                        binding.ratingBarOverall.setRating(curRating.getStaroverall());
+                        binding.viewRatingOtherItems.setText(curRating.getOtheritems());
+                        binding.viewRatingNotes.setText(curRating.getNotes());
+
                     }
                 });
 
