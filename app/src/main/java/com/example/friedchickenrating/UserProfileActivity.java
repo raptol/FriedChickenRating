@@ -56,6 +56,12 @@ public class UserProfileActivity extends AppCompatActivity {
                         binding.editTxtEmail.setText(userData.getEmail());
                         binding.editTxtBirthYear.setText(userData.getBirthYear());
 
+                        binding.ratingBarFlavor.setRating(userData.getPreferflavor());
+                        binding.ratingBarCrunch.setRating(userData.getPrefercrunch());
+                        binding.ratingBarSpiciness.setRating(userData.getPreferspiciness());
+                        binding.ratingBarPortion.setRating(userData.getPreferportion());
+                        binding.ratingBarPrice.setRating(userData.getPreferprice());
+
                         Log.d(TAG, "user name: " + userData.getName() + ", user email: " + userData.getEmail());
                     } else {
                         Log.d(TAG, "No such user data");
@@ -65,9 +71,16 @@ public class UserProfileActivity extends AppCompatActivity {
         });
 
         binding.btnSave.setOnClickListener((View view) -> {
+
             //update user's info to Firestore DB
             User updUserData = new User(userData.getUid(), userData.getName(), userData.getEmail(),
-                                        binding.editTxtBirthYear.getText().toString().trim());
+                                        binding.editTxtBirthYear.getText().toString().trim(),
+                                        binding.ratingBarFlavor.getRating(),
+                                        binding.ratingBarCrunch.getRating(),
+                                        binding.ratingBarSpiciness.getRating(),
+                                        binding.ratingBarPortion.getRating(),
+                                        binding.ratingBarPrice.getRating()
+                    );
 
             db.collection("users").document(user.getUid())
                     .set(updUserData)
