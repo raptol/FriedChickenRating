@@ -237,8 +237,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
 
             case SORT_OPTION_RELEVANT:
                 query = db.collection("ratings")
-                        .orderBy("title")
-                        .orderBy("placeid");
+                        .orderBy("placeid")
+                        .orderBy("title");
                 readPlaceList();
                 readRatingList(query);
                 break;
