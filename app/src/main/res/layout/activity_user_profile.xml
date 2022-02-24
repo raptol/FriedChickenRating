@@ -129,164 +129,164 @@
                 android:layout_gravity="center_vertical" />
         </androidx.cardview.widget.CardView>
 
+        <LinearLayout
+            android:id="@+id/ratingBarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardViewHometown">
+
             <LinearLayout
-                android:id="@+id/ratingBarContainer"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardViewHometown">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="My Preferences about Chicken" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Flavor" />
-
-                    <RatingBar
-                        android:id="@+id/ratingBarFlavor"
-                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                        android:layout_width="180dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
-                        android:isIndicator="false"
-                        android:numStars="5"
-                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Crunch" />
-
-                    <RatingBar
-                        android:id="@+id/ratingBarCrunch"
-                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                        android:layout_width="180dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
-                        android:isIndicator="false"
-                        android:numStars="5"
-                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Spiciness" />
-
-                    <RatingBar
-                        android:id="@+id/ratingBarSpiciness"
-                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                        android:layout_width="180dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
-                        android:isIndicator="false"
-                        android:numStars="5"
-                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Portion" />
-
-                    <RatingBar
-                        android:id="@+id/ratingBarPortion"
-                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                        android:layout_width="180dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
-                        android:isIndicator="false"
-                        android:numStars="5"
-                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Price" />
-
-                    <RatingBar
-                        android:id="@+id/ratingBarPrice"
-                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                        android:layout_width="180dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
-                        android:isIndicator="false"
-                        android:numStars="5"
-                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-                </LinearLayout>
-
+                    android:text="My Preferences about Chicken" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btnSave"
-                android:layout_width="150dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/design_default_color_primary_dark"
-                android:text="Save"
-                android:textColor="@android:color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnClose"
-                android:layout_width="150dp"
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Flavor" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarFlavor"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
-                android:background="@color/design_default_color_primary_dark"
-                android:text="Close"
-                android:textColor="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Crunch" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarCrunch"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Spiciness" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarSpiciness"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Portion" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarPortion"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Price" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarPrice"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/design_default_color_primary_dark"
+            android:text="Save"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
+
+        <Button
+            android:id="@+id/btnClose"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:background="@color/design_default_color_primary_dark"
+            android:text="Close"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
