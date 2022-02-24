@@ -67,10 +67,10 @@ public class UserProfileActivity extends AppCompatActivity {
 
         EditText editTextHometownName = (EditText) autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_input);
         editTextHometownName.setHint("Hometown name");
-        editTextHometownName.setGravity(Gravity.LEFT);
+        editTextHometownName.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         //editTextHometownName.setBackgroundColor(Color.GRAY);
 
-        autocompleteFragment.setCountries("CA");
+        //autocompleteFragment.setCountries("CA");
         autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG));
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -124,7 +124,7 @@ public class UserProfileActivity extends AppCompatActivity {
             String geohash;
 
             //Check whether user already have own hometown
-            if(!userData.getHometown().isEmpty()) {
+            if(userData.getHometown() != null && !userData.getHometown().isEmpty()) {
                 hometown = userData.getHometown();
                 latitude = userData.getLatitude();
                 longitude = userData.getLongitude();
