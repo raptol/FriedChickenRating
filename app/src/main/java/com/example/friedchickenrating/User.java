@@ -1,5 +1,7 @@
 package com.example.friedchickenrating;
 
+import com.google.firebase.Timestamp;
+
 public class User {
     private String uid;
     private String name;
@@ -13,13 +15,16 @@ public class User {
     private float preferspiciness;
     private float preferportion;
     private float preferprice;
+    private Timestamp lastlogin;
+    private Timestamp signup;
 
     public User() {
     }
 
     public User(String uid, String name, String email,
                 String hometown, Double latitude, Double longitude, String geohash,
-                float preferflavor, float prefercrunch, float preferspiciness, float preferportion, float preferprice) {
+                float preferflavor, float prefercrunch, float preferspiciness,
+                float preferportion, float preferprice, Timestamp lastlogin, Timestamp signup) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -32,6 +37,8 @@ public class User {
         this.preferspiciness = preferspiciness;
         this.preferportion = preferportion;
         this.preferprice = preferprice;
+        this.lastlogin = lastlogin;
+        this.signup = signup;
     }
 
     public String getUid() {
@@ -128,5 +135,21 @@ public class User {
 
     public void setPreferprice(float preferprice) {
         this.preferprice = preferprice;
+    }
+
+    public Timestamp getLastlogin() {
+        return lastlogin;
+    }
+
+    public void setLastlogin(Timestamp lastlogin) {
+        this.lastlogin = lastlogin;
+    }
+
+    public Timestamp getSignup() {
+        return signup;
+    }
+
+    public void setSignup(Timestamp signup) {
+        this.signup = signup;
     }
 }

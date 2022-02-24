@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -67,7 +68,9 @@ public class SignupActivity extends AppCompatActivity {
                                     User signupUser = new User(user.getUid(),
                                                                 binding.editTxtName.getText().toString().trim(),
                                                                 binding.editTxtEmail.getText().toString().trim(),
-                                                                null, 0.0, 0.0, null, 0, 0, 0, 0, 0);
+                                                                null, 0.0, 0.0, null,
+                                                                0, 0, 0, 0, 0,
+                                                                null, Timestamp.now());
                                     db.collection("users").document(user.getUid())
                                             .set(signupUser)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {

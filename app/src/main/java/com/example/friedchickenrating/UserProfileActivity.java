@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -122,6 +123,7 @@ public class UserProfileActivity extends AppCompatActivity {
             Double latitude;
             Double longitude;
             String geohash;
+            Timestamp lastlogin;
 
             //Check whether user already have own hometown
             if(userData.getHometown() != null && !userData.getHometown().isEmpty()) {
@@ -148,7 +150,9 @@ public class UserProfileActivity extends AppCompatActivity {
                                         binding.ratingBarCrunch.getRating(),
                                         binding.ratingBarSpiciness.getRating(),
                                         binding.ratingBarPortion.getRating(),
-                                        binding.ratingBarPrice.getRating()
+                                        binding.ratingBarPrice.getRating(),
+                                        userData.getLastlogin(),
+                                        userData.getSignup()
                     );
 
             db.collection("users").document(user.getUid())
