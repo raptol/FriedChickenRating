@@ -110,7 +110,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="My Preferences of Chicken" />
+                        android:text="My Preferences about Chicken" />
                 </LinearLayout>
 
                 <LinearLayout
