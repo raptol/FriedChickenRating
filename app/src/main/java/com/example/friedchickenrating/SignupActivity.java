@@ -67,7 +67,7 @@ public class SignupActivity extends AppCompatActivity {
                                     User signupUser = new User(user.getUid(),
                                                                 binding.editTxtName.getText().toString().trim(),
                                                                 binding.editTxtEmail.getText().toString().trim(),
-                                                                null, 0, 0, 0, 0, 0);
+                                                                null, 0.0, 0.0, null, 0, 0, 0, 0, 0);
                                     db.collection("users").document(user.getUid())
                                             .set(signupUser)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {

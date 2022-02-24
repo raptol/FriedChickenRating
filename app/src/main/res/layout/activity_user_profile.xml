@@ -1,248 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserProfileActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="User Profile"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputLayoutName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:enabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTxtName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:enabled="false"
-            android:hint="Name"
-            android:inputType="textPersonName"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputLayoutEmail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:enabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputLayoutName">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTxtEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:enabled="false"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputLayoutBirthYear"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputLayoutEmail">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTxtBirthYear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Birth Year(e.g. 1990)"
-            android:inputType="number"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <LinearLayout
-        android:id="@+id/ratingBarContainer"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/inputLayoutBirthYear">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        android:layout_height="match_parent"
+        tools:context=".UserProfileActivity">
 
             <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="User Profile"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputLayoutName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:enabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTxtName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:hint="Name"
+                    android:inputType="textPersonName"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputLayoutEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                android:enabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputLayoutName">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTxtEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewHometown"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="@color/cardview_light_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutEmail">
+
+            <fragment
+                android:id="@+id/placename_autocomplete_fragment"
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="My Preferences of Chicken" />
-        </LinearLayout>
+                android:layout_gravity="center_vertical" />
+        </androidx.cardview.widget.CardView>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/ratingBarContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardViewHometown">
 
-            <TextView
-                android:layout_width="100dp"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="My Preferences of Chicken" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Flavor" />
+
+                    <RatingBar
+                        android:id="@+id/ratingBarFlavor"
+                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                        android:layout_width="180dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:isIndicator="false"
+                        android:numStars="5"
+                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Crunch" />
+
+                    <RatingBar
+                        android:id="@+id/ratingBarCrunch"
+                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                        android:layout_width="180dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:isIndicator="false"
+                        android:numStars="5"
+                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Spiciness" />
+
+                    <RatingBar
+                        android:id="@+id/ratingBarSpiciness"
+                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                        android:layout_width="180dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:isIndicator="false"
+                        android:numStars="5"
+                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Portion" />
+
+                    <RatingBar
+                        android:id="@+id/ratingBarPortion"
+                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                        android:layout_width="180dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:isIndicator="false"
+                        android:numStars="5"
+                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Price" />
+
+                    <RatingBar
+                        android:id="@+id/ratingBarPrice"
+                        style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                        android:layout_width="180dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:isIndicator="false"
+                        android:numStars="5"
+                        tools:ignore="SpeakableTextPresentCheck"></RatingBar>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Flavor" />
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/design_default_color_primary_dark"
+                android:text="Save"
+                android:textColor="@android:color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
 
-            <RatingBar
-                android:id="@+id/ratingBarFlavor"
-                style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                android:layout_width="180dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:isIndicator="false"
-                android:numStars="5"
-                tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
+            <Button
+                android:id="@+id/btnClose"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Crunch" />
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                android:background="@color/design_default_color_primary_dark"
+                android:text="Close"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
 
-            <RatingBar
-                android:id="@+id/ratingBarCrunch"
-                style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                android:layout_width="180dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:isIndicator="false"
-                android:numStars="5"
-                tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Spiciness" />
-
-            <RatingBar
-                android:id="@+id/ratingBarSpiciness"
-                style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                android:layout_width="180dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:isIndicator="false"
-                android:numStars="5"
-                tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Portion" />
-
-            <RatingBar
-                android:id="@+id/ratingBarPortion"
-                style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                android:layout_width="180dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:isIndicator="false"
-                android:numStars="5"
-                tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Price" />
-
-            <RatingBar
-                android:id="@+id/ratingBarPrice"
-                style="@android:style/Widget.Material.Light.RatingBar.Indicator"
-                android:layout_width="180dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:isIndicator="false"
-                android:numStars="5"
-                tools:ignore="SpeakableTextPresentCheck"></RatingBar>
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/design_default_color_primary_dark"
-        android:text="Save"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
-
-    <Button
-        android:id="@+id/btnClose"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:background="@color/design_default_color_primary_dark"
-        android:text="Close"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
