@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.example.friedchickenrating.R;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -60,9 +62,10 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private static final String TAG = RatingListFragment.class.getSimpleName();
 
     private static final int SORT_OPTION_LOCATION = 1;
-    private static final int SORT_OPTION_MY_RATING = 2;
-    private static final int SORT_OPTION_HIGH_STARS = 3;
-    private static final int SORT_OPTION_LATEST = 4;
+    private static final int SORT_OPTION_HIGH_STARS = 2;
+    private static final int SORT_OPTION_LATEST = 3;
+    private static final int SORT_OPTION_RELEVANT = 4;
+    private static final int SORT_OPTION_MY_RATING = 5;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -138,13 +141,6 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
             }
         });
 
-        binding.btnSortMyRates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                displayRatingList(SORT_OPTION_MY_RATING);
-            }
-        });
-
         binding.btnSortHighRates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -156,6 +152,29 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
             @Override
             public void onClick(View view) {
                 displayRatingList(SORT_OPTION_LATEST);
+            }
+        });
+
+        binding.btnSortRelevant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_RELEVANT);
+            }
+        });
+
+        binding.btnSortMyRates.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_MY_RATING);
+            }
+        });
+
+        //event handler for open map button
+        binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(RatingListFragment.this)
+                        .navigate(R.id.action_nav_ratings_to_nav_maps);
             }
         });
     }
@@ -202,6 +221,28 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         Query query;
 
         switch(sortOption) {
+            case SORT_OPTION_HIGH_STARS:
+                query = db.collection("ratings")
+                        .orderBy("staroverall", Query.Direction.DESCENDING);
+                readPlaceList();
+                readRatingList(query);
+                break;
+
+            case SORT_OPTION_LATEST:
+                query = db.collection("ratings")
+                        .orderBy("timestamp", Query.Direction.DESCENDING);
+                readPlaceList();
+                readRatingList(query);
+                break;
+
+            case SORT_OPTION_RELEVANT:
+                query = db.collection("ratings")
+                        .orderBy("title")
+                        .orderBy("placeid");
+                readPlaceList();
+                readRatingList(query);
+                break;
+
             case SORT_OPTION_MY_RATING:
                 query = db.collection("ratings")
                         .whereEqualTo("userid", user.getUid())
@@ -210,21 +251,12 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 readRatingList(query);
                 break;
 
-            case SORT_OPTION_HIGH_STARS:
-                query = db.collection("ratings").orderBy("staroverall", Query.Direction.DESCENDING);
-                readPlaceList();
-                readRatingList(query);
-                break;
-
-            case SORT_OPTION_LATEST:
-                query = db.collection("ratings").orderBy("timestamp", Query.Direction.DESCENDING);
-                readPlaceList();
-                readRatingList(query);
-                break;
-
             default: // by location
                 readRatingListByCurrentLocation(userLocation);
         }
+
+        //Scroll to top
+        binding.recyclerViewRatingList.smoothScrollToPosition(0);
     }
 
     private void readPlaceList() {

@@ -462,7 +462,7 @@ public class MapsFragment extends Fragment {
                                         Marker marker = map.addMarker(markerOptions);
                                         marker.setSnippet(placeId);
                                         marker.setZIndex(10);
-                                        marker.showInfoWindow();
+                                        //marker.showInfoWindow();
                                     }
                                 }
                             });

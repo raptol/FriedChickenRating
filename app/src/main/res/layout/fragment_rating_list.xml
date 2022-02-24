@@ -23,6 +23,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
                     android:text="Location"
                     android:textSize="10sp" />
 
@@ -30,24 +32,50 @@
                     android:id="@+id/btnSortHighRates"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="High Rates"
+                    android:layout_marginStart="2dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="High"
                     android:textSize="10sp" />
+
                 <Button
                     android:id="@+id/btnSortLatest"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="2dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
                     android:text="Latest"
+                    android:textSize="10sp" />
+
+                <Button
+                    android:id="@+id/btnSortRelevant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_weight="1"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="Relevant"
                     android:textSize="10sp" />
 
                 <Button
                     android:id="@+id/btnSortMyRates"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="My Rates"
+                    android:layout_marginStart="2dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="My"
                     android:textSize="10sp" />
+
+                <ImageView
+                    android:id="@+id/btnOpenMap"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@drawable/img" />
 
             </LinearLayout>
         </HorizontalScrollView>

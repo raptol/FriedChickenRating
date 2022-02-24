@@ -51,6 +51,7 @@
                     android:gravity="center"
                     android:hint="Chicken restaurant name"
                     android:inputType="textPersonName"
+                    android:minHeight="48dp"
                     tools:text="Pelocan Chicken" />
 
                 <EditText
