@@ -68,7 +68,7 @@ public class SignupActivity extends AppCompatActivity {
                                     User signupUser = new User(user.getUid(),
                                                                 binding.editTxtName.getText().toString().trim(),
                                                                 binding.editTxtEmail.getText().toString().trim(),
-                                                                null, 0.0, 0.0, null,
+                                                                null, 0.0, 0.0, null, null,
                                                                 0, 0, 0, 0, 0,
                                                                 null, Timestamp.now());
                                     db.collection("users").document(user.getUid())

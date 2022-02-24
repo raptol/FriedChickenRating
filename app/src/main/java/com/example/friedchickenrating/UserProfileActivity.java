@@ -1,6 +1,7 @@
 package com.example.friedchickenrating;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -9,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,9 +32,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -42,6 +51,8 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "UserProfile";
     private User userData;
+
+    private List<String> backgroundCultureValues; // for spinner
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +109,38 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+        // setup Spinner for Background culture
+        backgroundCultureValues = new ArrayList<>();
+        ArrayAdapter backgroundAdapter = new ArrayAdapter(this,
+                android.R.layout.simple_spinner_item, backgroundCultureValues);
+        backgroundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spnBackground.setAdapter(backgroundAdapter);
+
+        // Listen for realtime updates of the backgrounds
+        db.collection("backgrounds")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
+                        if(error != null) {
+                            Log.w(TAG, "Listen failed.", error);
+                            return;
+                        }
+
+                        backgroundCultureValues.clear();
+                        for(QueryDocumentSnapshot document: value) {
+                            if (document != null) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                Background background = document.toObject(Background.class);
+                                backgroundCultureValues.add(background.getName());
+                                Log.d(TAG, "backgroundCulture: " + background.getName());
+                            }
+                        }
+
+                        backgroundAdapter.notifyDataSetChanged();
+                    }
+                });
+
         //get user from Firestore DB
         DocumentReference usersDbRef = db.collection("users").document(user.getUid());
         usersDbRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -111,6 +154,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         binding.editTxtName.setText(userData.getName());
                         binding.editTxtEmail.setText(userData.getEmail());
                         editTextHometownName.setText(userData.getHometown());
+                        binding.spnBackground.setSelection(backgroundAdapter.getPosition(userData.getBackground()));
 
                         binding.ratingBarFlavor.setRating(userData.getPreferflavor());
                         binding.ratingBarCrunch.setRating(userData.getPrefercrunch());
@@ -128,19 +172,20 @@ public class UserProfileActivity extends AppCompatActivity {
 
         binding.btnSave.setOnClickListener((View view) -> {
 
-            String hometown = null;
-            Double latitude = null;
-            Double longitude = null;
-            String geohash = null;
+            String hometown = editTextHometownName.getText().toString().trim();
+            Double latitude = userData.getLatitude();
+            Double longitude = userData.getLongitude();
+            String geohash = userData.getGeohash();
 
             if(!editTextHometownName.getText().toString().isEmpty()) {
 
-                //hometown = placeData.getName();
-                hometown = editTextHometownName.getText().toString().trim();
-                latitude = placeData.getLatitude();
-                longitude = placeData.getLongitude();
-                geohash = GeoFireUtils.getGeoHashForLocation(
-                                new GeoLocation(latitude, longitude));
+                //When hometown is changed, get new geohash
+                if(!userData.getHometown().equals(hometown)) {
+                    latitude = placeData.getLatitude();
+                    longitude = placeData.getLongitude();
+                    geohash = GeoFireUtils.getGeoHashForLocation(
+                            new GeoLocation(latitude, longitude));
+                }
             }
 
             //update user's info to Firestore DB
@@ -149,6 +194,7 @@ public class UserProfileActivity extends AppCompatActivity {
                                         latitude,
                                         longitude,
                                         geohash,
+                                        binding.spnBackground.getSelectedItem().toString(),
                                         binding.ratingBarFlavor.getRating(),
                                         binding.ratingBarCrunch.getRating(),
                                         binding.ratingBarSpiciness.getRating(),

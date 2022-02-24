@@ -10,6 +10,7 @@ public class User {
     private Double latitude;
     private Double longitude;
     private String geohash;
+    private String background;
     private float preferflavor;
     private float prefercrunch;
     private float preferspiciness;
@@ -22,7 +23,7 @@ public class User {
     }
 
     public User(String uid, String name, String email,
-                String hometown, Double latitude, Double longitude, String geohash,
+                String hometown, Double latitude, Double longitude, String geohash, String background,
                 float preferflavor, float prefercrunch, float preferspiciness,
                 float preferportion, float preferprice, Timestamp lastlogin, Timestamp signup) {
         this.uid = uid;
@@ -32,6 +33,7 @@ public class User {
         this.latitude = latitude;
         this.longitude = longitude;
         this.geohash = geohash;
+        this.background = background;
         this.preferflavor = preferflavor;
         this.prefercrunch = prefercrunch;
         this.preferspiciness = preferspiciness;
@@ -95,6 +97,14 @@ public class User {
 
     public void setGeohash(String geohash) {
         this.geohash = geohash;
+    }
+
+    public String getBackground() {
+        return background;
+    }
+
+    public void setBackground(String background) {
+        this.background = background;
     }
 
     public float getPreferflavor() {
