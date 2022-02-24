@@ -54,6 +54,15 @@ public class UserProfileActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         FirebaseUser user = auth.getCurrentUser();
 
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            Boolean isFirstLogin = bundle.getBoolean("isFirstLogin");
+            if(isFirstLogin) {
+                binding.txtWelcome.setVisibility(View.VISIBLE);
+                binding.txtWelcomMessage.setVisibility(View.VISIBLE);
+            }
+        }
+
         // Initiate the SDK for Places
         String apiKey = getString(R.string.api_key);
         if(!Places.isInitialized()) {
@@ -119,19 +128,13 @@ public class UserProfileActivity extends AppCompatActivity {
 
         binding.btnSave.setOnClickListener((View view) -> {
 
-            String hometown;
-            Double latitude;
-            Double longitude;
-            String geohash;
-            Timestamp lastlogin;
+            String hometown = null;
+            Double latitude = null;
+            Double longitude = null;
+            String geohash = null;
 
-            //Check whether user already have own hometown
-            if(userData.getHometown() != null && !userData.getHometown().isEmpty()) {
-                hometown = userData.getHometown();
-                latitude = userData.getLatitude();
-                longitude = userData.getLongitude();
-                geohash = userData.getGeohash();
-            } else {
+            if(!editTextHometownName.getText().toString().isEmpty()) {
+
                 //hometown = placeData.getName();
                 hometown = editTextHometownName.getText().toString().trim();
                 latitude = placeData.getLatitude();

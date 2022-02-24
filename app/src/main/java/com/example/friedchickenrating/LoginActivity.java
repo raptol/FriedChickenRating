@@ -20,6 +20,8 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
@@ -31,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int PASSWORD_MIN_CHARS = 6;
     private static final String TAG = "LoginActivity";
+
+    private User userData;
+    Boolean isFirstLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,24 +68,55 @@ public class LoginActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 }
 
-                                //update last login time of user to Firestore DB
-                                db.collection("users").document(user.getUid())
-                                        .update("lastlogin", Timestamp.now())
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "User was successfully saved!");
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error saving data", e);
-                                            }
-                                        });
+                                //get user from Firestore DB
+                                DocumentReference usersDbRef = db.collection("users").document(user.getUid());
+                                usersDbRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if(task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            if(document.exists()) {
+                                                userData = document.toObject(User.class);
 
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                finish();
+                                                Log.d(TAG, "getLastLogin(): " + userData.getLastlogin());
+                                                if(userData.getLastlogin() == null) {
+                                                    isFirstLogin = true;
+                                                }
+
+                                                // update last login time of user to Firestore DB
+                                                db.collection("users").document(user.getUid())
+                                                        .update("lastlogin", Timestamp.now())
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d(TAG, "User was successfully saved!");
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w(TAG, "Error saving data", e);
+                                                            }
+                                                        });
+                                                Log.d(TAG, "user name: " + userData.getName() + ", user email: " + userData.getEmail());
+
+                                                if(isFirstLogin) {
+                                                    Intent intent = new Intent(LoginActivity.this, UserProfileActivity.class);
+                                                    intent.putExtra("isFirstLogin", true);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                                    finish();
+                                                }
+
+                                            } else {
+                                                Log.d(TAG, "No such user data");
+                                            }
+                                        }
+                                    }
+                                });
+
                             } else {
                                 Toast.makeText(LoginActivity.this, getString(R.string.login_failed),
                                         Toast.LENGTH_SHORT).show();
