@@ -303,6 +303,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                     return;
                 }
 
+                Log.d(TAG, "excute fetch db, value.size: " + value.size());
+
                 ratingList.clear();
                 for(QueryDocumentSnapshot document: value) {
                     if (document != null) {
