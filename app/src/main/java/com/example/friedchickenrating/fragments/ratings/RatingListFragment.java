@@ -132,7 +132,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         userLocation = new LatLng(lastUserKnownLocation.getLatitude(), lastUserKnownLocation.getLongitude());
 
         //display rating list
-        displayRatingList(SORT_OPTION_LOCATION); //default sorting option: location
+        displayRatingList(SORT_OPTION_LATEST); //default sorting option: latest
 
         binding.btnSortLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,7 +186,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
 
