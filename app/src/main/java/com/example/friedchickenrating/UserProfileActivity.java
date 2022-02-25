@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,9 +51,12 @@ public class UserProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private static final String TAG = "UserProfile";
+
+    private RatingPlace placeData;
     private User userData;
 
     private List<String> backgroundCultureValues; // for spinner
+    private static final String SPINNER_CHOOSE_MESSAGE ="Choose one.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +85,7 @@ public class UserProfileActivity extends AppCompatActivity {
         }
 
         // Initialize the AutocompleteSupportFragment.
-        RatingPlace placeData = new RatingPlace();
+        placeData = new RatingPlace();
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.placename_autocomplete_fragment);
         autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
@@ -128,6 +132,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         }
 
                         backgroundCultureValues.clear();
+                        backgroundCultureValues.add(SPINNER_CHOOSE_MESSAGE);
                         for(QueryDocumentSnapshot document: value) {
                             if (document != null) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
@@ -172,20 +177,32 @@ public class UserProfileActivity extends AppCompatActivity {
 
         binding.btnSave.setOnClickListener((View view) -> {
 
-            String hometown = editTextHometownName.getText().toString().trim();
-            Double latitude = userData.getLatitude();
-            Double longitude = userData.getLongitude();
-            String geohash = userData.getGeohash();
+            String hometown = null;
+            Double latitude = 0.0;
+            Double longitude = 0.0;
+            String geohash = null;
 
-            if(!editTextHometownName.getText().toString().isEmpty()) {
+            if(editTextHometownName.getText().toString().isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Please enter your hometown to help your tastes.", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                Log.d(TAG, "userData.getHometown(): " + userData.getHometown());
 
-                //When hometown is changed, get new geohash
-                if(!userData.getHometown().equals(hometown)) {
+                hometown = editTextHometownName.getText().toString();
+                if(placeData.getPlaceid() != null) {
                     latitude = placeData.getLatitude();
                     longitude = placeData.getLongitude();
-                    geohash = GeoFireUtils.getGeoHashForLocation(
-                            new GeoLocation(latitude, longitude));
+                    geohash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(latitude, longitude));
+                } else {
+                    latitude = userData.getLatitude();
+                    longitude = userData.getLongitude();
+                    geohash = userData.getGeohash();
                 }
+            }
+
+            if(binding.spnBackground.getSelectedItem().toString().equals(SPINNER_CHOOSE_MESSAGE)) {
+                Toast.makeText(getApplicationContext(), "Please choose your background culture to help your tastes.", Toast.LENGTH_SHORT).show();
+                return;
             }
 
             //update user's info to Firestore DB
