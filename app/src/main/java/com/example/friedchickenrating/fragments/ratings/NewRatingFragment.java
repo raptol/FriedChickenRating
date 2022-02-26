@@ -354,7 +354,7 @@ public class NewRatingFragment extends Fragment {
             fileName = formatter.format(now) + ".jpg";
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageReference = storage.getReferenceFromUrl("gs://friedchickenrating.appspot.com/").child("images/" + fileName);
+            StorageReference storageReference = storage.getReference().child("images/" + fileName);
             storageReference.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override

@@ -207,8 +207,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                 long size;
                 final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
                 StorageReference storageReference
-                        = firebaseStorage.getReferenceFromUrl("gs://friedchickenrating.appspot.com/")
-                        .child("images").child(filename);
+                        = firebaseStorage.getReference().child("images").child(filename);
                 storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
