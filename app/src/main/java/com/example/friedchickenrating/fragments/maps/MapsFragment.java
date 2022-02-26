@@ -117,7 +117,6 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(mapReadyCallback);
 
             // Initiate the SDK for Places
-            //String apiKey = getString(R.string.api_key);
             String apiKey = getString(R.string.google_maps_key);
             if (!Places.isInitialized()) {
                 Places.initialize(getContext(), apiKey);
