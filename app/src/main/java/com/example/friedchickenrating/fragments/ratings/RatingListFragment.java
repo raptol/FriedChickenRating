@@ -320,7 +320,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
             Log.d(TAG, "current location's latitude: " + userLocation.latitude + ", longitude: " + userLocation.longitude);
 
             final GeoLocation center = new GeoLocation(userLocation.latitude, userLocation.longitude);
-            final double radiusInMeter = 5 * 1000; //find places within 5km
+            final double radiusInMeter = 50 * 1000; //find places within 50km
 
             List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInMeter);
             final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
@@ -365,9 +365,10 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                             }
 
                             // rating list matched with places
-
-                            Query query = db.collection("ratings").whereIn("placeid", curLocPlaceIds);
-                            readRatingList(query);
+                            if(curLocPlaceIds.size() > 0) {
+                                Query query = db.collection("ratings").whereIn("placeid", curLocPlaceIds);
+                                readRatingList(query);
+                            }
                         }
                     });
         }
