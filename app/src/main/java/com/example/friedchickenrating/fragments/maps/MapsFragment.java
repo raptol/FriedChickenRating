@@ -208,150 +208,154 @@ public class MapsFragment extends Fragment {
                         LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
                 Location lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                LatLng userLocation = new LatLng(lastUserKnownLocation.getLatitude(),
-                        lastUserKnownLocation.getLongitude());
-                //map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
+                if(lastUserKnownLocation != null) {
+                    LatLng userLocation = new LatLng(lastUserKnownLocation.getLatitude(),
+                            lastUserKnownLocation.getLongitude());
+                    //map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
 
-                map.setMyLocationEnabled(true);
-                map.getUiSettings().setMyLocationButtonEnabled(true);
-                map.getUiSettings().setZoomControlsEnabled(true);
-                map.getUiSettings().setZoomGesturesEnabled(true);
 
-                //register event handler to click icon of place
-                map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
-                    @Override
-                    public void onPoiClick(@NonNull PointOfInterest pointOfInterest) {
-                        Log.d(TAG, "onPoiClick, latitude: " + pointOfInterest.latLng.latitude
-                                + ", longitude: " + pointOfInterest.latLng.longitude
-                                + ", pointOfInterest.name: " + pointOfInterest.name
-                                + ", pointOfInterest.placeId: " + pointOfInterest.placeId);
+                    map.setMyLocationEnabled(true);
+                    map.getUiSettings().setMyLocationButtonEnabled(true);
+                    map.getUiSettings().setZoomControlsEnabled(true);
+                    map.getUiSettings().setZoomGesturesEnabled(true);
 
-                        String region = ratingViewModel.getRegionFromLatLng(requireContext(),
-                                pointOfInterest.latLng.latitude, pointOfInterest.latLng.longitude);
+                    //register event handler to click icon of place
+                    map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
+                        @Override
+                        public void onPoiClick(@NonNull PointOfInterest pointOfInterest) {
+                            Log.d(TAG, "onPoiClick, latitude: " + pointOfInterest.latLng.latitude
+                                    + ", longitude: " + pointOfInterest.latLng.longitude
+                                    + ", pointOfInterest.name: " + pointOfInterest.name
+                                    + ", pointOfInterest.placeId: " + pointOfInterest.placeId);
 
-                        Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
-                        if (requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
-                            Bundle result = new Bundle();
-                            result.putString("placeId", pointOfInterest.placeId);
-                            result.putString("placeName", pointOfInterest.name);
-                            result.putDouble("latitude", pointOfInterest.latLng.latitude);
-                            result.putDouble("longitude", pointOfInterest.latLng.longitude);
-                            result.putString("region", region);
+                            String region = ratingViewModel.getRegionFromLatLng(requireContext(),
+                                    pointOfInterest.latLng.latitude, pointOfInterest.latLng.longitude);
 
-                            getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
+                            Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
+                            if (requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_ADD_RATING) {
+                                Bundle result = new Bundle();
+                                result.putString("placeId", pointOfInterest.placeId);
+                                result.putString("placeName", pointOfInterest.name);
+                                result.putDouble("latitude", pointOfInterest.latLng.latitude);
+                                result.putDouble("longitude", pointOfInterest.latLng.longitude);
+                                result.putString("region", region);
 
-                            NavHostFragment.findNavController(MapsFragment.this)
-                                    .navigate(R.id.action_nav_maps_to_nav_newRating);
-                        }else {
-                            RatingPlace ratingPlace = new RatingPlace(
-                                    pointOfInterest.placeId,
-                                    pointOfInterest.name,
-                                    pointOfInterest.latLng.latitude,
-                                    pointOfInterest.latLng.longitude,
-                                    "",
-                                    region);
+                                getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
 
-                            ratingViewModel.setSelectedRatingPlace(ratingPlace);
-                            BottomSheetFragment bottomSheetFragment
-                                    = BottomSheetFragment.newInstance(
-                                            pointOfInterest.placeId,
-                                            pointOfInterest.name,
-                                            region);
-                            bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
+                                NavHostFragment.findNavController(MapsFragment.this)
+                                        .navigate(R.id.action_nav_maps_to_nav_newRating);
+                            } else {
+                                RatingPlace ratingPlace = new RatingPlace(
+                                        pointOfInterest.placeId,
+                                        pointOfInterest.name,
+                                        pointOfInterest.latLng.latitude,
+                                        pointOfInterest.latLng.longitude,
+                                        "",
+                                        region);
+
+                                ratingViewModel.setSelectedRatingPlace(ratingPlace);
+                                BottomSheetFragment bottomSheetFragment
+                                        = BottomSheetFragment.newInstance(
+                                        pointOfInterest.placeId,
+                                        pointOfInterest.name,
+                                        region);
+                                bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
+                            }
                         }
-                    }
-                });
+                    });
 
-                //register event handler to click any point of map
-                map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(@NonNull LatLng latLng) {
-                        //map.addMarker(new MarkerOptions().position(latLng).title("Selected Place"));
-                        Log.d(TAG, "onMapClick, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
-                    }
-                });
+                    //register event handler to click any point of map
+                    map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                        @Override
+                        public void onMapClick(@NonNull LatLng latLng) {
+                            //map.addMarker(new MarkerOptions().position(latLng).title("Selected Place"));
+                            Log.d(TAG, "onMapClick, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
+                        }
+                    });
 
-                //register event handler to click a custom marker of map
-                //However, custom marker puts on a layer on the map.
-                //So, when user clicks the marker, event happens by clicking a POI
-                map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(@NonNull Marker marker) {
-                        //String markerName = marker.getTitle();
-                        //Toast.makeText(getContext(), "Clicked location is " + markerName + ", marker id: " + marker.getId(), Toast.LENGTH_SHORT).show();
+                    //register event handler to click a custom marker of map
+                    //However, custom marker puts on a layer on the map.
+                    //So, when user clicks the marker, event happens by clicking a POI
+                    map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(@NonNull Marker marker) {
+                            //String markerName = marker.getTitle();
+                            //Toast.makeText(getContext(), "Clicked location is " + markerName + ", marker id: " + marker.getId(), Toast.LENGTH_SHORT).show();
 
-                        String placeId = marker.getSnippet();
-                        if(!placeId.equals("")) {
-                            db.collection("places").whereEqualTo("placeid", placeId)
-                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onEvent(@Nullable QuerySnapshot value,
-                                                            @Nullable FirebaseFirestoreException error) {
-                                            if (error != null) {
-                                                Log.w(TAG, "Listen failed.", error);
-                                                return;
-                                            }
+                            String placeId = marker.getSnippet();
+                            if (!placeId.equals("")) {
+                                db.collection("places").whereEqualTo("placeid", placeId)
+                                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onEvent(@Nullable QuerySnapshot value,
+                                                                @Nullable FirebaseFirestoreException error) {
+                                                if (error != null) {
+                                                    Log.w(TAG, "Listen failed.", error);
+                                                    return;
+                                                }
 
-                                            if(!value.isEmpty()) {
-                                                QueryDocumentSnapshot document = (QueryDocumentSnapshot) value.getDocuments().get(0);
-                                                if (document != null) {
-                                                    Log.d(TAG, document.getId() + " => " + document.getData());
-                                                    RatingPlace place = document.toObject(RatingPlace.class);
+                                                if (!value.isEmpty()) {
+                                                    QueryDocumentSnapshot document = (QueryDocumentSnapshot) value.getDocuments().get(0);
+                                                    if (document != null) {
+                                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                                        RatingPlace place = document.toObject(RatingPlace.class);
 
-                                                    ratingViewModel.setSelectedRatingPlace(place);
-                                                    BottomSheetFragment bottomSheetFragment
-                                                            = BottomSheetFragment.newInstance(
-                                                            place.getPlaceid(),
-                                                            place.getName(),
-                                                            place.getRegion());
-                                                    bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
+                                                        ratingViewModel.setSelectedRatingPlace(place);
+                                                        BottomSheetFragment bottomSheetFragment
+                                                                = BottomSheetFragment.newInstance(
+                                                                place.getPlaceid(),
+                                                                place.getName(),
+                                                                place.getRegion());
+                                                        bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
+                                        });
+                            }
+
+                            return true;
                         }
+                    });
 
-                        return true;
-                    }
-                });
+                    //Register event handler of Map Layer Image Button
+                    binding.btnMapLayer.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (isShowCustomMarker == false) {
+                                binding.btnMapLayerGroup.setVisibility(View.VISIBLE);
+                                binding.btnMapLayerPerson.setVisibility(View.VISIBLE);
 
-                //Register event handler of Map Layer Image Button
-                binding.btnMapLayer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (isShowCustomMarker == false) {
-                            binding.btnMapLayerGroup.setVisibility(View.VISIBLE);
-                            binding.btnMapLayerPerson.setVisibility(View.VISIBLE);
+                                placeMarkerOnMap(userLocation, 1); // Default: rating places of all user
+                                isShowCustomMarker = true;
+                            } else {
+                                binding.btnMapLayerGroup.setVisibility(View.GONE);
+                                binding.btnMapLayerPerson.setVisibility(View.GONE);
 
-                            placeMarkerOnMap(userLocation, 1); // Default: rating places of all user
-                            isShowCustomMarker = true;
-                        } else {
-                            binding.btnMapLayerGroup.setVisibility(View.GONE);
-                            binding.btnMapLayerPerson.setVisibility(View.GONE);
+                                map.clear();
+                                isShowCustomMarker = false;
+                            }
+                        }
+                    });
 
+                    binding.btnMapLayerGroup.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
                             map.clear();
-                            isShowCustomMarker = false;
+                            placeMarkerOnMap(userLocation, 1); // rating places of all user
                         }
-                    }
-                });
+                    });
 
-                binding.btnMapLayerGroup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        map.clear();
-                        placeMarkerOnMap(userLocation, 1); // rating places of all user
-                    }
-                });
-
-                binding.btnMapLayerPerson.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        map.clear();
-                        placeMarkerOnMap(userLocation, 2); // rating places of only login user
-                    }
-                });
+                    binding.btnMapLayerPerson.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            map.clear();
+                            placeMarkerOnMap(userLocation, 2); // rating places of only login user
+                        }
+                    });
+                }
             }
+
         } else {
             requestPermission();
         }
