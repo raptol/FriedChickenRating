@@ -329,7 +329,9 @@ public class NewRatingFragment extends Fragment {
         });
 
         FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-        fab.setVisibility(View.INVISIBLE);
+        if(fab != null) {
+            fab.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void getValuesFromOtherFragment(Bundle result) {
