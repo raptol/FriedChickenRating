@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_marginTop="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             <ImageView
                 android:id="@+id/imgViewPicture"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="100dp"
                 android:layout_gravity="center"
                 tools:src="@tools:sample/avatars" />
 
@@ -69,7 +69,6 @@
                         android:id="@+id/viewRatingChickenType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
                         android:gravity="center"
                         android:paddingLeft="4dp"
                         android:text="Korean"
@@ -95,6 +94,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        android:minHeight="0dp"
                         android:text="Edit" />
                 </LinearLayout>
 
@@ -103,7 +103,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -260,8 +260,8 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_weight="0.1"
                 android:orientation="horizontal">
 
@@ -278,14 +278,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
                     android:ems="10"
-                    android:minHeight="48dp"
                     android:text="Other items..." />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_weight="0.2"
                 android:orientation="horizontal">
 
@@ -303,7 +302,6 @@
                     android:layout_marginStart="65dp"
                     android:ems="10"
                     android:gravity="start|top"
-                    android:minHeight="48dp"
                     android:text="Notes..." />
             </LinearLayout>
 
