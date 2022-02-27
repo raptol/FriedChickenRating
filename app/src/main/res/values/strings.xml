@@ -13,6 +13,7 @@
     <string name="menu_maps">Restaurants Map</string>
     <string name="menu_roulette">Roulette</string>
     <string name="menu_newRating">New Rating</string>
+    <string name="menu_editRating">Edit Rating</string>
     <string name="menu_ratings">Ratings</string>
     <string name="menu_recipes">Recipes</string>
 

@@ -11,10 +11,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -117,6 +119,9 @@ public class NewRatingFragment extends Fragment {
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         isEditing = true;
                         getValuesFromOtherFragment(result);
+
+                        //Change the title of action bar to Edit Rating
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.menu_editRating));
                     }
                 });
 
