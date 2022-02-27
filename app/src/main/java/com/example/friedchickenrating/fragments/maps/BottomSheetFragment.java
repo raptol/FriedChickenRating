@@ -56,6 +56,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     private RatingViewModel ratingViewModel;
     private FragmentBottomSheetDialogBinding binding;
 
+    static final int REQUEST_BOTTOM_SHEET_FOR_MAP = 1;
+    static final int REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING = 2;
+    Integer requestCode;
+
     List<Rating> ratingList;
 
     public static BottomSheetFragment newInstance(String placeid, String placename, String region) {
@@ -88,17 +92,20 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
         Log.d(TAG, "place_id:" + placeid);
 
+        //Request to point a place from View Rating
+        requestCode = ratingViewModel.getMapRequestCode().getValue();
+
         BottomSheetRatingAdapter bottomSheetRatingAdapter = new BottomSheetRatingAdapter(ratingList);
 
         final TextView txtPlaceName = (TextView) binding.txtPlaceName;
         final TextView txtPlaceRegion = (TextView) binding.txtPlaceRegion;
-        final Button btnNewRatingFromMap = (Button) binding.btnNewRatingFromMap;
+        final Button btnNewRatingFromBottomSheet = (Button) binding.btnNewRatingFromBottomSheet;
         final RecyclerView recyclerView = (RecyclerView) binding.recyclerViewBottomList;
 
         txtPlaceName.setText(placename);
         txtPlaceRegion.setText(region);
 
-        btnNewRatingFromMap.setOnClickListener(new View.OnClickListener() {
+        btnNewRatingFromBottomSheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 RatingPlace ratingPlace = ratingViewModel.getSelectedRatingPlace().getValue();
@@ -109,12 +116,20 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                 result.putDouble("longitude", ratingPlace.getLongitude());
                 result.putString("region", ratingPlace.getRegion());
 
-                getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
+                getParentFragmentManager().setFragmentResult("passByBottomSheet", result);
 
-                ratingViewModel.setSelectedRating(new Rating());//Rating initialize
                 dismiss();
-                NavHostFragment.findNavController(BottomSheetFragment.this)
-                        .navigate(R.id.action_nav_maps_to_nav_newRating);
+
+                //request to display bottom sheet dialog from Map
+                if (requestCode != null && requestCode == REQUEST_BOTTOM_SHEET_FOR_MAP) {
+                    NavHostFragment.findNavController(BottomSheetFragment.this)
+                            .navigate(R.id.action_nav_maps_to_nav_newRating);
+
+                    //request to display bottom sheet dialog from ViewRating
+                } else if(requestCode != null && requestCode == REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING) {
+                    NavHostFragment.findNavController(BottomSheetFragment.this)
+                            .navigate(R.id.action_nav_viewRatings_to_nav_newRating);
+                }
             }
         });
 
@@ -149,11 +164,11 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        binding = null;
+//    }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -232,8 +247,17 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                     ratingViewModel.setSelectedRatingId(ratingList.get(position).getId());
 
                     dismiss();
-                    NavHostFragment.findNavController(BottomSheetFragment.this)
-                            .navigate(R.id.action_nav_maps_to_nav_viewRatings);
+
+                    //request to display bottom sheet dialog from Map
+                    if (requestCode != null && requestCode == REQUEST_BOTTOM_SHEET_FOR_MAP) {
+                        NavHostFragment.findNavController(BottomSheetFragment.this)
+                                .navigate(R.id.action_nav_maps_to_nav_viewRatings);
+
+                        //request to display bottom sheet dialog from ViewRating
+                    } else if(requestCode != null && requestCode == REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING) {
+                        NavHostFragment.findNavController(BottomSheetFragment.this)
+                                .navigate(R.id.action_nav_viewRatings_self);
+                    }
                 }
             });
         }

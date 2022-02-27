@@ -108,16 +108,57 @@ public class NewRatingFragment extends Fragment {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         isEditing = false;
+
+                        Rating newRating = new Rating(); //initialize
+                        ratingViewModel.setSelectedRating(newRating);//Rating initialize
+
                         getValuesFromOtherFragment(result);
                     }
                 });
 
-        //Register result listener to get rating info passed by view rating
+        //Register result listener to get place info from bottom sheet
+        getParentFragmentManager().setFragmentResultListener("passByBottomSheet", this,
+                new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        isEditing = false;
+
+                        ratingViewModel.setMapRequestCode(0); //initialize
+
+                        String placeId = result.getString("placeId");
+                        String placeName = result.getString("placeName");
+                        Double latitude = result.getDouble("latitude");
+                        Double longitude = result.getDouble("longitude");
+                        String region = result.getString("region");
+                        Log.d(TAG, "ResultListener, latitude: " + latitude + ", longitude: " + longitude);
+                        Log.d(TAG, "ResultListener, placeId: " + placeId + ", placeName: " + placeName);
+                        Log.d(TAG, "ResultListener, region: " + region );
+
+                        placeData.setPlaceid(placeId);
+                        placeData.setName(placeName);
+                        placeData.setLatitude(latitude);
+                        placeData.setLongitude(longitude);
+                        placeData.setLatitude(latitude);
+                        placeData.setLongitude(longitude);
+                        placeData.setGeohash(
+                                GeoFireUtils.getGeoHashForLocation(
+                                        new GeoLocation(latitude, longitude)));
+                        placeData.setRegion(region);
+
+                        binding.newRatingPlaceName.setText(placeData.getName());
+                        binding.newRatingRegion.setText(placeData.getRegion());
+
+                        getChildFragmentManager().popBackStack();
+                    }
+                });
+
+        //Register result listener to get rating info passed by view rating for Editing
         getParentFragmentManager().setFragmentResultListener("passByViewRating", this,
                 new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         isEditing = true;
+
                         getValuesFromOtherFragment(result);
 
                         //Change the title of action bar to Edit Rating

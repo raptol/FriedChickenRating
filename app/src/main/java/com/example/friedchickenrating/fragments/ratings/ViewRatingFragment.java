@@ -25,6 +25,7 @@ import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
 import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
+import com.example.friedchickenrating.fragments.maps.BottomSheetFragment;
 import com.example.friedchickenrating.fragments.maps.MapsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -56,6 +57,7 @@ public class ViewRatingFragment extends Fragment {
     private List<Rating> ratingList;
     private RatingPlace selectedPlace;
     static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
+    static final int REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING = 2;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
 
@@ -93,59 +95,61 @@ public class ViewRatingFragment extends Fragment {
         Log.d(TAG, "curRating.title: " + curRating.getTitle());
 
         // Listen for realtime updates of the places
-        db.collection("places").document(curRating.getPlaceid())
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot value,
-                                        @Nullable FirebaseFirestoreException error) {
-                        if(error != null) {
-                            Log.w(TAG, "Listen failed.", error);
-                            return;
-                        }
+        if(curRating != null) {
+            db.collection("places").document(curRating.getPlaceid())
+                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot value,
+                                            @Nullable FirebaseFirestoreException error) {
+                            if (error != null) {
+                                Log.w(TAG, "Listen failed.", error);
+                                return;
+                            }
 
-                        selectedPlace = value.toObject(RatingPlace.class);
+                            selectedPlace = value.toObject(RatingPlace.class);
 
-                        // download and display images
-                        Map<String, Object> pictures = curRating.getPictures();
-                        String filename = String.valueOf(pictures.get("filename"));
-                        Log.d(TAG, "filename: " + filename);
+                            // download and display images
+                            Map<String, Object> pictures = curRating.getPictures();
+                            String filename = String.valueOf(pictures.get("filename"));
+                            Log.d(TAG, "filename: " + filename);
 
-                        if( !filename.isEmpty() && filename != null) {
-                            long size;
-                            final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-                            StorageReference storageReference
-                                    = firebaseStorage.getReference().child("images").child(filename);
-                            storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Uri> task) {
-                                    if (task.isSuccessful()) {
-                                        Glide.with(getContext())
-                                                .load(task.getResult())
-                                                .into(binding.imgViewPicture);
-                                        binding.imgViewPicture.invalidate();
-                                    } else {
-                                        Toast.makeText(getContext(),
-                                                "Fail to load image", Toast.LENGTH_SHORT).show();
+                            if (!filename.isEmpty() && filename != null) {
+                                long size;
+                                final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                                StorageReference storageReference
+                                        = firebaseStorage.getReference().child("images").child(filename);
+                                storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()) {
+                                            Glide.with(getContext())
+                                                    .load(task.getResult())
+                                                    .into(binding.imgViewPicture);
+                                            binding.imgViewPicture.invalidate();
+                                        } else {
+                                            Toast.makeText(getContext(),
+                                                    "Fail to load image", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
+
+
+                            binding.viewRatingTitle.setText(curRating.getTitle());
+                            binding.viewRatingPlaceName.setText(selectedPlace.getName());
+                            binding.viewRatingChickenType.setText(curRating.getType());
+                            binding.ratingBarFlavor.setRating(curRating.getStarflavor());
+                            binding.ratingBarCrunch.setRating(curRating.getStarcrunch());
+                            binding.ratingBarSpiciness.setRating(curRating.getStarspiciness());
+                            binding.ratingBarPortion.setRating(curRating.getStarportion());
+                            binding.ratingBarPrice.setRating(curRating.getStarprice());
+                            binding.ratingBarOverall.setRating(curRating.getStaroverall());
+                            binding.viewRatingOtherItems.setText(curRating.getOtheritems());
+                            binding.viewRatingNotes.setText(curRating.getNotes());
+
                         }
-
-
-                        binding.viewRatingTitle.setText(curRating.getTitle());
-                        binding.viewRatingPlaceName.setText(selectedPlace.getName());
-                        binding.viewRatingChickenType.setText(curRating.getType());
-                        binding.ratingBarFlavor.setRating(curRating.getStarflavor());
-                        binding.ratingBarCrunch.setRating(curRating.getStarcrunch());
-                        binding.ratingBarSpiciness.setRating(curRating.getStarspiciness());
-                        binding.ratingBarPortion.setRating(curRating.getStarportion());
-                        binding.ratingBarPrice.setRating(curRating.getStarprice());
-                        binding.ratingBarOverall.setRating(curRating.getStaroverall());
-                        binding.viewRatingOtherItems.setText(curRating.getOtheritems());
-                        binding.viewRatingNotes.setText(curRating.getNotes());
-
-                    }
-                });
+                    });
+        }
 
         //event handler for open map button
         binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
@@ -193,6 +197,24 @@ public class ViewRatingFragment extends Fragment {
                 NavHostFragment.findNavController(ViewRatingFragment.this)
                         .navigate(R.id.action_nav_viewRatings_to_nav_newRating);
 
+            }
+        });
+
+
+        //event handler for show all rating list of this place
+        binding.btnShowAllRatingList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ratingViewModel.setSelectedRatingPlace(selectedPlace);
+                ratingViewModel.setMapRequestCode(REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING);
+
+                BottomSheetFragment bottomSheetFragment
+                        = BottomSheetFragment.newInstance(
+                        selectedPlace.getPlaceid(),
+                        selectedPlace.getName(),
+                        selectedPlace.getRegion());
+                bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
             }
         });
     }

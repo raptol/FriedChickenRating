@@ -83,6 +83,7 @@ public class MapsFragment extends Fragment {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
     static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
+    static final int REQUEST_BOTTOM_SHEET_FOR_MAP = 1;
 
     private GoogleMap map;
     private LocationManager locationManager;
@@ -278,6 +279,7 @@ public class MapsFragment extends Fragment {
                                         region);
 
                                 ratingViewModel.setSelectedRatingPlace(ratingPlace);
+                                ratingViewModel.setMapRequestCode(REQUEST_BOTTOM_SHEET_FOR_MAP);
                                 BottomSheetFragment bottomSheetFragment
                                         = BottomSheetFragment.newInstance(
                                         pointOfInterest.placeId,
@@ -325,6 +327,7 @@ public class MapsFragment extends Fragment {
                                                         RatingPlace place = document.toObject(RatingPlace.class);
 
                                                         ratingViewModel.setSelectedRatingPlace(place);
+                                                        ratingViewModel.setMapRequestCode(REQUEST_BOTTOM_SHEET_FOR_MAP);
                                                         BottomSheetFragment bottomSheetFragment
                                                                 = BottomSheetFragment.newInstance(
                                                                 place.getPlaceid(),

@@ -299,6 +299,12 @@
                 android:text="Notes..." />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btnShowAllRatingList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show All Rating List of This Place" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
