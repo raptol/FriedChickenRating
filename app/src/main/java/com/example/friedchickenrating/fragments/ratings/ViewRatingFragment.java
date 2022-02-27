@@ -191,16 +191,9 @@ public class ViewRatingFragment extends Fragment {
                 getParentFragmentManager().setFragmentResult("passByViewRating", result);
 
                 NavHostFragment.findNavController(ViewRatingFragment.this)
-                        .navigate(R.id.action_viewRatingFragment_to_nav_newRating);
+                        .navigate(R.id.action_nav_viewRatings_to_nav_newRating);
 
             }
         });
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        binding = null;
-    }
-
 }
