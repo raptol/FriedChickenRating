@@ -90,6 +90,9 @@
         <action
             android:id="@+id/action_nav_viewRatings_to_nav_newRating"
             app:destination="@id/nav_newRating" />
+        <action
+            android:id="@+id/action_nav_viewRatings_to_nav_maps"
+            app:destination="@id/nav_maps" />
     </fragment>
     <fragment
         android:id="@+id/bottomSheetFragment"

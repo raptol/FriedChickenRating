@@ -28,6 +28,7 @@ import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
 import com.example.friedchickenrating.fragments.maps.MapsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -39,6 +40,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +52,7 @@ public class ViewRatingFragment extends Fragment {
 
     private List<Rating> ratingList;
     private RatingPlace selectedPlace;
+    static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
 
@@ -138,6 +141,20 @@ public class ViewRatingFragment extends Fragment {
 
                     }
                 });
+
+        //event handler for open map button
+        binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ratingViewModel.setSelectedRating(curRating);
+                ratingViewModel.setSelectedRatingPlace(selectedPlace);
+                ratingViewModel.setMapRequestCode(REQUEST_MAP_PLACE_FOR_VIEW_RATING);
+
+                NavHostFragment.findNavController(ViewRatingFragment.this)
+                        .navigate(R.id.action_nav_viewRatings_to_nav_maps);
+            }
+        });
 
         //event handler for edit button
         binding.btnEditRating.setOnClickListener(new View.OnClickListener() {

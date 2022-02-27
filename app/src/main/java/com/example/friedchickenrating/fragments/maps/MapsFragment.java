@@ -82,6 +82,7 @@ public class MapsFragment extends Fragment {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
+    static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
 
     private GoogleMap map;
     private LocationManager locationManager;
@@ -134,8 +135,7 @@ public class MapsFragment extends Fragment {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
                     Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                    LatLng userLocation = new LatLng(place.getLatLng().latitude,
-                            place.getLatLng().longitude);
+                    LatLng userLocation = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 20));
                 }
 
@@ -203,6 +203,7 @@ public class MapsFragment extends Fragment {
         if (checkPermission()) {
 
             if (map != null) {
+
                 //Get current location
                 locationManager.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -211,14 +212,36 @@ public class MapsFragment extends Fragment {
                 if(lastUserKnownLocation != null) {
                     LatLng userLocation = new LatLng(lastUserKnownLocation.getLatitude(),
                             lastUserKnownLocation.getLongitude());
-                    //map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
-
 
                     map.setMyLocationEnabled(true);
                     map.getUiSettings().setMyLocationButtonEnabled(true);
                     map.getUiSettings().setZoomControlsEnabled(true);
                     map.getUiSettings().setZoomGesturesEnabled(true);
+
+                    //Request to point a place from View Rating
+                    Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
+                    if (requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_VIEW_RATING) {
+
+                        RatingPlace place = ratingViewModel.getSelectedRatingPlace().getValue();
+
+                        Log.d(TAG, "selcted place: " + place.getPlaceid());
+                        Log.d(TAG, "latitude: " + place.getLatitude() + ", longitude: " + place.getLongitude());
+                        LatLng placeLocation = new LatLng(place.getLatitude(), place.getLongitude());
+
+                        Log.d(TAG, "map: " + map);
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 20));
+
+                        MarkerOptions markerOptions = new MarkerOptions().position(placeLocation);
+                        markerOptions.title(place.getName());
+
+                        Marker marker = map.addMarker(markerOptions);
+                        marker.setSnippet(place.getPlaceid());
+                        marker.setZIndex(10);
+                    } else {
+
+                        //map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
+                    }
 
                     //register event handler to click icon of place
                     map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
@@ -284,7 +307,7 @@ public class MapsFragment extends Fragment {
                             //Toast.makeText(getContext(), "Clicked location is " + markerName + ", marker id: " + marker.getId(), Toast.LENGTH_SHORT).show();
 
                             String placeId = marker.getSnippet();
-                            if (!placeId.equals("")) {
+                            if (marker.getSnippet() != null) {
                                 db.collection("places").whereEqualTo("placeid", placeId)
                                         .addSnapshotListener(new EventListener<QuerySnapshot>() {
                                             @Override
