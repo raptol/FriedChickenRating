@@ -241,7 +241,7 @@ public class MapsFragment extends Fragment {
                                 result.putDouble("longitude", pointOfInterest.latLng.longitude);
                                 result.putString("region", region);
 
-                                getParentFragmentManager().setFragmentResult("requestMapPlaceInfo", result);
+                                getParentFragmentManager().setFragmentResult("passByMapPlace", result);
 
                                 NavHostFragment.findNavController(MapsFragment.this)
                                         .navigate(R.id.action_nav_maps_to_nav_newRating);

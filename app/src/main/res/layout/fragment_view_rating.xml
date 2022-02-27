@@ -101,7 +101,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.4"
             android:orientation="vertical">
 
             <LinearLayout
@@ -128,11 +128,11 @@
 
                 <RatingBar
                     android:id="@+id/ratingBarFlavor"
-                    android:layout_width="240dp"
-                    android:layout_height="40dp"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="10dp"
-                    android:clickable="false"
-                    android:contextClickable="false"
+                    android:isIndicator="false"
                     android:numStars="5"
                     tools:ignore="SpeakableTextPresentCheck"></RatingBar>
             </LinearLayout>
@@ -150,9 +150,11 @@
 
                 <RatingBar
                     android:id="@+id/ratingBarCrunch"
-                    android:layout_width="240dp"
-                    android:layout_height="40dp"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="10dp"
+                    android:isIndicator="false"
                     android:numStars="5"
                     tools:ignore="SpeakableTextPresentCheck"></RatingBar>
             </LinearLayout>
@@ -170,9 +172,11 @@
 
                 <RatingBar
                     android:id="@+id/ratingBarSpiciness"
-                    android:layout_width="240dp"
-                    android:layout_height="40dp"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="10dp"
+                    android:isIndicator="false"
                     android:numStars="5"
                     tools:ignore="SpeakableTextPresentCheck"></RatingBar>
             </LinearLayout>
@@ -190,9 +194,11 @@
 
                 <RatingBar
                     android:id="@+id/ratingBarPortion"
-                    android:layout_width="240dp"
-                    android:layout_height="40dp"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="10dp"
+                    android:isIndicator="false"
                     android:numStars="5"
                     tools:ignore="SpeakableTextPresentCheck"></RatingBar>
             </LinearLayout>
@@ -210,9 +216,11 @@
 
                 <RatingBar
                     android:id="@+id/ratingBarPrice"
-                    android:layout_width="240dp"
-                    android:layout_height="40dp"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="10dp"
+                    android:isIndicator="false"
                     android:numStars="5"
                     tools:ignore="SpeakableTextPresentCheck"></RatingBar>
             </LinearLayout>
@@ -230,9 +238,11 @@
 
                 <RatingBar
                     android:id="@+id/ratingBarOverall"
-                    android:layout_width="240dp"
-                    android:layout_height="40dp"
+                    style="@android:style/Widget.Material.Light.RatingBar.Indicator"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="10dp"
+                    android:isIndicator="false"
                     android:numStars="5"
                     tools:ignore="SpeakableTextPresentCheck"></RatingBar>
             </LinearLayout>

@@ -11,17 +11,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
 import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
+import com.example.friedchickenrating.fragments.maps.MapsFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -29,6 +35,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,19 +46,12 @@ public class ViewRatingFragment extends Fragment {
 
     private RatingViewModel ratingViewModel;
     private FragmentViewRatingBinding binding;
-    private FirebaseAuth auth;
     private FirebaseFirestore db;
 
-    private ImageView imgViewNewPhoto;
-    private Uri filePath;
-    private String fileName;
-
     private List<Rating> ratingList;
-    private List<RatingPlace> placeList;
+    private RatingPlace selectedPlace;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
-    static final int REQUEST_IMAGE_SELECT = 0;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
     @Override
@@ -77,13 +78,11 @@ public class ViewRatingFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         ratingList = new ArrayList<>();
-        placeList = new ArrayList<>();
 
         Rating curRating = ratingViewModel.getSelectedRating().getValue();
 
         Log.d(TAG, "curRating.id: " + curRating.getPlaceid());
         Log.d(TAG, "curRating.title: " + curRating.getTitle());
-//        Log.d(TAG, "curRating.region: " + curRating.getRegion());
 
         // Listen for realtime updates of the places
         db.collection("places").document(curRating.getPlaceid())
@@ -96,26 +95,37 @@ public class ViewRatingFragment extends Fragment {
                             return;
                         }
 
-                        String placeName = value.getString("name");
-                        Log.d(TAG, "curRating.placeName: " + placeName);
+                        selectedPlace = value.toObject(RatingPlace.class);
 
+                        // download and display images
                         Map<String, Object> pictures = curRating.getPictures();
                         String filename = String.valueOf(pictures.get("filename"));
                         Log.d(TAG, "filename: " + filename);
 
-                        ImageView tempPhoto = ratingViewModel.getSelectedRatingImage().getValue();
-                        BitmapDrawable tempPhotoDrawable = (BitmapDrawable)tempPhoto.getDrawable();
-                        if(tempPhotoDrawable != null) {
-                            Bitmap bitmap = tempPhotoDrawable.getBitmap();
-                            binding.imgViewPicture.setImageBitmap(bitmap);
-                            binding.imgViewPicture.invalidate();
+                        if( !filename.isEmpty() && filename != null) {
+                            long size;
+                            final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                            StorageReference storageReference
+                                    = firebaseStorage.getReference().child("images").child(filename);
+                            storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()) {
+                                        Glide.with(getContext())
+                                                .load(task.getResult())
+                                                .into(binding.imgViewPicture);
+                                        binding.imgViewPicture.invalidate();
+                                    } else {
+                                        Toast.makeText(getContext(),
+                                                "Fail to load image", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                         }
 
-//                        binding.imgViewPicture.setImageResource();
-//                        binding.imgViewPicture.setImageBitmap(bitmap);
+
                         binding.viewRatingTitle.setText(curRating.getTitle());
-                        binding.viewRatingPlaceName.setText(placeName);
-//                        binding.viewRatingRegion.setText(curRating.getRegion());
+                        binding.viewRatingPlaceName.setText(selectedPlace.getName());
                         binding.viewRatingChickenType.setText(curRating.getType());
                         binding.ratingBarFlavor.setRating(curRating.getStarflavor());
                         binding.ratingBarCrunch.setRating(curRating.getStarcrunch());
@@ -129,33 +139,29 @@ public class ViewRatingFragment extends Fragment {
                     }
                 });
 
-        // Listen for realtime updates of the ratings
-        db.collection("ratings")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException error) {
-                        if(error != null) {
-                            Log.w(TAG, "Listen failed.", error);
-                            return;
-                        }
-
-                        ratingList.clear();
-                        for(QueryDocumentSnapshot document: value) {
-                            if (document != null) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Rating rating = document.toObject(Rating.class);
-                                ratingList.add(rating);
-                            }
-                        }
-//                        ratingListAdapter.setRatingList(ratingList, placeList);
-                    }
-                });
-
         //event handler for edit button
         binding.btnEditRating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String region = ratingViewModel.getRegionFromLatLng(requireContext(),
+                        selectedPlace.getLatitude(), selectedPlace.getLongitude());
+
+                Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
+                Bundle result = new Bundle();
+                result.putString("placeId", selectedPlace.getPlaceid());
+                result.putString("placeName", selectedPlace.getName());
+                result.putDouble("latitude", selectedPlace.getLatitude());
+                result.putDouble("longitude", selectedPlace.getLongitude());
+                result.putString("region", region);
+
+                ratingViewModel.setSelectedRating(curRating);
+                ratingViewModel.setSelectedRatingImage(binding.imgViewPicture);
+
+                getParentFragmentManager().setFragmentResult("passByViewRating", result);
+
+                NavHostFragment.findNavController(ViewRatingFragment.this)
+                        .navigate(R.id.action_viewRatingFragment_to_nav_newRating);
 
             }
         });

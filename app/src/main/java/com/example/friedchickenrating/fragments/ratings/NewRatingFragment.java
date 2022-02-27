@@ -67,6 +67,7 @@ public class NewRatingFragment extends Fragment {
     private String fileName;
 
     private RatingPlace placeData;
+    private Boolean isEditing = false;
 
     private static final String TAG = NewRatingFragment.class.getSimpleName();
     static final int REQUEST_IMAGE_SELECT = 0;
@@ -100,64 +101,22 @@ public class NewRatingFragment extends Fragment {
         FirebaseUser user = auth.getCurrentUser();
 
         //Register result listener to get place info from map
-        getParentFragmentManager().setFragmentResultListener("requestMapPlaceInfo", this,
+        getParentFragmentManager().setFragmentResultListener("passByMapPlace", this,
                 new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                        ratingViewModel.setMapRequestCode(0); //initialize
+                        isEditing = false;
+                        getValuesFromOtherFragment(result);
+                    }
+                });
 
-                        String placeId = result.getString("placeId");
-                        String placeName = result.getString("placeName");
-                        Double latitude = result.getDouble("latitude");
-                        Double longitude = result.getDouble("longitude");
-                        String region = result.getString("region");
-                        Log.d(TAG, "ResultListener, latitude: " + latitude + ", longitude: " + longitude);
-                        Log.d(TAG, "ResultListener, placeId: " + placeId + ", placeName: " + placeName);
-                        Log.d(TAG, "ResultListener, region: " + region );
-
-                        placeData.setPlaceid(placeId);
-                        placeData.setName(placeName);
-                        placeData.setLatitude(latitude);
-                        placeData.setLongitude(longitude);
-                        placeData.setLatitude(latitude);
-                        placeData.setLongitude(longitude);
-                        placeData.setGeohash(
-                                GeoFireUtils.getGeoHashForLocation(
-                                        new GeoLocation(latitude, longitude)));
-                        placeData.setRegion(region);
-
-                        //recover stored data before switching from new rating to map
-                        filePath = ratingViewModel.getSelectedRatingImageFilePath().getValue();
-                        Log.d(TAG, "filePath==> " + filePath);
-
-                        ImageView tempPhoto = ratingViewModel.getSelectedRatingImage().getValue();
-                        if(tempPhoto != null) {
-                            BitmapDrawable tempPhotoDrawable = (BitmapDrawable) tempPhoto.getDrawable();
-                            if (tempPhotoDrawable != null) {
-                                Bitmap bitmap = tempPhotoDrawable.getBitmap();
-                                binding.imgViewPicture.setImageBitmap(bitmap);
-                                binding.imgViewPicture.invalidate();
-                            }
-                        }
-
-                        binding.newRatingPlaceName.setText(placeData.getName());
-                        binding.newRatingRegion.setText(placeData.getRegion());
-
-                        Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
-                        if(recoverRatingData != null) {
-                            binding.newRatingTitle.setText(recoverRatingData.getTitle());
-                            binding.newRatingChickenType.setText(recoverRatingData.getType());
-                            binding.newRatingOtherItems.setText(recoverRatingData.getOtheritems());
-                            binding.newRatingNotes.setText(recoverRatingData.getNotes());
-                            binding.ratingBarFlavor.setRating(recoverRatingData.getStarflavor());
-                            binding.ratingBarCrunch.setRating(recoverRatingData.getStarcrunch());
-                            binding.ratingBarSpiciness.setRating(recoverRatingData.getStarspiciness());
-                            binding.ratingBarPortion.setRating(recoverRatingData.getStarportion());
-                            binding.ratingBarPrice.setRating(recoverRatingData.getStarprice());
-                            binding.ratingBarOverall.setRating(recoverRatingData.getStaroverall());
-                        }
-
-                        getChildFragmentManager().popBackStack();
+        //Register result listener to get rating info passed by view rating
+        getParentFragmentManager().setFragmentResultListener("passByViewRating", this,
+                new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        isEditing = true;
+                        getValuesFromOtherFragment(result);
                     }
                 });
 
@@ -180,7 +139,11 @@ public class NewRatingFragment extends Fragment {
             public void onClick(View view) {
 
                 //store data before switching from new rating to map
-                Rating saveRatingData = new Rating("",
+                String docId = ""; // New rating mode
+                if(isEditing) { // Edit rating mode
+                    docId = ratingViewModel.getSelectedRating().getValue().getId();
+                }
+                Rating saveRatingData = new Rating(docId,
                         binding.newRatingTitle.getText().toString(),
                         binding.newRatingChickenType.getText().toString(),
                         placeData.getPlaceid(),
@@ -233,19 +196,31 @@ public class NewRatingFragment extends Fragment {
                 }
 
                 //upload image to Google Firebase Storage
-                uploadImageToFirebaseStorage();
+                Map<String, Object> photoValues = null;
+                if(filePath != null) {
+                    uploadImageToFirebaseStorage();
 
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date now = new Date();
-                String photoDateTime = formatter.format(now);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date now = new Date();
+                    String photoDateTime = formatter.format(now);
 
-                Photo photo = new Photo(fileName, photoDateTime);
-                Map<String, Object> photoValues = photo.toMap();
-                //Map<String, Object> picturesMap = new HashMap<>();
-                //picturesMap.put("pictures", photoValues);
+                    Photo photo = new Photo(fileName, photoDateTime);
+                    photoValues = photo.toMap();
+                }else {  // get value from edit if the file is not updated
+                    Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
+                    if(recoverRatingData != null) {
+                        photoValues = recoverRatingData.getPictures();
+                    }
+                }
 
                 //add new rating to Firestore DB
-                String ratingsDocId = db.collection("ratings").document().getId();
+                String ratingsDocId;
+                if(isEditing == false) {
+                    ratingsDocId = db.collection("ratings").document().getId();
+                } else {
+                    ratingsDocId = ratingViewModel.getSelectedRating().getValue().getId();
+                }
+
                 Rating newRatingData = new Rating(ratingsDocId,
                                             binding.newRatingTitle.getText().toString(),
                                             binding.newRatingChickenType.getText().toString(),
@@ -309,6 +284,63 @@ public class NewRatingFragment extends Fragment {
 
         FloatingActionButton fab = getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
+    }
+
+    private void getValuesFromOtherFragment(Bundle result) {
+        ratingViewModel.setMapRequestCode(0); //initialize
+
+        String placeId = result.getString("placeId");
+        String placeName = result.getString("placeName");
+        Double latitude = result.getDouble("latitude");
+        Double longitude = result.getDouble("longitude");
+        String region = result.getString("region");
+        Log.d(TAG, "ResultListener, latitude: " + latitude + ", longitude: " + longitude);
+        Log.d(TAG, "ResultListener, placeId: " + placeId + ", placeName: " + placeName);
+        Log.d(TAG, "ResultListener, region: " + region );
+
+        placeData.setPlaceid(placeId);
+        placeData.setName(placeName);
+        placeData.setLatitude(latitude);
+        placeData.setLongitude(longitude);
+        placeData.setLatitude(latitude);
+        placeData.setLongitude(longitude);
+        placeData.setGeohash(
+                GeoFireUtils.getGeoHashForLocation(
+                        new GeoLocation(latitude, longitude)));
+        placeData.setRegion(region);
+
+        //recover stored data before switching from new rating to map
+        filePath = ratingViewModel.getSelectedRatingImageFilePath().getValue();
+        Log.d(TAG, "filePath==> " + filePath);
+
+        ImageView tempPhoto = ratingViewModel.getSelectedRatingImage().getValue();
+        if(tempPhoto != null) {
+            BitmapDrawable tempPhotoDrawable = (BitmapDrawable) tempPhoto.getDrawable();
+            if (tempPhotoDrawable != null) {
+                Bitmap bitmap = tempPhotoDrawable.getBitmap();
+                binding.imgViewPicture.setImageBitmap(bitmap);
+                binding.imgViewPicture.invalidate();
+            }
+        }
+
+        binding.newRatingPlaceName.setText(placeData.getName());
+        binding.newRatingRegion.setText(placeData.getRegion());
+
+        Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
+        if(recoverRatingData != null) {
+            binding.newRatingTitle.setText(recoverRatingData.getTitle());
+            binding.newRatingChickenType.setText(recoverRatingData.getType());
+            binding.newRatingOtherItems.setText(recoverRatingData.getOtheritems());
+            binding.newRatingNotes.setText(recoverRatingData.getNotes());
+            binding.ratingBarFlavor.setRating(recoverRatingData.getStarflavor());
+            binding.ratingBarCrunch.setRating(recoverRatingData.getStarcrunch());
+            binding.ratingBarSpiciness.setRating(recoverRatingData.getStarspiciness());
+            binding.ratingBarPortion.setRating(recoverRatingData.getStarportion());
+            binding.ratingBarPrice.setRating(recoverRatingData.getStarprice());
+            binding.ratingBarOverall.setRating(recoverRatingData.getStaroverall());
+        }
+
+        getChildFragmentManager().popBackStack();
     }
 
     @Override
