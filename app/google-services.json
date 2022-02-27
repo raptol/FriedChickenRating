@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "337362918321",
-    "project_id": "friedchickenrating",
-    "storage_bucket": "friedchickenrating.appspot.com"
+    "project_number": "145056044968",
+    "project_id": "csis4495-342407",
+    "storage_bucket": "csis4495-342407.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:337362918321:android:2aee248ff6719f00873b90",
+        "mobilesdk_app_id": "1:145056044968:android:95595487c328498e52ef9d",
         "android_client_info": {
           "package_name": "com.example.friedchickenrating"
         }
       },
       "oauth_client": [
         {
-          "client_id": "337362918321-jegffelmc1iafujtakb9tkc17hslei7e.apps.googleusercontent.com",
+          "client_id": "145056044968-0eje72pi9cbui8hppgmkq0dc262426jm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAA8yMt0fuxPn1Be_dEP4-xo7-6Le015PI"
+          "current_key": "AIzaSyAb0LcSn1kIYVzjALkDmm6_CIJQJToRQFc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "337362918321-jegffelmc1iafujtakb9tkc17hslei7e.apps.googleusercontent.com",
+              "client_id": "145056044968-0eje72pi9cbui8hppgmkq0dc262426jm.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
