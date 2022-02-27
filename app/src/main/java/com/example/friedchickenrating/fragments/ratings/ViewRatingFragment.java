@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -49,6 +50,8 @@ public class ViewRatingFragment extends Fragment {
     private RatingViewModel ratingViewModel;
     private FragmentViewRatingBinding binding;
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     private List<Rating> ratingList;
     private RatingPlace selectedPlace;
@@ -79,6 +82,8 @@ public class ViewRatingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
         ratingList = new ArrayList<>();
 
@@ -155,6 +160,14 @@ public class ViewRatingFragment extends Fragment {
                         .navigate(R.id.action_nav_viewRatings_to_nav_maps);
             }
         });
+
+        //If login user is user who created current rating, enable Edit button
+        //else, disable Edit button
+        if(user.getUid() != null && user.getUid().equals(curRating.getUserid())) {
+            binding.btnEditRating.setVisibility(View.VISIBLE);
+        } else {
+            binding.btnEditRating.setVisibility(View.INVISIBLE);
+        }
 
         //event handler for edit button
         binding.btnEditRating.setOnClickListener(new View.OnClickListener() {
