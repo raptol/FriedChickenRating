@@ -95,7 +95,7 @@ public class ViewRatingFragment extends Fragment {
         Log.d(TAG, "curRating.title: " + curRating.getTitle());
 
         // Listen for realtime updates of the places
-        if(curRating != null) {
+        if(curRating != null && curRating.getPlaceid() != null) {
             db.collection("places").document(curRating.getPlaceid())
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
