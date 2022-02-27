@@ -122,7 +122,7 @@ public class ViewRatingFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
-                                            Glide.with(getContext())
+                                            Glide.with(getActivity())
                                                     .load(task.getResult())
                                                     .into(binding.imgViewPicture);
                                             binding.imgViewPicture.invalidate();
@@ -217,5 +217,11 @@ public class ViewRatingFragment extends Fragment {
                 bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -75,7 +75,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:src="@drawable/img" />
+                    android:src="@drawable/home_map" />
 
             </LinearLayout>
         </HorizontalScrollView>

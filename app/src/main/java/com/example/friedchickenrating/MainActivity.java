@@ -127,46 +127,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity((new Intent(MainActivity.this, LoginActivity.class)));
             finish();
         });
-
-        cardView_map = findViewById(R.id.cardView_map);
-        cardView_favorite = findViewById(R.id.cardView_favorite);
-        cardView_profile = findViewById(R.id.cardView_profile);
-        cardView_roulette = findViewById(R.id.cardView_roulette);
-
-        cardView_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = getApplicationContext();
-                Toast.makeText(context, "cardView map clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        cardView_favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = getApplicationContext();
-                Toast.makeText(context, "cardView favorite clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        cardView_profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = getApplicationContext();
-                Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
-                startActivity(intent);
-//                Toast.makeText(context, "cardView profile clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        cardView_roulette.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = getApplicationContext();
-                Toast.makeText(context, "cardView roulette clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-
     }
 
     @Override

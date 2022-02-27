@@ -456,4 +456,10 @@ public class NewRatingFragment extends Fragment {
             Toast.makeText(this.getContext(), "Select image first.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

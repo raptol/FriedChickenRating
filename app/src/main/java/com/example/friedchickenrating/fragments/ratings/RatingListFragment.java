@@ -178,13 +178,6 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 LOCATION_PERMISSION_REQUEST_CODE);
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
     @Override
     public void onListItemClick(Rating rating, int position) {
         ratingViewModel.setSelectedRating(rating);
@@ -378,5 +371,11 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                         }
                     });
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

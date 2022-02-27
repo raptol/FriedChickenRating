@@ -267,4 +267,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             return ratingList.size();
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
