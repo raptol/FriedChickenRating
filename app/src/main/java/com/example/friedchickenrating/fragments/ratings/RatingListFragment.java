@@ -109,28 +109,6 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         binding.recyclerViewRatingList.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
         binding.recyclerViewRatingList.setAdapter(ratingListAdapter);
 
-        //Check permission to get current location
-        if (!checkPermission()) {
-            requestPermission();
-        }
-
-        //Get current location
-        //Initiate LocationManager and LocationListener for current location of user
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-//                    Log.d(TAG, "onLocationChanged, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
-            }
-        };
-
-        locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-        Location lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        userLocation = new LatLng(lastUserKnownLocation.getLatitude(), lastUserKnownLocation.getLongitude());
-
         //display rating list
         displayRatingList(SORT_OPTION_LATEST); //default sorting option: latest
 
@@ -252,7 +230,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 break;
 
             default: // by location
-                readRatingListByCurrentLocation(userLocation);
+                readRatingListByCurrentLocation();
         }
 
         //Scroll to top
@@ -318,63 +296,87 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         });
     }
 
-    private void readRatingListByCurrentLocation(LatLng currentLocation) {
+    private void readRatingListByCurrentLocation() {
 
-        placeList.clear();
-
-        //find places to be matched with user's current location
-        Log.d(TAG, "current location's latitude: " + currentLocation.latitude + ", longitude: " + currentLocation.longitude);
-
-        final GeoLocation center = new GeoLocation(currentLocation.latitude, currentLocation.longitude);
-        final double radiusInMeter = 5 * 1000; //find places within 5km
-
-        List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInMeter);
-        final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
-        for (GeoQueryBounds b : bounds) {
-            Query q = db.collection("places")
-                    .orderBy("geohash")
-                    .startAt(b.startHash)
-                    .endAt(b.endHash);
-
-            tasks.add(q.get());
-
-            Log.d(TAG, "tasks.added");
+        //Check permission to get current location
+        if (!checkPermission()) {
+            requestPermission();
         }
 
-        List<String> curLocPlaceIds = new ArrayList<>();
+        //Get current location
+        //Initiate LocationManager and LocationListener for current location of user
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//                    Log.d(TAG, "onLocationChanged, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
+            }
+        };
 
-        Tasks.whenAllComplete(tasks)
-                .addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<Task<?>>> t) {
-                        List<DocumentSnapshot> matchingPlaceDocs = new ArrayList<>();
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-                        for (Task<QuerySnapshot> task : tasks) {
-                            QuerySnapshot snap = task.getResult();
-                            for (DocumentSnapshot doc : snap.getDocuments()) {
-                                double latitude = doc.getDouble("latitude");
-                                double longitude = doc.getDouble("longitude");
+        Location lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(lastUserKnownLocation != null) {
+            userLocation = new LatLng(lastUserKnownLocation.getLatitude(), lastUserKnownLocation.getLongitude());
 
-                                // We have to filter out a few false positives due to GeoHash
-                                // accuracy, but most will match
-                                GeoLocation docLocation = new GeoLocation(latitude, longitude);
-                                double distanceInMeter = GeoFireUtils.getDistanceBetween(docLocation, center);
-                                if (distanceInMeter <= radiusInMeter) {
-                                    matchingPlaceDocs.add(doc);
-                                    RatingPlace place = doc.toObject(
-                                            RatingPlace.class);
-                                    placeList.add(place);
-                                    curLocPlaceIds.add(place.getPlaceid());
-                                    Log.d(TAG, "placeList: "+ place.getName());
+            placeList.clear();
+
+            //find places to be matched with user's current location
+            Log.d(TAG, "current location's latitude: " + userLocation.latitude + ", longitude: " + userLocation.longitude);
+
+            final GeoLocation center = new GeoLocation(userLocation.latitude, userLocation.longitude);
+            final double radiusInMeter = 5 * 1000; //find places within 5km
+
+            List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInMeter);
+            final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+            for (GeoQueryBounds b : bounds) {
+                Query q = db.collection("places")
+                        .orderBy("geohash")
+                        .startAt(b.startHash)
+                        .endAt(b.endHash);
+
+                tasks.add(q.get());
+
+                Log.d(TAG, "tasks.added");
+            }
+
+            List<String> curLocPlaceIds = new ArrayList<>();
+
+            Tasks.whenAllComplete(tasks)
+                    .addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
+                        @Override
+                        public void onComplete(@NonNull Task<List<Task<?>>> t) {
+                            List<DocumentSnapshot> matchingPlaceDocs = new ArrayList<>();
+
+                            for (Task<QuerySnapshot> task : tasks) {
+                                QuerySnapshot snap = task.getResult();
+                                for (DocumentSnapshot doc : snap.getDocuments()) {
+                                    double latitude = doc.getDouble("latitude");
+                                    double longitude = doc.getDouble("longitude");
+
+                                    // We have to filter out a few false positives due to GeoHash
+                                    // accuracy, but most will match
+                                    GeoLocation docLocation = new GeoLocation(latitude, longitude);
+                                    double distanceInMeter = GeoFireUtils.getDistanceBetween(docLocation, center);
+                                    if (distanceInMeter <= radiusInMeter) {
+                                        matchingPlaceDocs.add(doc);
+                                        RatingPlace place = doc.toObject(
+                                                RatingPlace.class);
+                                        placeList.add(place);
+                                        curLocPlaceIds.add(place.getPlaceid());
+                                        Log.d(TAG, "placeList: " + place.getName());
+                                    }
                                 }
                             }
+
+                            // rating list matched with places
+
+                            Query query = db.collection("ratings").whereIn("placeid", curLocPlaceIds);
+                            readRatingList(query);
                         }
-
-                        // rating list matched with places
-
-                        Query query = db.collection("ratings").whereIn("placeid", curLocPlaceIds);
-                        readRatingList(query);
-                    }
-                });
+                    });
+        }
     }
 }
