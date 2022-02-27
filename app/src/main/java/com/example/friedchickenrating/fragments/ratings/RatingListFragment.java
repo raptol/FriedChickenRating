@@ -3,6 +3,7 @@ package com.example.friedchickenrating.fragments.ratings;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -102,6 +103,14 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
 
         ratingList = new ArrayList<>();
         placeList = new ArrayList<>();
+
+//        int orientation = getResources().getConfiguration().orientation;
+//        int gridCount;
+//        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            gridCount = 1;
+//        } else {
+//            gridCount = 2;
+//        }
 
         ratingListAdapter = new RatingListAdapter(ratingList, placeList);
         ratingListAdapter.setListener(this);
