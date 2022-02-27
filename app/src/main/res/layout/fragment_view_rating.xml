@@ -60,6 +60,7 @@
                         android:id="@+id/viewRatingRegion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:paddingLeft="4dp"
                         android:text="Burnaby"
@@ -69,6 +70,7 @@
                         android:id="@+id/viewRatingChickenType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:paddingLeft="4dp"
                         android:text="Korean"
@@ -86,15 +88,15 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="5dp"
                         android:src="@drawable/home_map" />
 
                     <Button
                         android:id="@+id/btnEditRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:minHeight="0dp"
+                        android:layout_marginTop="2dp"
+                        android:minHeight="48dp"
                         android:text="Edit" />
                 </LinearLayout>
 
@@ -261,7 +263,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
                 android:layout_weight="0.1"
                 android:orientation="horizontal">
 
@@ -284,7 +286,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
                 android:layout_weight="0.2"
                 android:orientation="horizontal">
 
@@ -309,6 +311,7 @@
                 android:id="@+id/btnShowAllRatingList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="Show All Rating List of This Place" />
 
         </LinearLayout>
