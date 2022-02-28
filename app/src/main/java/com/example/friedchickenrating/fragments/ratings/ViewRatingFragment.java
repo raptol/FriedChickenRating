@@ -28,6 +28,8 @@ import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
 import com.example.friedchickenrating.fragments.maps.BottomSheetFragment;
 import com.example.friedchickenrating.fragments.maps.MapsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -169,8 +171,10 @@ public class ViewRatingFragment extends Fragment {
         //else, disable Edit button
         if(user.getUid() != null && user.getUid().equals(curRating.getUserid())) {
             binding.btnEditRating.setVisibility(View.VISIBLE);
+            binding.btnDeleteRating.setVisibility(View.VISIBLE);
         } else {
             binding.btnEditRating.setVisibility(View.INVISIBLE);
+            binding.btnDeleteRating.setVisibility(View.INVISIBLE);
         }
 
         //event handler for edit button
@@ -197,6 +201,33 @@ public class ViewRatingFragment extends Fragment {
                 NavHostFragment.findNavController(ViewRatingFragment.this)
                         .navigate(R.id.action_nav_viewRatings_to_nav_newRating);
 
+            }
+        });
+
+        //event handler for delete button
+        binding.btnDeleteRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.collection("ratings").document(curRating.getId())
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d(TAG, "The rating was successfully deleted!");
+                                Toast.makeText(getContext(), "delete the rating success.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error deleting the rating", e);
+                                Toast.makeText(getContext(), "delete the rating error.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                //myAdapter.notifyItemRangeChanged()
+                NavHostFragment.findNavController(ViewRatingFragment.this)
+                        .navigate(R.id.action_nav_viewRatings_to_nav_ratings);
             }
         });
 
