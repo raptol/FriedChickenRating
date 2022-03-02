@@ -3,6 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/activity_main.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/activity_signup.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/content_main.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_rating_list.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_recipes.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_recipes_list.xml" value="0.1" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_view_rating.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_view_recipe.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/layout_rating_list.xml" value="0.3333333333333333" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/layout_recipes_list.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/view_recipe.xml" value="0.3265625" />
         <entry key="..\:/GitRepo/AndroidStudioProjects/CSIS4495AR/FriedChickenRating/app/src/main/res/drawable/ic_menu_camera.xml" value="0.34444444444444444" />
         <entry key="..\:/GitRepo/AndroidStudioProjects/CSIS4495AR/FriedChickenRating/app/src/main/res/drawable/ic_menu_home.xml" value="0.33177083333333335" />
         <entry key="..\:/GitRepo/AndroidStudioProjects/CSIS4495AR/FriedChickenRating/app/src/main/res/drawable/ic_menu_recipes.xml" value="0.3484375" />

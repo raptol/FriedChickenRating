@@ -1,19 +1,54 @@
 package com.example.friedchickenrating.fragments.recipes;
 
+import android.net.Uri;
+import android.widget.ImageView;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class RecipesViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private MutableLiveData<Recipe> selectedRecipe = new MutableLiveData<>();
+    private MutableLiveData<String> selectedRecipeId = new MutableLiveData<>();
+    private MutableLiveData<ImageView> selectedRecipeImage = new MutableLiveData<>();
+    private MutableLiveData<Uri> selectedRatingImageFilePath = new MutableLiveData<>();
+
+    private static final String TAG = RecipesViewModel.class.getSimpleName();
 
     public RecipesViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is recipes fragment");
+//        mText = new MutableLiveData<>();
+//        mText.setValue("This is recipes fragment");
+    }
+//    public LiveData<String> getText() {
+//        return mText;
+//    }
+    public LiveData<Recipe> getSelectedRecipe() {
+        return selectedRecipe;
+    }
+    public LiveData<String> getSelectedRecipeId() {
+        return selectedRecipeId;
+    }
+    public LiveData<ImageView> getSelectedRecipeImage() {
+        return selectedRecipeImage;
+    }
+    public LiveData<Uri> getSelectedRecipeImageFilePath() {
+        return selectedRatingImageFilePath;
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setSelectedRecipe(Recipe selectedRecipe) {
+        this.selectedRecipe.setValue(selectedRecipe);
+    }
+
+    public void setSelectedRecipeId(String selectedRecipeId) {
+        this.selectedRecipeId.setValue(selectedRecipeId);
+    }
+
+    public void setSelectedRecipeImage(ImageView selectedRecipeImage) {
+        this.selectedRecipeImage.setValue(selectedRecipeImage);
+    }
+
+    public void setSelectedRatingImageFilePath(Uri selectedRatingImageFilePath) {
+        this.selectedRatingImageFilePath.setValue(selectedRatingImageFilePath);
     }
 }

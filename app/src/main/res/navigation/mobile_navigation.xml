@@ -58,9 +58,13 @@
 
     <fragment
         android:id="@+id/nav_recipes"
-        android:name="com.example.friedchickenrating.fragments.recipes.RecipesFragment"
+        android:name="com.example.friedchickenrating.fragments.recipes.RecipesListFragment"
         android:label="@string/menu_recipes"
-        tools:layout="@layout/fragment_recipes" />
+        tools:layout="@layout/fragment_recipes_list" >
+        <action
+            android:id="@+id/action_nav_recipes_to_nav_viewRecipes"
+            app:destination="@id/nav_viewRecipes" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_newRating"
@@ -102,6 +106,14 @@
         <action
             android:id="@+id/action_bottomSheetFragment_to_nav_viewRatings"
             app:destination="@id/nav_viewRatings" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_viewRecipes"
+        android:name="com.example.friedchickenrating.fragments.recipes.viewRecipeFragment"
+        android:label="viewRecipeFragment" >
+        <action
+            android:id="@+id/action_nav_viewRecipes_to_nav_recipes"
+            app:destination="@id/nav_recipes" />
     </fragment>
 
 </navigation>
