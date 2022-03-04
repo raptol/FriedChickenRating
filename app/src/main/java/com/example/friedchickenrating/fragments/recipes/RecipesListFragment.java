@@ -43,6 +43,7 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
 
     private List<Recipe> recipeList;
     private RecipesListAdapter recipesListAdapter;
+
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private static final String TAG = RecipesListFragment.class.getSimpleName();

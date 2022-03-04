@@ -61,31 +61,31 @@ public class RecipesListAdapter extends RecyclerView.Adapter {
 
         recipeViewHolder.txtRecipeItemTitle.setText(curRecipe.getRecipeTitle());
 
-//        Map<String, Object> pictures = curRecipe.getPictures();
-//        String filename = String.valueOf(pictures.get("filename"));
-//
-//        Log.d(TAG, "filename: " + filename);
-//
-//        if( !filename.isEmpty() && filename != null) {
-//            long size;
-//            final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-//            StorageReference storageReference
-//                    = firebaseStorage.getReference().child("images").child(filename);
-//            storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Uri> task) {
-//                    if (task.isSuccessful()) {
-//                        Glide.with(holder.itemView.getContext())
-//                                .load(task.getResult())
-//                                .into(((RecipeViewHolder) holder).imgRecipeItemPhoto);
-//                        ((RecipeViewHolder) holder).imgRecipeItemPhoto.invalidate();
-//                    } else {
-//                        Toast.makeText(holder.itemView.getContext(),
-//                                "Fail to load image", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            });
-//        }
+        Map<String, Object> pictures = curRecipe.getPictures();
+        String filename = String.valueOf(pictures.get("filename"));
+
+        Log.d(TAG, "filename: " + filename);
+
+        if( !filename.isEmpty() && filename != null) {
+            long size;
+            final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+            StorageReference storageReference
+                    = firebaseStorage.getReference().child("images").child(filename);
+            storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Glide.with(holder.itemView.getContext())
+                                .load(task.getResult())
+                                .into(((RecipeViewHolder) holder).imgRecipeItemPhoto);
+                        ((RecipeViewHolder) holder).imgRecipeItemPhoto.invalidate();
+                    } else {
+                        Toast.makeText(holder.itemView.getContext(),
+                                "Fail to load image", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
 
         recipeViewHolder.imgRecipeItemPhoto.setOnClickListener(new View.OnClickListener() {
             @Override

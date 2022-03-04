@@ -1,5 +1,7 @@
 package com.example.friedchickenrating.fragments.recipes;
 
+import com.google.firebase.Timestamp;
+
 import java.util.Map;
 
 public class Recipe {
@@ -8,15 +10,17 @@ public class Recipe {
     private String ingredients;
     private String steps;
     private Map<String, Object> pictures;
+    private Timestamp timestamp;
 
     public Recipe() { }
 
-    public Recipe(String recipeId, String recipeTitle, String ingredients, String steps, Map<String, Object> pictures) {
+    public Recipe(String recipeId, String recipeTitle, String ingredients, String steps, Map<String, Object> pictures, Timestamp timestamp) {
         this.recipeId = recipeId;
         this.recipeTitle = recipeTitle;
         this.ingredients = ingredients;
         this.steps = steps;
         this.pictures = pictures;
+        this.timestamp = timestamp;
     }
 
     public String getRecipeId() {
@@ -57,6 +61,14 @@ public class Recipe {
 
     public void setPictures(Map<String, Object> pictures) {
         this.pictures = pictures;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }
 
