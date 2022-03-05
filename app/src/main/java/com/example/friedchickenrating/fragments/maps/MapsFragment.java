@@ -172,7 +172,7 @@ public class MapsFragment extends Fragment {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-//                    Log.d(TAG, "onLocationChanged, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
+                    Log.d(TAG, "onLocationChanged, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
                 }
             };
 
@@ -183,11 +183,8 @@ public class MapsFragment extends Fragment {
     private boolean checkPermission() {
         int hasFineLocationPermission =
                 ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-        int hasCoarseLocationPermission =
-                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
 
@@ -195,10 +192,7 @@ public class MapsFragment extends Fragment {
     }
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions(getActivity(),
-                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                LOCATION_PERMISSION_REQUEST_CODE);
+        permissionResultCallback.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
     private void enableMyLocation() {
@@ -206,6 +200,11 @@ public class MapsFragment extends Fragment {
         if (checkPermission()) {
 
             if (map != null) {
+
+                map.setMyLocationEnabled(true);
+                map.getUiSettings().setMyLocationButtonEnabled(true);
+                map.getUiSettings().setZoomControlsEnabled(true);
+                map.getUiSettings().setZoomGesturesEnabled(true);
 
                 //Get current location
                 locationManager.requestLocationUpdates(
@@ -215,11 +214,6 @@ public class MapsFragment extends Fragment {
                 if(lastUserKnownLocation != null) {
                     LatLng userLocation = new LatLng(lastUserKnownLocation.getLatitude(),
                             lastUserKnownLocation.getLongitude());
-
-                    map.setMyLocationEnabled(true);
-                    map.getUiSettings().setMyLocationButtonEnabled(true);
-                    map.getUiSettings().setZoomControlsEnabled(true);
-                    map.getUiSettings().setZoomGesturesEnabled(true);
 
                     //Request to point a place from View Rating
                     Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
@@ -524,6 +518,7 @@ public class MapsFragment extends Fragment {
                     }
                 }
             });
+
 
     @Override
     public void onDestroyView() {
