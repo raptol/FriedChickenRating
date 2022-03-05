@@ -174,8 +174,11 @@ public class MapsFragment extends Fragment {
                 public void onLocationChanged(@NonNull Location location) {
 
                     currentUserLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    if(currentUserLocation != null && !currentUserLocation.equals(prevUserLocation)) {
-                        Log.d(TAG, "onLocationChanged, latitude: " + currentUserLocation.latitude + ", longitude: " + currentUserLocation.longitude);
+                    if(currentUserLocation != null &&
+                        (Math.round(currentUserLocation.latitude) != Math.round(prevUserLocation.latitude) ||
+                         Math.round(currentUserLocation.longitude) != Math.round(prevUserLocation.longitude))) {
+                        Log.d(TAG, "onLocationChanged prevUserLocation, latitude: " + Math.round(prevUserLocation.latitude) + ", longitude: " + Math.round(prevUserLocation.longitude));
+                        Log.d(TAG, "onLocationChanged, currentUserLocation latitude: " + Math.round(currentUserLocation.latitude) + ", longitude: " + Math.round(currentUserLocation.longitude));
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentUserLocation, 17));
                         prevUserLocation = currentUserLocation;
                     }
