@@ -109,6 +109,8 @@ public class NewRatingFragment extends Fragment {
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         isEditing = false;
 
+                        ratingViewModel.setMapRequestCode(0); //initialize
+
                         Rating newRating = new Rating(); //initialize
                         ratingViewModel.setSelectedRating(newRating);//Rating initialize
 
