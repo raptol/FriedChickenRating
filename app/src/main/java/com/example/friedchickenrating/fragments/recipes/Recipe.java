@@ -7,18 +7,18 @@ import java.util.Map;
 public class Recipe {
     private String recipeId; //recipe id
     private String recipeTitle; //recipe title
-    private String ingredients;
-    private String steps;
+    private String recipeIngredients;
+    private String recipeSteps;
     private Map<String, Object> pictures;
     private Timestamp timestamp;
 
     public Recipe() { }
 
-    public Recipe(String recipeId, String recipeTitle, String ingredients, String steps, Map<String, Object> pictures, Timestamp timestamp) {
+    public Recipe(String recipeId, String recipeTitle, String recipeIngredients, String recipeSteps, Map<String, Object> pictures, Timestamp timestamp) {
         this.recipeId = recipeId;
         this.recipeTitle = recipeTitle;
-        this.ingredients = ingredients;
-        this.steps = steps;
+        this.recipeIngredients = recipeIngredients;
+        this.recipeSteps = recipeSteps;
         this.pictures = pictures;
         this.timestamp = timestamp;
     }
@@ -39,20 +39,20 @@ public class Recipe {
         this.recipeTitle = recipeTitle;
     }
 
-    public String getIngredients() {
-        return ingredients;
+    public String getRecipeIngredients() {
+        return recipeIngredients;
     }
 
-    public void setIngredients(String ingredients) {
-        this.ingredients = ingredients;
+    public void setRecipeIngredients(String recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
     }
 
-    public String getSteps() {
-        return steps;
+    public String getRecipeSteps() {
+        return recipeSteps;
     }
 
-    public void setSteps(String steps) {
-        this.steps = steps;
+    public void setRecipeSteps(String recipeSteps) {
+        this.recipeSteps = recipeSteps;
     }
 
     public Map<String, Object> getPictures() {

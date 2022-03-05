@@ -15,7 +15,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/recipeTitle"
+                android:id="@+id/viewRecipeTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -33,7 +33,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/imgViewPicture"
+                    android:id="@+id/imgViewRecipePicture"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_gravity="center_vertical"
