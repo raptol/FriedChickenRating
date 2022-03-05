@@ -90,6 +90,8 @@ public class MapsFragment extends Fragment {
     private LocationListener locationListener;
     private Boolean isShowCustomMarker = false;
 
+    private String previousGeoHash = null;
+
     private static final String TAG = "MapsFragment";
 
     @Nullable
@@ -171,8 +173,16 @@ public class MapsFragment extends Fragment {
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    Log.d(TAG, "onLocationChanged, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
+
+                    String currentGeoHash = GeoFireUtils.getGeoHashForLocation(
+                            new GeoLocation(location.getLatitude(), location.getLongitude()));
+
+                    if (!currentGeoHash.equals(previousGeoHash)) {
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        Log.d(TAG, "onLocationChanged, latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+                        previousGeoHash = currentGeoHash;
+                    }
                 }
             };
 
@@ -206,14 +216,26 @@ public class MapsFragment extends Fragment {
                 map.getUiSettings().setZoomControlsEnabled(true);
                 map.getUiSettings().setZoomGesturesEnabled(true);
 
+                map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                    @Override
+                    public boolean onMyLocationButtonClick() {
+
+                        Log.d(TAG, "Click My Location Button");
+                        return false;
+                    }
+                });
+
                 //Get current location
                 locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                        LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
 
                 Location lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if(lastUserKnownLocation != null) {
                     LatLng userLocation = new LatLng(lastUserKnownLocation.getLatitude(),
                             lastUserKnownLocation.getLongitude());
+
+                    previousGeoHash = GeoFireUtils.getGeoHashForLocation(
+                            new GeoLocation(userLocation.latitude, userLocation.longitude));
 
                     //Request to point a place from View Rating
                     Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
