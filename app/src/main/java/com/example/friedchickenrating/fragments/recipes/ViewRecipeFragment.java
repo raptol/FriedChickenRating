@@ -12,11 +12,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentViewRecipeBinding;
 import com.example.friedchickenrating.fragments.ratings.ViewRatingFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class viewRecipeFragment extends Fragment {
+public class ViewRecipeFragment extends Fragment {
     private RecipesViewModel recipeViewModel;
     private FragmentViewRecipeBinding binding;
     private FirebaseFirestore db;
@@ -123,7 +127,73 @@ public class viewRecipeFragment extends Fragment {
                     });
         }
 
+
+        //If login user is user who created current rating, enable Edit button
+        //else, disable Edit button
+//        if(user.getUid() != null && user.getUid().equals(curRecipe.getUserid())) {
+//            binding.btnEditRecipe.setVisibility(View.VISIBLE);
+//            binding.btnDeleteRecipe.setVisibility(View.VISIBLE);
+//        } else {
+//            binding.btnEditRecipe.setVisibility(View.INVISIBLE);
+//            binding.btnDeleteRecipe.setVisibility(View.INVISIBLE);
+//        }
+
+        //event handler for edit button
+        binding.btnEditRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
+                Bundle result = new Bundle();
+//                result.putString("placeId", selectedPlace.getPlaceid());
+//                result.putString("placeName", selectedPlace.getName());
+//                result.putDouble("latitude", selectedPlace.getLatitude());
+//                result.putDouble("longitude", selectedPlace.getLongitude());
+//                result.putString("region", region);
+
+                recipeViewModel.setSelectedRecipe(curRecipe);
+                recipeViewModel.setSelectedRecipeImage(binding.imgViewRecipePicture);
+
+                getParentFragmentManager().setFragmentResult("passByViewRecipe", result);
+
+                NavHostFragment.findNavController(ViewRecipeFragment.this)
+                        .navigate(R.id.action_nav_viewRecipes_to_newRecipeFragment3);
+            }
+        });
+
+        //event handler for delete button
+        binding.btnDeleteRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.collection("recipes").document(curRecipe.getRecipeId())
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d(TAG, "The recipe was successfully deleted!");
+                                Toast.makeText(getContext(), "delete the recipe success.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error deleting the recipe", e);
+                                Toast.makeText(getContext(), "delete the recipe error.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                //myAdapter.notifyItemRangeChanged()
+                NavHostFragment.findNavController(ViewRecipeFragment.this)
+                        .navigate(R.id.action_nav_viewRecipes_to_newRecipeFragment3);
+            }
+        });
+
+
     }
+
+
+
+
 
 
 

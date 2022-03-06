@@ -17,6 +17,7 @@
     <string name="menu_viewRating">View Rating</string>
     <string name="menu_ratings">Ratings</string>
     <string name="menu_recipes">Recipes</string>
+    <string name="menu_editRecipes">Edit Rating</string>
 
     <!-- Strings related to login -->
     <string name="error_invalid_email">Not a valid email</string>

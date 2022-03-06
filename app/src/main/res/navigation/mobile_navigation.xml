@@ -44,7 +44,7 @@
         android:id="@+id/nav_ratings"
         android:name="com.example.friedchickenrating.fragments.ratings.RatingListFragment"
         android:label="@string/menu_ratings"
-        tools:layout="@layout/fragment_rating_list" >
+        tools:layout="@layout/fragment_rating_list">
         <action
             android:id="@+id/action_nav_ratings_to_nav_newRating"
             app:destination="@id/nav_newRating" />
@@ -64,6 +64,9 @@
         <action
             android:id="@+id/action_nav_recipes_to_nav_viewRecipes"
             app:destination="@id/nav_viewRecipes" />
+        <action
+            android:id="@+id/action_nav_recipes_to_nav_newRecipe"
+            app:destination="@id/nav_newRecipe" />
     </fragment>
 
     <fragment
@@ -109,10 +112,24 @@
     </fragment>
     <fragment
         android:id="@+id/nav_viewRecipes"
-        android:name="com.example.friedchickenrating.fragments.recipes.viewRecipeFragment"
-        android:label="viewRecipeFragment" >
+        android:name="com.example.friedchickenrating.fragments.recipes.ViewRecipeFragment"
+        android:label="viewRecipeFragment">
         <action
             android:id="@+id/action_nav_viewRecipes_to_nav_recipes"
+            app:destination="@id/nav_recipes" />
+        <action
+            android:id="@+id/action_nav_viewRecipes_to_newRecipeFragment3"
+            app:destination="@id/nav_newRecipe" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_newRecipe"
+        android:name="com.example.friedchickenrating.fragments.recipes.NewRecipeFragment"
+        android:label="NewRecipeFragment">
+        <action
+            android:id="@+id/action_newRecipeFragment3_to_nav_viewRecipes"
+            app:destination="@id/nav_viewRecipes" />
+        <action
+            android:id="@+id/action_nav_newRecipe_to_nav_recipes"
             app:destination="@id/nav_recipes" />
     </fragment>
 
