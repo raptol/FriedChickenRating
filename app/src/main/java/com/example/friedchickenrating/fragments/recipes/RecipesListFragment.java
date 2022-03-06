@@ -151,13 +151,9 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
         binding.recyclerViewRecipeList.smoothScrollToPosition(0);
     }
 
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
-
 }

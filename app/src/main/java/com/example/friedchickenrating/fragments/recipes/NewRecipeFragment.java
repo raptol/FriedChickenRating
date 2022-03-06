@@ -171,8 +171,8 @@ public class NewRecipeFragment extends Fragment {
                 Recipe newRecipeData = new Recipe(recipeDocId,
                         binding.etNewRecipeName.getText().toString(),
                         binding.etRecipeIngredient1.getText().toString(),
-//                        user.getUid(),
                         binding.etRecipeStep1.getText().toString(),
+                        user.getUid(),
                         photoValues,
                         Timestamp.now());
 
@@ -196,7 +196,7 @@ public class NewRecipeFragment extends Fragment {
 
                 //myAdapter.notifyItemRangeChanged()
                 NavHostFragment.findNavController(NewRecipeFragment.this)
-                        .navigate(R.id.action_newRecipeFragment3_to_nav_viewRecipes);
+                        .navigate(R.id.action_nav_newRecipe_to_nav_recipes);
             }
         });
 
@@ -209,9 +209,8 @@ public class NewRecipeFragment extends Fragment {
     private void getValuesFromOtherFragment(Bundle result) {
 
         String recipeTitle = result.getString("recipeTitle");
-//        String placeName = result.getString("placeName");
-//        Double latitude = result.getDouble("latitude");
-//        Double longitude = result.getDouble("longitude");
+        String ingredients = result.getString("ingredients");
+        String steps = result.getString("steps");
 //        String region = result.getString("region");
 
         //recover stored data before switching from new rating to map

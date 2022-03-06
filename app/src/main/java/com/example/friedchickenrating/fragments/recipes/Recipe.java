@@ -9,16 +9,18 @@ public class Recipe {
     private String recipeTitle; //recipe title
     private String recipeIngredients;
     private String recipeSteps;
+    private String userid; //user id
     private Map<String, Object> pictures;
     private Timestamp timestamp;
 
     public Recipe() { }
 
-    public Recipe(String recipeId, String recipeTitle, String recipeIngredients, String recipeSteps, Map<String, Object> pictures, Timestamp timestamp) {
+    public Recipe(String recipeId, String recipeTitle, String recipeIngredients, String recipeSteps, String userid, Map<String, Object> pictures, Timestamp timestamp) {
         this.recipeId = recipeId;
         this.recipeTitle = recipeTitle;
         this.recipeIngredients = recipeIngredients;
         this.recipeSteps = recipeSteps;
+        this.userid = userid;
         this.pictures = pictures;
         this.timestamp = timestamp;
     }
@@ -53,6 +55,14 @@ public class Recipe {
 
     public void setRecipeSteps(String recipeSteps) {
         this.recipeSteps = recipeSteps;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 
     public Map<String, Object> getPictures() {

@@ -117,12 +117,10 @@ public class ViewRecipeFragment extends Fragment {
                                 });
                             }
 
-
                             binding.viewRecipeTitle.setText(curRecipe.getRecipeTitle());
                             binding.recipeIngredient1.setText(curRecipe.getRecipeIngredients());
                             binding.txtRecipeStep1.setText(curRecipe.getRecipeSteps());
-                            binding.txtRecipeStep2.setText(curRecipe.getRecipeSteps());
-
+//                            binding.txtRecipeStep2.setText(curRecipe.getRecipeSteps());
                         }
                     });
         }
@@ -130,13 +128,13 @@ public class ViewRecipeFragment extends Fragment {
 
         //If login user is user who created current rating, enable Edit button
         //else, disable Edit button
-//        if(user.getUid() != null && user.getUid().equals(curRecipe.getUserid())) {
-//            binding.btnEditRecipe.setVisibility(View.VISIBLE);
-//            binding.btnDeleteRecipe.setVisibility(View.VISIBLE);
-//        } else {
-//            binding.btnEditRecipe.setVisibility(View.INVISIBLE);
-//            binding.btnDeleteRecipe.setVisibility(View.INVISIBLE);
-//        }
+        if(user.getUid() != null && user.getUid().equals(curRecipe.getUserid())) {
+            binding.btnEditRecipe.setVisibility(View.VISIBLE);
+            binding.btnDeleteRecipe.setVisibility(View.VISIBLE);
+        } else {
+            binding.btnEditRecipe.setVisibility(View.INVISIBLE);
+            binding.btnDeleteRecipe.setVisibility(View.INVISIBLE);
+        }
 
         //event handler for edit button
         binding.btnEditRecipe.setOnClickListener(new View.OnClickListener() {
@@ -145,11 +143,11 @@ public class ViewRecipeFragment extends Fragment {
 
 //                Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
                 Bundle result = new Bundle();
-//                result.putString("placeId", selectedPlace.getPlaceid());
-//                result.putString("placeName", selectedPlace.getName());
-//                result.putDouble("latitude", selectedPlace.getLatitude());
-//                result.putDouble("longitude", selectedPlace.getLongitude());
-//                result.putString("region", region);
+                result.putString("recipeTitle", binding.viewRecipeTitle.toString());
+                result.putString("ingredients", binding.recipeIngredient1.toString());
+                result.putString("steps", binding.txtRecipeStep1.toString());
+//                result.putDouble("steps", selectedPlace.getLatitude());
+
 
                 recipeViewModel.setSelectedRecipe(curRecipe);
                 recipeViewModel.setSelectedRecipeImage(binding.imgViewRecipePicture);
@@ -184,7 +182,7 @@ public class ViewRecipeFragment extends Fragment {
 
                 //myAdapter.notifyItemRangeChanged()
                 NavHostFragment.findNavController(ViewRecipeFragment.this)
-                        .navigate(R.id.action_nav_viewRecipes_to_newRecipeFragment3);
+                        .navigate(R.id.action_nav_viewRecipes_to_nav_recipes);
             }
         });
 
