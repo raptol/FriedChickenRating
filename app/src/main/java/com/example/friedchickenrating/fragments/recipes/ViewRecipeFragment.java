@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ViewRecipeFragment extends Fragment {
-    private RecipesViewModel recipeViewModel;
+    private RecipesViewModel recipesViewModel;
     private FragmentViewRecipeBinding binding;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -56,7 +56,7 @@ public class ViewRecipeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        recipeViewModel = new ViewModelProvider(requireActivity()).get(RecipesViewModel.class);
+        recipesViewModel = new ViewModelProvider(requireActivity()).get(RecipesViewModel.class);
         binding = FragmentViewRecipeBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
         return rootView;
@@ -72,7 +72,7 @@ public class ViewRecipeFragment extends Fragment {
 
         recipeList = new ArrayList<>();
 
-        Recipe curRecipe = recipeViewModel.getSelectedRecipe().getValue();
+        Recipe curRecipe = recipesViewModel.getSelectedRecipe().getValue();
 
         Log.d(TAG, "curRecipe.id: " + curRecipe.getRecipeId());
         Log.d(TAG, "curRecipe.title: " + curRecipe.getRecipeTitle());
@@ -149,10 +149,10 @@ public class ViewRecipeFragment extends Fragment {
 //                result.putDouble("steps", selectedPlace.getLatitude());
 
 
-                recipeViewModel.setSelectedRecipe(curRecipe);
-                recipeViewModel.setSelectedRecipeImage(binding.imgViewRecipePicture);
+                recipesViewModel.setSelectedRecipe(curRecipe);
+                recipesViewModel.setSelectedRecipeImage(binding.imgViewRecipePicture);
 
-                getParentFragmentManager().setFragmentResult("passByViewRecipe", result);
+                getParentFragmentManager().setFragmentResult("passByViewRecipes", result);
 
                 NavHostFragment.findNavController(ViewRecipeFragment.this)
                         .navigate(R.id.action_nav_viewRecipes_to_newRecipeFragment3);

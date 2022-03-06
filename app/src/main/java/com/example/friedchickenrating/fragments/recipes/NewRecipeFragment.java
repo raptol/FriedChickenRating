@@ -59,6 +59,7 @@ public class NewRecipeFragment extends Fragment {
     private Uri filePath;
     private String fileName;
 
+    private Recipe recipeData;
     private Boolean isEditing = false;
 
     private static final String TAG = NewRecipeFragment.class.getSimpleName();
@@ -84,6 +85,8 @@ public class NewRecipeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        recipeData = new Recipe();
 
         imgViewNewPhoto = binding.imgViewRecipePicture;
         db = FirebaseFirestore.getInstance();
@@ -208,11 +211,19 @@ public class NewRecipeFragment extends Fragment {
 
     private void getValuesFromOtherFragment(Bundle result) {
 
+//        recipeData = recipesViewModel.getSelectedRecipe().getValue();
+
         String recipeTitle = result.getString("recipeTitle");
         String ingredients = result.getString("ingredients");
         String steps = result.getString("steps");
 //        String region = result.getString("region");
 
+        recipeData.setRecipeTitle(recipeTitle);
+        recipeData.setRecipeIngredients(ingredients);
+        recipeData.setRecipeSteps(steps);
+
+
+//        binding.etNewRecipeName.setText(recipeData.getRecipeTitle());
         //recover stored data before switching from new rating to map
         filePath = recipesViewModel.getSelectedRecipeImageFilePath().getValue();
         Log.d(TAG, "filePath==> " + filePath);

@@ -148,6 +148,15 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
             }
         });
 
+        //event hundler for add recipe button
+        binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(RecipesListFragment.this)
+                        .navigate(R.id.action_nav_recipes_to_nav_newRecipe);
+            }
+        });
+
         binding.recyclerViewRecipeList.smoothScrollToPosition(0);
     }
 
