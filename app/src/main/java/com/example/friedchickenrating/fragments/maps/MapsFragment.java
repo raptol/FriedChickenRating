@@ -176,9 +176,9 @@ public class MapsFragment extends Fragment {
                     currentUserLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     if( ((prevUserLocation != null && prevUserLocation.latitude != 0 && prevUserLocation.latitude != 0) &&
                          (currentUserLocation != null && currentUserLocation.latitude != 0 && currentUserLocation.latitude != 0)) ) {
-                        if ( (Math.round(currentUserLocation.latitude) != Math.round(prevUserLocation.latitude) ||
-                              Math.round(currentUserLocation.longitude) != Math.round(prevUserLocation.longitude))) {
-                            Log.d(TAG, "onLocationChanged, currentUserLocation latitude: " + Math.round(currentUserLocation.latitude) + ", longitude: " + Math.round(currentUserLocation.longitude));
+                        if ( (Math.floor(currentUserLocation.latitude * 1000) != Math.floor(prevUserLocation.latitude * 1000) ||
+                              Math.floor(currentUserLocation.longitude * 1000) != Math.floor(prevUserLocation.longitude * 1000))) {
+                            Log.d(TAG, "onLocationChanged, currentUserLocation latitude: " + Math.round(currentUserLocation.latitude * 1000) + ", longitude: " + Math.round(currentUserLocation.longitude * 1000));
                             map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentUserLocation, 17));
                             prevUserLocation = currentUserLocation;
                         }
@@ -241,6 +241,8 @@ public class MapsFragment extends Fragment {
                 if(lastUserKnownLocation != null) {
                     currentUserLocation = new LatLng(lastUserKnownLocation.getLatitude(), lastUserKnownLocation.getLongitude());
                     prevUserLocation = currentUserLocation;
+
+                    Log.d(TAG, "onLocationChanged, initialUserLocation: " + prevUserLocation);
 
                     //Request to point a place from View Rating
                     Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
