@@ -58,8 +58,6 @@ public class ViewRatingFragment extends Fragment {
 
     private List<Rating> ratingList;
     private RatingPlace selectedPlace;
-    static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
-    static final int REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING = 2;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
 
@@ -160,7 +158,7 @@ public class ViewRatingFragment extends Fragment {
 
                 ratingViewModel.setSelectedRating(curRating);
                 ratingViewModel.setSelectedRatingPlace(selectedPlace);
-                ratingViewModel.setMapRequestCode(REQUEST_MAP_PLACE_FOR_VIEW_RATING);
+                ratingViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_VIEW_RATING);
 
                 NavHostFragment.findNavController(ViewRatingFragment.this)
                         .navigate(R.id.action_nav_viewRatings_to_nav_maps);
@@ -238,7 +236,7 @@ public class ViewRatingFragment extends Fragment {
             public void onClick(View view) {
 
                 ratingViewModel.setSelectedRatingPlace(selectedPlace);
-                ratingViewModel.setMapRequestCode(REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING);
+                ratingViewModel.setMapRequestCode(BottomSheetFragment.REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING);
 
                 BottomSheetFragment bottomSheetFragment
                         = BottomSheetFragment.newInstance(

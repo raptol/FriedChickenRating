@@ -77,10 +77,8 @@ public class MapsFragment extends Fragment {
     private FirebaseAuth auth;
     private FirebaseUser user;
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
-    static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
-    static final int REQUEST_BOTTOM_SHEET_FOR_MAP = 1;
+    public static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
+    public static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
 
     private GoogleMap map;
     private LocationManager locationManager;
@@ -89,8 +87,7 @@ public class MapsFragment extends Fragment {
 
     LatLng currentUserLocation = null;
     LatLng prevUserLocation = null;
-
-
+    
     private static final String TAG = MapsFragment.class.getSimpleName();
 
     @Nullable
@@ -305,7 +302,7 @@ public class MapsFragment extends Fragment {
                                     region);
 
                             ratingViewModel.setSelectedRatingPlace(ratingPlace);
-                            ratingViewModel.setMapRequestCode(REQUEST_BOTTOM_SHEET_FOR_MAP);
+                            ratingViewModel.setMapRequestCode(BottomSheetFragment.REQUEST_BOTTOM_SHEET_FOR_MAP);
                             BottomSheetFragment bottomSheetFragment
                                     = BottomSheetFragment.newInstance(
                                     pointOfInterest.placeId,
@@ -353,7 +350,7 @@ public class MapsFragment extends Fragment {
                                                     RatingPlace place = document.toObject(RatingPlace.class);
 
                                                     ratingViewModel.setSelectedRatingPlace(place);
-                                                    ratingViewModel.setMapRequestCode(REQUEST_BOTTOM_SHEET_FOR_MAP);
+                                                    ratingViewModel.setMapRequestCode(BottomSheetFragment.REQUEST_BOTTOM_SHEET_FOR_MAP);
                                                     BottomSheetFragment bottomSheetFragment
                                                             = BottomSheetFragment.newInstance(
                                                             place.getPlaceid(),

@@ -56,8 +56,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     private RatingViewModel ratingViewModel;
     private FragmentBottomSheetDialogBinding binding;
 
-    static final int REQUEST_BOTTOM_SHEET_FOR_MAP = 1;
-    static final int REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING = 2;
+    public static final int REQUEST_BOTTOM_SHEET_FOR_MAP = 11;
+    public static final int REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING = 12;
     Integer requestCode;
 
     List<Rating> ratingList;
