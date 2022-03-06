@@ -77,8 +77,8 @@ public class MapsFragment extends Fragment {
     private FirebaseAuth auth;
     private FirebaseUser user;
 
-    public static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
-    public static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
+    public static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 101;
+    public static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 102;
 
     private GoogleMap map;
     private LocationManager locationManager;
@@ -87,7 +87,7 @@ public class MapsFragment extends Fragment {
 
     LatLng currentUserLocation = null;
     LatLng prevUserLocation = null;
-    
+
     private static final String TAG = MapsFragment.class.getSimpleName();
 
     @Nullable
