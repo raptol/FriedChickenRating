@@ -74,7 +74,6 @@ public class NewRatingFragment extends Fragment {
     private static final String TAG = NewRatingFragment.class.getSimpleName();
     static final int REQUEST_IMAGE_SELECT = 0;
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -210,7 +209,7 @@ public class NewRatingFragment extends Fragment {
                 ratingViewModel.setSelectedRating(saveRatingData);
                 ratingViewModel.setSelectedRatingImage(binding.imgViewPicture);
                 ratingViewModel.setSelectedRatingImageFilePath(filePath);
-                ratingViewModel.setMapRequestCode(REQUEST_MAP_PLACE_FOR_ADD_RATING);
+                ratingViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_ADD_RATING);
 
                 NavHostFragment.findNavController(NewRatingFragment.this)
                         .navigate(R.id.action_nav_newRating_to_nav_maps);
