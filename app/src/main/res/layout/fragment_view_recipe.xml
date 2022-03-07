@@ -194,7 +194,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:text="Step 1"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="invisible" />
 
                 <TextView
                     android:id="@+id/txtRecipeStep1"

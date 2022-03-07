@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -34,6 +35,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ViewRecipeFragment extends Fragment {
     private RecipesViewModel recipesViewModel;
@@ -74,6 +76,9 @@ public class ViewRecipeFragment extends Fragment {
 
         Log.d(TAG, "curRecipe.id: " + curRecipe.getRecipeId());
         Log.d(TAG, "curRecipe.title: " + curRecipe.getRecipeTitle());
+
+        //Change the title of action bar to Edit Recipe
+        Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setTitle(getString(R.string.menu_viewRecipe));
 
         // Listen for realtime updates of the places
         if(curRecipe != null && curRecipe.getRecipeId() != null) {
