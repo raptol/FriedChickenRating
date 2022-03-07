@@ -101,7 +101,26 @@ public class NewRecipeFragment extends Fragment {
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         isEditing = true;
 
-                        getValuesFromOtherFragment(result);
+                        ImageView tempPhoto = recipesViewModel.getSelectedRecipeImage().getValue();
+                        if(tempPhoto != null) {
+                            BitmapDrawable tempPhotoDrawable = (BitmapDrawable) tempPhoto.getDrawable();
+                            if (tempPhotoDrawable != null) {
+                                Bitmap bitmap = tempPhotoDrawable.getBitmap();
+                                binding.imgViewRecipePicture.setImageBitmap(bitmap);
+                                binding.imgViewRecipePicture.invalidate();
+                            }
+                        }
+
+                        Recipe selectedRecipe = recipesViewModel.getSelectedRecipe().getValue();
+                        if(selectedRecipe != null) {
+                            binding.etNewRecipeName.setText(selectedRecipe.getRecipeTitle());
+                            binding.etRecipeIngredient1.setText(selectedRecipe.getRecipeIngredients());
+                            binding.etRecipeStep1.setText(selectedRecipe.getRecipeSteps());
+
+                            recipeData.setRecipeTitle(selectedRecipe.getRecipeTitle());
+                            recipeData.setRecipeIngredients(selectedRecipe.getRecipeIngredients());
+                            recipeData.setRecipeSteps(selectedRecipe.getRecipeSteps());
+                        }
 
                         //Change the title of action bar to Edit Recipe
                         Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setTitle(getString(R.string.menu_editRecipes));
@@ -158,9 +177,9 @@ public class NewRecipeFragment extends Fragment {
                     Photo photo = new Photo(fileName, photoDateTime);
                     photoValues = photo.toMap();
                 }else {  // get value from edit if the file is not updated
-                    Recipe recoverRecipeData = recipesViewModel.getSelectedRecipe().getValue();
-                    if(recoverRecipeData != null) {
-                        photoValues = recoverRecipeData.getPictures();
+                    Recipe selectedRecipe = recipesViewModel.getSelectedRecipe().getValue();
+                    if(selectedRecipe != null) {
+                        photoValues = selectedRecipe.getPictures();
                     }
                 }
 
@@ -179,6 +198,8 @@ public class NewRecipeFragment extends Fragment {
                         user.getUid(),
                         photoValues,
                         Timestamp.now());
+
+                Log.d(TAG, "recipeDocId: " + recipeDocId);
 
                 db.collection("recipes").document(recipeDocId)
                         .set(newRecipeData)
@@ -208,45 +229,6 @@ public class NewRecipeFragment extends Fragment {
         if(fab != null) {
             fab.setVisibility(View.INVISIBLE);
         }
-    }
-
-    private void getValuesFromOtherFragment(Bundle result) {
-
-//        recipeData = recipesViewModel.getSelectedRecipe().getValue();
-
-        String recipeTitle = result.getString("recipeTitle");
-        String ingredients = result.getString("ingredients");
-        String steps = result.getString("steps");
-//        String region = result.getString("region");
-
-        recipeData.setRecipeTitle(recipeTitle);
-        recipeData.setRecipeIngredients(ingredients);
-        recipeData.setRecipeSteps(steps);
-
-
-//        binding.etNewRecipeName.setText(recipeData.getRecipeTitle());
-        //recover stored data before switching from new rating to map
-        filePath = recipesViewModel.getSelectedRecipeImageFilePath().getValue();
-        Log.d(TAG, "filePath==> " + filePath);
-
-        ImageView tempPhoto = recipesViewModel.getSelectedRecipeImage().getValue();
-        if(tempPhoto != null) {
-            BitmapDrawable tempPhotoDrawable = (BitmapDrawable) tempPhoto.getDrawable();
-            if (tempPhotoDrawable != null) {
-                Bitmap bitmap = tempPhotoDrawable.getBitmap();
-                binding.imgViewRecipePicture.setImageBitmap(bitmap);
-                binding.imgViewRecipePicture.invalidate();
-            }
-        }
-
-        Recipe recoverRecipeData = recipesViewModel.getSelectedRecipe().getValue();
-        if(recoverRecipeData != null) {
-            binding.etNewRecipeName.setText(recoverRecipeData.getRecipeTitle());
-            binding.etRecipeIngredient1.setText(recoverRecipeData.getRecipeIngredients());
-            binding.etRecipeStep1.setText(recoverRecipeData.getRecipeSteps());
-        }
-
-        getChildFragmentManager().popBackStack();
     }
 
     @Override

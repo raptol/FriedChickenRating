@@ -80,54 +80,36 @@ public class ViewRecipeFragment extends Fragment {
         //Change the title of action bar to Edit Recipe
         Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setTitle(getString(R.string.menu_viewRecipe));
 
-        // Listen for realtime updates of the places
-        if(curRecipe != null && curRecipe.getRecipeId() != null) {
-            db.collection("recipes").document(curRecipe.getRecipeId())
-                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable DocumentSnapshot value,
-                                            @Nullable FirebaseFirestoreException error) {
-                            if (error != null) {
-                                Log.w(TAG, "Listen failed.", error);
-                                return;
-                            }
+        // download and display images
+        Map<String, Object> pictures = curRecipe.getPictures();
+        String filename = String.valueOf(pictures.get("filename"));
+        Log.d(TAG, "filename: " + filename);
 
-//                            selectedPlace = value.toObject(RatingPlace.class);
-
-                            // download and display images
-                            Map<String, Object> pictures = curRecipe.getPictures();
-                            String filename = String.valueOf(pictures.get("filename"));
-                            Log.d(TAG, "filename: " + filename);
-
-                            if (!filename.isEmpty() && filename != null) {
-                                long size;
-                                final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-                                StorageReference storageReference
-                                        = firebaseStorage.getReference().child("images").child(filename);
-                                storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.isSuccessful()) {
-                                            Glide.with(getActivity())
-                                                    .load(task.getResult())
-                                                    .into(binding.imgViewRecipePicture);
-                                            binding.imgViewRecipePicture.invalidate();
-                                        } else {
-                                            Toast.makeText(getContext(),
-                                                    "Fail to load image", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                            }
-
-                            binding.viewRecipeTitle.setText(curRecipe.getRecipeTitle());
-                            binding.recipeIngredient1.setText(curRecipe.getRecipeIngredients());
-                            binding.txtRecipeStep1.setText(curRecipe.getRecipeSteps());
-//                            binding.txtRecipeStep2.setText(curRecipe.getRecipeSteps());
-                        }
-                    });
+        if (!filename.isEmpty() && filename != null) {
+            long size;
+            final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+            StorageReference storageReference
+                    = firebaseStorage.getReference().child("images").child(filename);
+            storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Glide.with(getActivity())
+                                .load(task.getResult())
+                                .into(binding.imgViewRecipePicture);
+                        binding.imgViewRecipePicture.invalidate();
+                    } else {
+                        Toast.makeText(getContext(),
+                                "Fail to load image", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
 
+        binding.viewRecipeTitle.setText(curRecipe.getRecipeTitle());
+        binding.recipeIngredient1.setText(curRecipe.getRecipeIngredients());
+        binding.txtRecipeStep1.setText(curRecipe.getRecipeSteps());
+//                            binding.txtRecipeStep2.setText(curRecipe.getRecipeSteps());
 
         //If login user is user who created current rating, enable Edit button
         //else, disable Edit button
@@ -144,18 +126,10 @@ public class ViewRecipeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-//                Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
-                Bundle result = new Bundle();
-                result.putString("recipeTitle", binding.viewRecipeTitle.toString());
-                result.putString("ingredients", binding.recipeIngredient1.toString());
-                result.putString("steps", binding.txtRecipeStep1.toString());
-//                result.putDouble("steps", selectedPlace.getLatitude());
-
-
                 recipesViewModel.setSelectedRecipe(curRecipe);
                 recipesViewModel.setSelectedRecipeImage(binding.imgViewRecipePicture);
 
-                getParentFragmentManager().setFragmentResult("passByViewRecipes", result);
+                getParentFragmentManager().setFragmentResult("passByViewRecipes", new Bundle());
 
                 NavHostFragment.findNavController(ViewRecipeFragment.this)
                         .navigate(R.id.action_nav_viewRecipes_to_newRecipeFragment3);
@@ -183,20 +157,11 @@ public class ViewRecipeFragment extends Fragment {
                             }
                         });
 
-                //myAdapter.notifyItemRangeChanged()
                 NavHostFragment.findNavController(ViewRecipeFragment.this)
                         .navigate(R.id.action_nav_viewRecipes_to_nav_recipes);
             }
         });
-
-
     }
-
-
-
-
-
-
 
     @Override
     public void onDestroyView() {
