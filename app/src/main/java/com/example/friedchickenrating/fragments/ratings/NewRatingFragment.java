@@ -245,14 +245,16 @@ public class NewRatingFragment extends Fragment {
                 //upload image to Google Firebase Storage
                 Map<String, Object> photoValues = null;
                 if(filePath != null) {
-                    uploadImageToFirebaseStorage();
-
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date now = new Date();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                    fileName = formatter.format(now) + ".jpg";
+
+                    formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String photoDateTime = formatter.format(now);
 
                     Photo photo = new Photo(fileName, photoDateTime);
                     photoValues = photo.toMap();
+
                 }else {  // get value from edit if the file is not updated
                     Rating recoverRatingData = ratingViewModel.getSelectedRating().getValue();
                     if(recoverRatingData != null) {
@@ -303,6 +305,13 @@ public class NewRatingFragment extends Fragment {
                                                     Log.d(TAG, "New place was successfully saved!");
                                                     Log.d(TAG, "Document ID:" + placeData.getPlaceid());
                                                     Toast.makeText(getContext(), "add new place success.", Toast.LENGTH_SHORT).show();
+
+                                                    if(filePath != null) {
+                                                        uploadImageToFirebaseStorage();
+                                                    } else {
+                                                        NavHostFragment.findNavController(NewRatingFragment.this)
+                                                                .navigate(R.id.action_nav_newRating_to_nav_ratings);
+                                                    }
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -323,9 +332,6 @@ public class NewRatingFragment extends Fragment {
                             }
                         });
 
-                //myAdapter.notifyItemRangeChanged()
-                NavHostFragment.findNavController(NewRatingFragment.this)
-                        .navigate(R.id.action_nav_newRating_to_nav_ratings);
             }
         });
 
@@ -430,10 +436,6 @@ public class NewRatingFragment extends Fragment {
             progressDialog.setTitle("is uploading...");
             progressDialog.show();
 
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            Date now = new Date();
-            fileName = formatter.format(now) + ".jpg";
-
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReference().child("images/" + fileName);
             storageReference.putFile(filePath)
@@ -441,6 +443,9 @@ public class NewRatingFragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
+
+                            NavHostFragment.findNavController(NewRatingFragment.this)
+                                    .navigate(R.id.action_nav_newRating_to_nav_ratings);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
