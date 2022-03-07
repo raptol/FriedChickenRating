@@ -64,13 +64,6 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
         binding = FragmentRecipesListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-//        final TextView textView = binding.textRecipes;
-//        recipesViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
         return root;
     }
 
@@ -148,7 +141,7 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
             }
         });
 
-        //event hundler for add recipe button
+        //event handler for add recipe button
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

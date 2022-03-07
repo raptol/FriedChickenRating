@@ -43,8 +43,6 @@ public class ViewRecipeFragment extends Fragment {
     private FirebaseUser user;
 
     private List<Recipe> recipeList;
-    static final int REQUEST_MAP_PLACE_FOR_VIEW_RATING = 2;
-    static final int REQUEST_BOTTOM_SHEET_FOR_VIEW_RATING = 2;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
 
@@ -78,7 +76,7 @@ public class ViewRecipeFragment extends Fragment {
         Log.d(TAG, "curRecipe.title: " + curRecipe.getRecipeTitle());
 
         // Listen for realtime updates of the places
-        if(curRecipe != null) {
+        if(curRecipe != null && curRecipe.getRecipeId() != null) {
             db.collection("recipes").document(curRecipe.getRecipeId())
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override

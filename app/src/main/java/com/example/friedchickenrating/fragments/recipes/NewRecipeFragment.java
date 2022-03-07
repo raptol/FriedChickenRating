@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 public class NewRecipeFragment extends Fragment {
 
@@ -103,7 +104,7 @@ public class NewRecipeFragment extends Fragment {
                         getValuesFromOtherFragment(result);
 
                         //Change the title of action bar to Edit Recipe
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.menu_editRecipes));
+                        Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setTitle(getString(R.string.menu_editRecipes));
                     }
                 });
 
