@@ -168,10 +168,11 @@ public class NewRecipeFragment extends Fragment {
                 //upload image to Google Firebase Storage
                 Map<String, Object> photoValues = null;
                 if(filePath != null) {
-                    uploadImageToFirebaseStorage();
-
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date now = new Date();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                    fileName = formatter.format(now) + ".jpg";
+
+                    formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String photoDateTime = formatter.format(now);
 
                     Photo photo = new Photo(fileName, photoDateTime);
@@ -209,6 +210,8 @@ public class NewRecipeFragment extends Fragment {
                                 Log.d(TAG, "New recipe was successfully saved!");
                                 Log.d(TAG, "Document ID:" + recipeDocId);
                                 Toast.makeText(getContext(), "add new recipe success.", Toast.LENGTH_SHORT).show();
+
+                                uploadImageToFirebaseStorage();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -218,10 +221,6 @@ public class NewRecipeFragment extends Fragment {
                                 Toast.makeText(getContext(), "add new recipe error.", Toast.LENGTH_SHORT).show();
                             }
                         });
-
-                //myAdapter.notifyItemRangeChanged()
-                NavHostFragment.findNavController(NewRecipeFragment.this)
-                        .navigate(R.id.action_nav_newRecipe_to_nav_recipes);
             }
         });
 
@@ -269,10 +268,6 @@ public class NewRecipeFragment extends Fragment {
             progressDialog.setTitle("is uploading...");
             progressDialog.show();
 
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            Date now = new Date();
-            fileName = formatter.format(now) + ".jpg";
-
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReference().child("images/" + fileName);
             storageReference.putFile(filePath)
@@ -280,6 +275,9 @@ public class NewRecipeFragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
+
+                            NavHostFragment.findNavController(NewRecipeFragment.this)
+                                    .navigate(R.id.action_nav_newRecipe_to_nav_recipes);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
