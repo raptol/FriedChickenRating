@@ -211,7 +211,12 @@ public class NewRecipeFragment extends Fragment {
                                 Log.d(TAG, "Document ID:" + recipeDocId);
                                 Toast.makeText(getContext(), "add new recipe success.", Toast.LENGTH_SHORT).show();
 
-                                uploadImageToFirebaseStorage();
+                                if(filePath != null) {
+                                    uploadImageToFirebaseStorage();
+                                } else {
+                                    NavHostFragment.findNavController(NewRecipeFragment.this)
+                                            .navigate(R.id.action_nav_newRecipe_to_nav_recipes);
+                                }
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
