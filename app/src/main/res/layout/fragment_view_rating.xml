@@ -76,8 +76,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.6"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -102,25 +102,53 @@
                         android:src="@drawable/home_map" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/viewRatingRegion"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
                     android:layout_marginTop="5dp"
-                    android:gravity="center"
-                    android:paddingLeft="4dp"
-                    android:text="Burnaby"
-                    android:textSize="16sp" />
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/viewRatingChickenType"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:gravity="center"
-                    android:paddingLeft="4dp"
-                    android:text="Korean"
-                    android:textSize="16sp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/viewRatingRegion"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Burnaby"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/viewRatingChickenType"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Korean"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/btnMyFavorite"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:src="@drawable/ic_icon_favorite" />
+
+                </LinearLayout>
+
+
+
+
 
             </LinearLayout>
 

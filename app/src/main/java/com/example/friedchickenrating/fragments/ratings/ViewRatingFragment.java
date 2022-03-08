@@ -25,6 +25,7 @@ import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
 import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.example.friedchickenrating.databinding.FragmentViewRatingBinding;
+import com.example.friedchickenrating.fragments.favorites.Favorite;
 import com.example.friedchickenrating.fragments.maps.BottomSheetFragment;
 import com.example.friedchickenrating.fragments.maps.MapsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -58,6 +59,8 @@ public class ViewRatingFragment extends Fragment {
 
     private List<Rating> ratingList;
     private RatingPlace selectedPlace;
+    private Favorite favorite = null;
+    private Boolean isFavorite = false;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
 
@@ -170,10 +173,93 @@ public class ViewRatingFragment extends Fragment {
         if(user.getUid() != null && user.getUid().equals(curRating.getUserid())) {
             binding.btnEditRating.setVisibility(View.VISIBLE);
             binding.btnDeleteRating.setVisibility(View.VISIBLE);
+
         } else {
             binding.btnEditRating.setVisibility(View.INVISIBLE);
             binding.btnDeleteRating.setVisibility(View.INVISIBLE);
         }
+
+
+        //If login user is user who selected current rating as favorite, show color image
+        //else, show grey image
+        showNotSelectedFavoriteButton();
+        if(user.getUid() != null) {
+
+            db.collection("favorites")
+                    .whereEqualTo("userid", user.getUid())
+                    .whereEqualTo("ratingid", curRating.getId())
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value,
+                                            @Nullable FirebaseFirestoreException error) {
+                            if(error != null) {
+                                Log.w(TAG, "Listen failed.", error);
+                                return;
+                            }
+
+                            if(value.size() > 0) {
+                                DocumentSnapshot document = value.getDocuments().get(0);
+                                if (document != null) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    favorite = document.toObject(Favorite.class);
+
+                                    showSelectedFavoriteButton();
+                                }
+                            }
+                        }
+                    });
+        }
+
+        //event handler for my favorite button
+        binding.btnMyFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Click to my favorite
+                if(isFavorite) { // favorite is already selected
+                    db.collection("favorites").document(favorite.getId())
+                            .delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.d(TAG, "The favorite was successfully deleted!");
+                                    Toast.makeText(getContext(), "delete the favorite success.", Toast.LENGTH_SHORT).show();
+
+                                    showNotSelectedFavoriteButton();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error deleting the favorite", e);
+                                    Toast.makeText(getContext(), "delete the favorite error.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } else {
+                    String favoriteDocId = db.collection("favorites").document().getId();
+
+                    favorite = new Favorite(favoriteDocId, user.getUid(), curRating.getId());
+                    db.collection("favorites").document(favoriteDocId)
+                        .set(favorite)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d(TAG, "New favorite was successfully saved!");
+                                Log.d(TAG, "Document ID:" + favoriteDocId);
+                                Toast.makeText(getContext(), "add new favorite success.", Toast.LENGTH_SHORT).show();
+
+                                showSelectedFavoriteButton();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error saving data", e);
+                                Toast.makeText(getContext(), "add new favorite error.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                }
+            }
+        });
 
         //event handler for edit button
         binding.btnEditRating.setOnClickListener(new View.OnClickListener() {
@@ -246,6 +332,16 @@ public class ViewRatingFragment extends Fragment {
                 bottomSheetFragment.show(getParentFragmentManager(), BottomSheetFragment.TAG);
             }
         });
+    }
+
+    private void showSelectedFavoriteButton() {
+        isFavorite = true;
+        binding.btnMyFavorite.setImageResource(R.drawable.home_favorite);
+    }
+
+    private void showNotSelectedFavoriteButton() {
+        isFavorite = false;
+        binding.btnMyFavorite.setImageResource(R.drawable.ic_icon_favorite);
     }
 
     @Override

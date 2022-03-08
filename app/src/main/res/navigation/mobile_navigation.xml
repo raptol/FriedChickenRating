@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_nav_home_to_nav_ratings"
             app:destination="@id/nav_ratings" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_my_favorites"
+            app:destination="@id/nav_my_favorites" />
     </fragment>
 
     <fragment
@@ -131,6 +134,15 @@
         <action
             android:id="@+id/action_nav_newRecipe_to_nav_recipes"
             app:destination="@id/nav_recipes" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_my_favorites"
+        android:name="com.example.friedchickenrating.fragments.favorites.FavoriteListFragment"
+        android:label="@string/menu_my_favorites"
+        tools:layout="@layout/fragment_favorite_list" >
+        <action
+            android:id="@+id/action_nav_my_favorites_to_nav_viewRatings"
+            app:destination="@id/nav_viewRatings" />
     </fragment>
 
 </navigation>
