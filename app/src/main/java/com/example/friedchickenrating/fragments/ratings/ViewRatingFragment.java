@@ -125,10 +125,13 @@ public class ViewRatingFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
-                                            Glide.with(getActivity())
-                                                    .load(task.getResult())
-                                                    .into(binding.imgViewPicture);
-                                            binding.imgViewPicture.invalidate();
+
+                                            if(getActivity() != null) {
+                                                Glide.with(getActivity())
+                                                        .load(task.getResult())
+                                                        .into(binding.imgViewPicture);
+                                                binding.imgViewPicture.invalidate();
+                                            }
                                         } else {
                                             Toast.makeText(getContext(),
                                                     "Fail to load image", Toast.LENGTH_SHORT).show();

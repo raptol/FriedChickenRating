@@ -169,5 +169,11 @@ public class FavoriteListFragment extends Fragment implements FavoriteListAdapte
                     }
                 });
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
 

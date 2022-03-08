@@ -94,10 +94,14 @@ public class ViewRecipeFragment extends Fragment {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
-                        Glide.with(getActivity())
-                                .load(task.getResult())
-                                .into(binding.imgViewRecipePicture);
-                        binding.imgViewRecipePicture.invalidate();
+
+                        if(getActivity() != null) {
+                            Glide.with(getActivity())
+                                    .load(task.getResult())
+                                    .into(binding.imgViewRecipePicture);
+                            binding.imgViewRecipePicture.invalidate();
+                        }
+
                     } else {
                         Toast.makeText(getContext(),
                                 "Fail to load image", Toast.LENGTH_SHORT).show();
