@@ -44,6 +44,9 @@
         <action
             android:id="@+id/action_nav_maps_to_bottomSheetFragment"
             app:destination="@id/bottomSheetFragment" />
+        <action
+            android:id="@+id/action_nav_maps_to_rouletteFragment"
+            app:destination="@id/rouletteFragment" />
     </fragment>
 
     <fragment
@@ -149,11 +152,14 @@
     </fragment>
     <fragment
         android:id="@+id/rouletteFragment"
-        android:name="com.example.friedchickenrating.fragments.RouletteFragment"
+        android:name="com.example.friedchickenrating.fragments.roulette.RouletteFragment"
         android:label="@string/menu_roulette">
         <action
             android:id="@+id/action_rouletteFragment_to_nav_home"
             app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_rouletteFragment_to_nav_maps"
+            app:destination="@id/nav_maps" />
     </fragment>
 
 </navigation>

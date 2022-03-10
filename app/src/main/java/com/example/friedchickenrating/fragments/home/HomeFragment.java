@@ -77,8 +77,8 @@ public class HomeFragment extends Fragment {
         binding.cardViewRoulette.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                NavHostFragment.findNavController(HomeFragment.this)
-//                        .navigate(R.id.action_nav_home_to_nav_roulette);
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(R.id.action_nav_home_to_rouletteFragment);
             }
         });
 
