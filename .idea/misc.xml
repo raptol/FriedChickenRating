@@ -3,21 +3,25 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/activity_login.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/activity_main.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/activity_signup.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/activity_user_profile.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/app_bar_main.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/content_main.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_bottom_sheet_dialog.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_home.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_maps.xml" value="0.3265625" />
-        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_new_rating.xml" value="0.1" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_new_rating.xml" value="0.3333333333333333" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_new_recipe.xml" value="0.3333333333333333" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_rating_list.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_recipes.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_recipes_list.xml" value="0.3333333333333333" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_roulette.xml" value="0.3333333333333333" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_view_rating.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/fragment_view_recipe.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/layout_bottom_sheet_list_item.xml" value="0.3265625" />
+        <entry key="..\:/FriedChickenRating/app/src/main/res/layout/layout_favorite_list.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/layout_rating_list.xml" value="0.3333333333333333" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/layout_recipes_list.xml" value="0.3265625" />
         <entry key="..\:/FriedChickenRating/app/src/main/res/layout/nav_header_main.xml" value="0.3265625" />

@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_nav_home_to_nav_my_favorites"
             app:destination="@id/nav_my_favorites" />
+        <action
+            android:id="@+id/action_nav_home_to_rouletteFragment"
+            app:destination="@id/rouletteFragment" />
     </fragment>
 
     <fragment
@@ -41,6 +44,9 @@
         <action
             android:id="@+id/action_nav_maps_to_bottomSheetFragment"
             app:destination="@id/bottomSheetFragment" />
+        <action
+            android:id="@+id/action_nav_maps_to_rouletteFragment"
+            app:destination="@id/rouletteFragment" />
     </fragment>
 
     <fragment
@@ -116,7 +122,7 @@
     <fragment
         android:id="@+id/nav_viewRecipes"
         android:name="com.example.friedchickenrating.fragments.recipes.ViewRecipeFragment"
-        android:label="viewRecipeFragment">
+        android:label="@string/menu_viewRecipe">
         <action
             android:id="@+id/action_nav_viewRecipes_to_nav_recipes"
             app:destination="@id/nav_recipes" />
@@ -127,7 +133,7 @@
     <fragment
         android:id="@+id/nav_newRecipe"
         android:name="com.example.friedchickenrating.fragments.recipes.NewRecipeFragment"
-        android:label="NewRecipeFragment">
+        android:label="@string/menu_newRecipe">
         <action
             android:id="@+id/action_newRecipeFragment3_to_nav_viewRecipes"
             app:destination="@id/nav_viewRecipes" />
@@ -143,6 +149,17 @@
         <action
             android:id="@+id/action_nav_my_favorites_to_nav_viewRatings"
             app:destination="@id/nav_viewRatings" />
+    </fragment>
+    <fragment
+        android:id="@+id/rouletteFragment"
+        android:name="com.example.friedchickenrating.fragments.roulette.RouletteFragment"
+        android:label="@string/menu_roulette">
+        <action
+            android:id="@+id/action_rouletteFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_rouletteFragment_to_nav_maps"
+            app:destination="@id/nav_maps" />
     </fragment>
 
 </navigation>
