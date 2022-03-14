@@ -32,10 +32,5 @@
             android:id="@+id/nav_my_favorites"
             android:icon="@drawable/ic_menu_favorites"
             android:title="@string/menu_my_favorites" />
-
-        <item
-            android:id="@+id/nav_my_recipes"
-            android:icon="@drawable/ic_menu_recipes"
-            android:title="@string/menu_my_recipes" />
     </group>
 </menu>

@@ -48,6 +48,11 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
 
     private static final String TAG = RecipesListFragment.class.getSimpleName();
 
+    private static final int SORT_OPTION_LATEST = 1;
+    private static final int SORT_OPTION_TITLE_ASCENDING = 2;
+    private static final int SORT_OPTION_TITLE_DESCENDING = 3;
+    private static final int SORT_OPTION_MY_RECIPES = 4;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +88,46 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
         binding.recyclerViewRecipeList.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
         binding.recyclerViewRecipeList.setAdapter(recipesListAdapter);
 
-        displayRecipeList();
+        //display recipe list
+        displayRecipeList(SORT_OPTION_LATEST); //default sorting option: latest
+
+        binding.btnSortLatest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRecipeList(SORT_OPTION_LATEST);
+            }
+        });
+
+        binding.btnSortAscTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRecipeList(SORT_OPTION_TITLE_ASCENDING);
+            }
+        });
+
+        binding.btnSortDescTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRecipeList(SORT_OPTION_TITLE_DESCENDING);
+            }
+        });
+
+        binding.btnSortMyRecipes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRecipeList(SORT_OPTION_MY_RECIPES);
+            }
+        });
+
+
+        //event handler for add recipe button
+        binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(RecipesListFragment.this)
+                        .navigate(R.id.action_nav_recipes_to_nav_newRecipe);
+            }
+        });
     }
 
     private boolean checkPermission() {
@@ -115,10 +159,42 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
         NavHostFragment.findNavController(RecipesListFragment.this).navigate(R.id.action_nav_recipes_to_nav_viewRecipes);
     }
 
-    private void displayRecipeList(){
+    private void displayRecipeList(int sortOption) {
+
         Query query;
 
-        query = db.collection("recipes");
+        switch(sortOption) {
+            case SORT_OPTION_TITLE_ASCENDING:
+                query = db.collection("recipes")
+                        .orderBy("recipeTitle", Query.Direction.ASCENDING);
+                readRecipeList(query);
+                break;
+
+            case SORT_OPTION_TITLE_DESCENDING:
+                query = db.collection("recipes")
+                        .orderBy("recipeTitle", Query.Direction.DESCENDING);
+                readRecipeList(query);
+                break;
+
+            case SORT_OPTION_MY_RECIPES:
+                query = db.collection("recipes")
+                        .whereEqualTo("userid", user.getUid())
+                        .orderBy("timestamp", Query.Direction.DESCENDING);
+                readRecipeList(query);
+                break;
+
+            default: // by latest
+                query = db.collection("recipes")
+                        .orderBy("timestamp", Query.Direction.DESCENDING);
+                readRecipeList(query);
+        }
+
+        //Scroll to top
+        binding.recyclerViewRecipeList.smoothScrollToPosition(0);
+    }
+
+    private void readRecipeList(Query query){
+
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -140,17 +216,6 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
                 recipesListAdapter.setRecipeList(recipeList);
             }
         });
-
-        //event handler for add recipe button
-        binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(RecipesListFragment.this)
-                        .navigate(R.id.action_nav_recipes_to_nav_newRecipe);
-            }
-        });
-
-        binding.recyclerViewRecipeList.smoothScrollToPosition(0);
     }
 
     @Override
