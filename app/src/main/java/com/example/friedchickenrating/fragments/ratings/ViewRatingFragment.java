@@ -1,5 +1,6 @@
 package com.example.friedchickenrating.fragments.ratings;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ShareCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -61,6 +63,8 @@ public class ViewRatingFragment extends Fragment {
     private RatingPlace selectedPlace;
     private Favorite favorite = null;
     private Boolean isFavorite = false;
+
+    private Uri imageUri;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
 
@@ -127,9 +131,12 @@ public class ViewRatingFragment extends Fragment {
                                         if (task.isSuccessful()) {
 
                                             if(getActivity() != null) {
+                                                imageUri = task.getResult();
+
                                                 Glide.with(getActivity())
-                                                        .load(task.getResult())
+                                                        .load(imageUri)
                                                         .into(binding.imgViewPicture);
+
                                                 binding.imgViewPicture.invalidate();
                                             }
                                         } else {
@@ -261,6 +268,33 @@ public class ViewRatingFragment extends Fragment {
                             }
                         });
                 }
+            }
+        });
+
+        //event handler for share button
+        binding.btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String contents =   "Title: " + binding.viewRatingTitle.getText().toString() + "\n" +
+                        "Restaurant: " + binding.viewRatingPlaceName.getText().toString() + "\n" +
+                        "Region: " + binding.viewRatingRegion.getText().toString() + "\n" +
+                        "Chicken Type: " + binding.viewRatingChickenType.getText().toString() + "\n" +
+                        "Other Items: " + binding.viewRatingOtherItems.getText().toString() + "\n" +
+                        "Notes: " + binding.viewRatingNotes.getText().toString();
+
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT, contents);
+
+                if(imageUri != null) {
+                    intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                    intent.setType("image/*");
+                } else {
+                    intent.setType("text/plain");
+                }
+
+                startActivity(Intent.createChooser(intent, "Share fried chicken"));
             }
         });
 

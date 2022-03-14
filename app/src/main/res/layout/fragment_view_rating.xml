@@ -146,10 +146,6 @@
 
                 </LinearLayout>
 
-
-
-
-
             </LinearLayout>
 
             <LinearLayout
@@ -166,9 +162,19 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="Ratings"
                         android:textSize="16sp"
                         android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/btnShare"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:src="@drawable/ic_icon_share" />
                 </LinearLayout>
 
                 <LinearLayout
