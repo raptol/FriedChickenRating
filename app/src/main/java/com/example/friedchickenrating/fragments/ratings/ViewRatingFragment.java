@@ -280,6 +280,12 @@ public class ViewRatingFragment extends Fragment {
                         "Restaurant: " + binding.viewRatingPlaceName.getText().toString() + "\n" +
                         "Region: " + binding.viewRatingRegion.getText().toString() + "\n" +
                         "Chicken Type: " + binding.viewRatingChickenType.getText().toString() + "\n" +
+                        "Flavor rating: " + binding.ratingBarFlavor.getRating() + "\n" +
+                        "Crunch rating: " + binding.ratingBarCrunch.getRating() + "\n" +
+                        "Spiciness rating: " + binding.ratingBarSpiciness.getRating() + "\n" +
+                        "Portion rating: " + binding.ratingBarPortion.getRating() + "\n" +
+                        "Price rating: " + binding.ratingBarPrice.getRating() + "\n" +
+                        "Overall rating: " + binding.ratingBarOverall.getRating() + "\n" +
                         "Other Items: " + binding.viewRatingOtherItems.getText().toString() + "\n" +
                         "Notes: " + binding.viewRatingNotes.getText().toString();
 
