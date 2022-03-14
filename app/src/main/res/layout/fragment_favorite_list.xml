@@ -19,6 +19,6 @@
             android:id="@+id/recyclerViewFavoriteList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="20dp" />
+            android:layout_margin="15dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
