@@ -94,8 +94,8 @@ public class HomeFragment extends Fragment {
         binding.cardViewFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                NavHostFragment.findNavController(HomeFragment.this)
-//                        .navigate(R.id.action_nav_home_to_favorites);
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(R.id.action_nav_home_to_nav_my_favorites);
             }
         });
     }
