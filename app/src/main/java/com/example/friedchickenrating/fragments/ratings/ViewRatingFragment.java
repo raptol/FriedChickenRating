@@ -339,12 +339,14 @@ public class ViewRatingFragment extends Fragment {
 
     private void showSelectedFavoriteButton() {
         isFavorite = true;
-        binding.btnMyFavorite.setImageResource(R.drawable.home_favorite);
+        if(binding.btnMyFavorite != null)
+            binding.btnMyFavorite.setImageResource(R.drawable.home_favorite);
     }
 
     private void showNotSelectedFavoriteButton() {
         isFavorite = false;
-        binding.btnMyFavorite.setImageResource(R.drawable.ic_icon_favorite);
+        if(binding.btnMyFavorite != null)
+            binding.btnMyFavorite.setImageResource(R.drawable.ic_icon_favorite);
     }
 
     @Override
