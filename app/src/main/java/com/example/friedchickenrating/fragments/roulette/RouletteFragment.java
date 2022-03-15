@@ -1,10 +1,18 @@
 package com.example.friedchickenrating.fragments.roulette;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,8 +35,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-public class RouletteFragment extends Fragment {
+public class RouletteFragment extends Fragment implements Animation.AnimationListener {
     private RouletteViewModel rouletteViewModel;
     private FragmentRouletteBinding binding;
     private FirebaseFirestore db;
@@ -38,11 +47,22 @@ public class RouletteFragment extends Fragment {
     private List<Restaurant> restaurantList;
     private RatingPlace selectedPlace;
 
-    private static final String TAG = ViewRatingFragment.class.getSimpleName();
+    private static final String TAG = RouletteFragment.class.getSimpleName();
+
+    boolean isRotating = true;
+    int intNum = 6;
+    long longDegree = 0;
+    SharedPreferences sharedPreferences;
+    Context context;
+
+    Animation.AnimationListener animationListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        this.intNum = this.sharedPreferences.getInt("INT_NUM", 6);
     }
 
     @Nullable
@@ -134,11 +154,64 @@ public class RouletteFragment extends Fragment {
                         .navigate(R.id.action_rouletteFragment_to_nav_maps);
             }
         });
+
+        binding.btnSpin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isRotating) {
+                    int rand = new Random().nextInt(360) + 3600;
+                    RotateAnimation rotateAnimation = new RotateAnimation((float) longDegree,
+                            (float) (longDegree + ((long)rand)), 1,0.5f, 1, 0.5f);
+                    longDegree = (longDegree + (long)rand) % 360;
+                    rotateAnimation.setDuration((long)rand);
+                    rotateAnimation.setFillAfter(true);
+                    rotateAnimation.setInterpolator(new DecelerateInterpolator());
+//                    rotateAnimation.setAnimationListener(this);
+                    binding.imgRouletteLarge.setAnimation(rotateAnimation);
+                    binding.imgRouletteLarge.startAnimation(rotateAnimation);
+//                    binding.btnSpin.setText("Stop");
+
+                    binding.txvRouletteResult.setText("Result: " + rand);
+
+                }
+                else {
+
+                }
+            }
+        });
+
+
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onAnimationStart(Animation animation) {
+
+        this.isRotating = false;
+        binding.btnSpin.setText("Stop");
+        Log.d(TAG, "onAnimationStart()");
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation) {
+//        Toast.makeText(this.getContext(), " " + (int) (((double)this.intNum)
+//                - Math.floor(((double)this.longDegree) / (360.0d / ((double)this.intNum)))),  Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Animation End", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onAnimationEnd()");
+        this.isRotating = true;
+        binding.btnSpin.setText("Stop");
+        binding.btnSpin.setEnabled(true);
+        binding.txvRouletteResult.setText("Result: ");
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {
+
     }
 }

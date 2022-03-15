@@ -23,19 +23,32 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txvRoulette"
+        app:layout_constraintTop_toBottomOf="@+id/imgPointer"
         app:srcCompat="@drawable/roulette" />
+
+    <Button
+        android:id="@+id/btnSpin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="Spin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
@@ -51,7 +64,8 @@
             android:gravity="center_horizontal"
             android:text="Restaurant Result"
             android:textSize="20sp"
-            app:layout_constraintTop_toBottomOf="@+id/imgRouletteLarge" />
+            app:layout_constraintTop_toBottomOf="@+id/imgRouletteLarge"
+            tools:layout_editor_absoluteX="15dp" />
 
         <ImageView
             android:id="@+id/btnOpenMap"
@@ -59,36 +73,25 @@
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/home_map"
-            tools:layout_editor_absoluteX="272dp"
-            tools:layout_editor_absoluteY="372dp"
+            tools:layout_editor_absoluteX="294dp"
+            tools:layout_editor_absoluteY="482dp"
             tools:layout_gravity="right"
             tools:layout_weight="1" />
 
     </LinearLayout>
 
 
-    <Button
-        android:id="@+id/btnSpin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Spin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
-
     <ImageView
         android:id="@+id/imgPointer"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:rotation="180"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imgRouletteLarge"
+        app:layout_constraintTop_toBottomOf="@+id/txvRoulette"
         app:srcCompat="@drawable/ic_baseline_navigation_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>
