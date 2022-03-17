@@ -1,9 +1,6 @@
 package com.example.friedchickenrating.fragments.roulette;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +8,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,7 +20,6 @@ import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentRouletteBinding;
 import com.example.friedchickenrating.fragments.maps.MapsFragment;
 import com.example.friedchickenrating.fragments.ratings.RatingPlace;
-import com.example.friedchickenrating.fragments.ratings.ViewRatingFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -34,7 +29,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class RouletteFragment extends Fragment implements Animation.AnimationListener {
@@ -49,20 +43,17 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
 
     private static final String TAG = RouletteFragment.class.getSimpleName();
 
-    boolean isRotating = true;
-    int intNum = 6;
-    long longDegree = 0;
-    SharedPreferences sharedPreferences;
-    Context context;
-
-    Animation.AnimationListener animationListener;
+    boolean isRotating = false;
+    private static final String[] slots = {"1", "2", "3" ,"4" ,"5" , "6", "7", "8", "9"};
+    private static final int[] slotDegrees = new int[slots.length];
+    private int degree = 0;
+    private static final Random random = new Random();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-        this.intNum = this.sharedPreferences.getInt("INT_NUM", 6);
+        getDegreeForSlots();
     }
 
     @Nullable
@@ -138,9 +129,6 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         }
 
 
-
-
-
         //event handler for open map button
         binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,32 +143,28 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
             }
         });
 
+        //event handler for spin button
         binding.btnSpin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRotating) {
-                    int rand = new Random().nextInt(360) + 3600;
-                    RotateAnimation rotateAnimation = new RotateAnimation((float) longDegree,
-                            (float) (longDegree + ((long)rand)), 1,0.5f, 1, 0.5f);
-                    longDegree = (longDegree + (long)rand) % 360;
-                    rotateAnimation.setDuration((long)rand);
+                if(!isRotating) {
+                    degree = random.nextInt(slots.length - 1);
+
+                    RotateAnimation rotateAnimation = new RotateAnimation(0,
+                            (360 * slots.length) + slotDegrees[degree],
+                            RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                            RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+                    rotateAnimation.setDuration(3600);
                     rotateAnimation.setFillAfter(true);
                     rotateAnimation.setInterpolator(new DecelerateInterpolator());
-//                    rotateAnimation.setAnimationListener(this);
+                    rotateAnimation.setAnimationListener(RouletteFragment.this);
                     binding.imgRouletteLarge.setAnimation(rotateAnimation);
                     binding.imgRouletteLarge.startAnimation(rotateAnimation);
-//                    binding.btnSpin.setText("Stop");
 
-                    binding.txvRouletteResult.setText("Result: " + rand);
-
-                }
-                else {
-
+                    binding.txvRouletteResult.setText("Result: onClick " + degree);
                 }
             }
         });
-
-
     }
 
     @Override
@@ -191,23 +175,29 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
 
     @Override
     public void onAnimationStart(Animation animation) {
-
+        binding.txvRouletteResult.setText("Result: ");
         this.isRotating = false;
-        binding.btnSpin.setText("Stop");
+//        binding.btnSpin.setText("Stop");
+        binding.btnSpin.setEnabled(false);
         Log.d(TAG, "onAnimationStart()");
 
     }
 
     @Override
     public void onAnimationEnd(Animation animation) {
-//        Toast.makeText(this.getContext(), " " + (int) (((double)this.intNum)
-//                - Math.floor(((double)this.longDegree) / (360.0d / ((double)this.intNum)))),  Toast.LENGTH_SHORT).show();
-        Toast.makeText(context, "Animation End", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getContext(), "Animation End", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onAnimationEnd()");
-        this.isRotating = true;
-        binding.btnSpin.setText("Stop");
+        this.isRotating = false;
+//        binding.btnSpin.setText("Spin");
         binding.btnSpin.setEnabled(true);
-        binding.txvRouletteResult.setText("Result: ");
+        binding.txvRouletteResult.setText("Result: " + slots[slots.length - (degree + 1)]);
+    }
+
+    private void getDegreeForSlots() {
+        int slotDegree = 360/slots.length;
+        for (int i = 0; i < slots.length; i++) {
+            slotDegrees[i] = (i+1) * slotDegree;
+        }
     }
 
     @Override
