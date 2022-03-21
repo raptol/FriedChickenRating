@@ -50,17 +50,47 @@
             app:layout_constraintTop_toBottomOf="@+id/txtWelcome"
             tools:visibility="visible" />
 
+        <ImageView
+            android:id="@+id/imgViewPicture"
+            android:layout_width="100dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.05"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtWelcomMessage"
+            app:srcCompat="@mipmap/ic_launcher_round" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@+id/imgViewPicture"
+            app:layout_constraintTop_toBottomOf="@+id/imgViewPicture">
+
+            <ImageButton
+                android:id="@+id/btnCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_icon_photo_camera" />
+
+            <ImageButton
+                android:id="@+id/btnPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_icon_image" />
+        </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
             android:layout_marginEnd="32dp"
             android:enabled="false"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtWelcomMessage">
+            app:layout_constraintStart_toEndOf="@+id/imgViewPicture"
+            app:layout_constraintTop_toTopOf="@+id/imgViewPicture">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTxtName"
@@ -78,12 +108,12 @@
             android:id="@+id/inputLayoutEmail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
             android:layout_marginEnd="32dp"
             android:enabled="false"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imgViewPicture"
             app:layout_constraintTop_toBottomOf="@+id/inputLayoutName">
 
             <com.google.android.material.textfield.TextInputEditText

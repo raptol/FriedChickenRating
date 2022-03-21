@@ -2,6 +2,8 @@ package com.example.friedchickenrating;
 
 import com.google.firebase.Timestamp;
 
+import java.util.Map;
+
 public class User {
     private String uid;
     private String name;
@@ -18,6 +20,7 @@ public class User {
     private float preferprice;
     private Timestamp lastlogin;
     private Timestamp signup;
+    private Map<String, Object> pictures; //picture url
 
     public User() {
     }
@@ -25,7 +28,7 @@ public class User {
     public User(String uid, String name, String email,
                 String hometown, Double latitude, Double longitude, String geohash, String background,
                 float preferflavor, float prefercrunch, float preferspiciness,
-                float preferportion, float preferprice, Timestamp lastlogin, Timestamp signup) {
+                float preferportion, float preferprice, Timestamp lastlogin, Timestamp signup, Map<String, Object> pictures) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -41,6 +44,7 @@ public class User {
         this.preferprice = preferprice;
         this.lastlogin = lastlogin;
         this.signup = signup;
+        this.pictures = pictures;
     }
 
     public String getUid() {
@@ -161,5 +165,13 @@ public class User {
 
     public void setSignup(Timestamp signup) {
         this.signup = signup;
+    }
+
+    public Map<String, Object> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(Map<String, Object> pictures) {
+        this.pictures = pictures;
     }
 }

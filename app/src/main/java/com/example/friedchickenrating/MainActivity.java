@@ -2,6 +2,7 @@ package com.example.friedchickenrating;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.friedchickenrating.fragments.home.HomeFragment;
 import com.example.friedchickenrating.fragments.ratings.NewRatingFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,8 +40,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -111,6 +116,39 @@ public class MainActivity extends AppCompatActivity {
                         navUserEmail.setText(userData.getEmail());
 
                         Log.d(TAG, "user name: " + userData.getName() + ", user email: " + userData.getEmail());
+
+                        // download and display images
+                        Map<String, Object> pictures = userData.getPictures();
+                        if(pictures != null) {
+                            String filename = String.valueOf(pictures.get("filename"));
+                            Log.d(TAG, "filename: " + filename);
+
+                            if (!filename.isEmpty() && filename != null) {
+                                long size;
+                                final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                                StorageReference storageReference
+                                        = firebaseStorage.getReference().child("images").child(filename);
+                                storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()) {
+
+                                            if (getApplicationContext() != null) {
+                                                Glide.with(getApplicationContext())
+                                                        .load(task.getResult())
+                                                        .into(navUserProfile);
+
+                                                navUserProfile.invalidate();
+                                            }
+                                        } else {
+                                            Toast.makeText(getApplicationContext(),
+                                                    "Fail to load image", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
                     } else {
                         Log.d(TAG, "No such user data");
                     }

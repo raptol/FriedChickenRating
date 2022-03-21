@@ -70,7 +70,7 @@ public class SignupActivity extends AppCompatActivity {
                                                                 binding.editTxtEmail.getText().toString().trim(),
                                                                 null, 0.0, 0.0, null, null,
                                                                 0, 0, 0, 0, 0,
-                                                                null, Timestamp.now());
+                                                                null, Timestamp.now(), null);
                                     db.collection("users").document(user.getUid())
                                             .set(signupUser)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {

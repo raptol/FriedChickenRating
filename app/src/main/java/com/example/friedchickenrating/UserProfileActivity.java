@@ -3,19 +3,35 @@ package com.example.friedchickenrating;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.friedchickenrating.databinding.ActivityUserProfileBinding;
+import com.example.friedchickenrating.fragments.ratings.NewRatingFragment;
+import com.example.friedchickenrating.fragments.ratings.Photo;
+import com.example.friedchickenrating.fragments.ratings.Rating;
 import com.example.friedchickenrating.fragments.ratings.RatingPlace;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
@@ -38,10 +54,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -57,6 +83,13 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private List<String> backgroundCultureValues; // for spinner
     private static final String SPINNER_CHOOSE_MESSAGE ="Choose one.";
+
+    private ImageView imgViewPicture;
+    private Uri filePath;
+    private String fileName;
+    private boolean hasImageToUpload = false;
+    static final int REQUEST_IMAGE_SELECT = 0;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,10 +201,66 @@ public class UserProfileActivity extends AppCompatActivity {
                         binding.ratingBarPrice.setRating(userData.getPreferprice());
 
                         Log.d(TAG, "user name: " + userData.getName() + ", user email: " + userData.getEmail());
+
+                        // download and display images
+                        Map<String, Object> pictures = userData.getPictures();
+                        if(pictures != null) {
+                            String filename = String.valueOf(pictures.get("filename"));
+                            Log.d(TAG, "filename: " + filename);
+
+                            if (!filename.isEmpty() && filename != null) {
+                                long size;
+                                final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                                StorageReference storageReference
+                                        = firebaseStorage.getReference().child("images").child(filename);
+                                storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()) {
+
+                                            if (getApplicationContext() != null) {
+                                                Glide.with(getApplicationContext())
+                                                        .load(task.getResult())
+                                                        .into(binding.imgViewPicture);
+
+                                                binding.imgViewPicture.invalidate();
+                                            }
+                                        } else {
+                                            Toast.makeText(getApplicationContext(),
+                                                    "Fail to load image", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        }
                     } else {
                         Log.d(TAG, "No such user data");
                     }
                 }
+            }
+        });
+
+        // Taking picture event handler for profile image
+        imgViewPicture = binding.imgViewPicture;
+        binding.btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //By taking a picture
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        });
+
+        // Choosing picture event handler for profile image
+        binding.btnPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //By choosing a file
+                Intent choosingPictureIntent = new Intent();
+                choosingPictureIntent.setType("image/*");
+                choosingPictureIntent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(choosingPictureIntent,
+                        "Select a image."), REQUEST_IMAGE_SELECT);
             }
         });
 
@@ -205,6 +294,22 @@ public class UserProfileActivity extends AppCompatActivity {
                 return;
             }
 
+            // format value to upload image to Google Firebase Storage
+            Map<String, Object> photoValues = null;
+            if(hasImageToUpload) {
+                Date now = new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                fileName = formatter.format(now) + ".jpg";
+
+                formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String photoDateTime = formatter.format(now);
+
+                Photo photo = new Photo(fileName, photoDateTime);
+                photoValues = photo.toMap();
+            }else {
+                photoValues = userData.getPictures();
+            }
+
             //update user's info to Firestore DB
             User updUserData = new User(userData.getUid(), userData.getName(), userData.getEmail(),
                                         hometown,
@@ -218,7 +323,8 @@ public class UserProfileActivity extends AppCompatActivity {
                                         binding.ratingBarPortion.getRating(),
                                         binding.ratingBarPrice.getRating(),
                                         userData.getLastlogin(),
-                                        userData.getSignup()
+                                        userData.getSignup(),
+                                        photoValues
                     );
 
             db.collection("users").document(user.getUid())
@@ -227,6 +333,13 @@ public class UserProfileActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.d(TAG, "User profile was successfully saved!");
+
+                            if(hasImageToUpload) {
+                                uploadImageToFirebaseStorage();
+                            } else {
+                                startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
+                                finish();
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -237,8 +350,6 @@ public class UserProfileActivity extends AppCompatActivity {
                     });
 
             Toast.makeText(getApplicationContext(), "Update user profile success.", Toast.LENGTH_SHORT).show();
-            startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
-            finish();
         });
 
         binding.btnClose.setOnClickListener((View view) -> {
@@ -246,4 +357,105 @@ public class UserProfileActivity extends AppCompatActivity {
             finish();
         });
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        //By taking picture
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            if(data != null) {
+                Log.d(TAG, "uri:" + String.valueOf(filePath));
+
+                Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                imgViewPicture.setImageBitmap(imageBitmap);
+                hasImageToUpload = true;
+            }
+
+        }
+
+        //By choosing file
+        if (requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK) {
+            filePath = data.getData();
+            Log.d(TAG, "uri:" + String.valueOf(filePath));
+
+            try {
+                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
+                        this.getApplicationContext().getContentResolver(), filePath);
+                imgViewPicture.setImageBitmap(imageBitmap);
+                hasImageToUpload = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void uploadImageToFirebaseStorage() {
+        if(hasImageToUpload) {
+//            final ProgressDialog progressDialog = new ProgressDialog(this.getApplicationContext());
+//            progressDialog.setTitle("is uploading...");
+//            progressDialog.show();
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference().child("images/" + fileName);
+
+            if(filePath != null) {
+                storageReference.putFile(filePath)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                //                            progressDialog.dismiss();
+
+                                startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
+                                finish();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                //                            progressDialog.dismiss();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                            }
+                        });
+            }else {
+                imgViewPicture.setDrawingCacheEnabled(true);
+                imgViewPicture.buildDrawingCache();
+                Bitmap bitmap = ((BitmapDrawable)imgViewPicture.getDrawable()).getBitmap();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                byte[] data = outputStream.toByteArray();
+
+                storageReference.putBytes(data)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                //                            progressDialog.dismiss();
+
+                                startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
+                                finish();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                //                            progressDialog.dismiss();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                            }
+                        });
+            }
+        } else {
+            Toast.makeText(this.getApplicationContext(), "Select image first.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
