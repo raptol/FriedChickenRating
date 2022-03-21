@@ -392,9 +392,9 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void uploadImageToFirebaseStorage() {
         if(hasImageToUpload) {
-//            final ProgressDialog progressDialog = new ProgressDialog(this.getApplicationContext());
-//            progressDialog.setTitle("is uploading...");
-//            progressDialog.show();
+            final ProgressDialog progressDialog = new ProgressDialog(UserProfileActivity.this);
+            progressDialog.setTitle("is uploading...");
+            progressDialog.show();
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReference().child("images/" + fileName);
@@ -404,8 +404,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                //                            progressDialog.dismiss();
-
+                                progressDialog.dismiss();
                                 startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
                                 finish();
                             }
@@ -413,7 +412,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                //                            progressDialog.dismiss();
+                                progressDialog.dismiss();
                             }
                         })
                         .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
