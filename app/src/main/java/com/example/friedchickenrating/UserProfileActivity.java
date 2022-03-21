@@ -399,7 +399,7 @@ public class UserProfileActivity extends AppCompatActivity {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReference().child("images/" + fileName);
 
-            if(filePath != null) {
+            if(filePath != null) { // upload from choosing image
                 storageReference.putFile(filePath)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -421,7 +421,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
                             }
                         });
-            }else {
+            }else { // upload from taking picture
                 imgViewPicture.setDrawingCacheEnabled(true);
                 imgViewPicture.buildDrawingCache();
                 Bitmap bitmap = ((BitmapDrawable)imgViewPicture.getDrawable()).getBitmap();
