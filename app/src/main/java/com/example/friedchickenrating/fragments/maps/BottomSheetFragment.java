@@ -102,7 +102,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         final Button btnNewRatingFromBottomSheet = (Button) binding.btnNewRatingFromBottomSheet;
         final RecyclerView recyclerView = (RecyclerView) binding.recyclerViewBottomList;
 
-        txtPlaceName.setText(placename);
+        txtPlaceName.setText(placename.trim().replaceAll("\\s+", " "));
         txtPlaceRegion.setText(region);
 
         btnNewRatingFromBottomSheet.setOnClickListener(new View.OnClickListener() {

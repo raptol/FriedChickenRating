@@ -136,7 +136,8 @@ public class NewRatingFragment extends Fragment {
                         Log.d(TAG, "ResultListener, region: " + region );
 
                         placeData.setPlaceid(placeId);
-                        placeData.setName(placeName);
+                        if(placeName != null)
+                            placeData.setName(placeName.trim().replaceAll("\\s+", " "));
                         placeData.setLatitude(latitude);
                         placeData.setLongitude(longitude);
                         placeData.setLatitude(latitude);
@@ -354,7 +355,8 @@ public class NewRatingFragment extends Fragment {
         Log.d(TAG, "ResultListener, region: " + region );
 
         placeData.setPlaceid(placeId);
-        placeData.setName(placeName);
+        if(placeName != null)
+            placeData.setName(placeName.trim().replaceAll("\\s+", " "));
         placeData.setLatitude(latitude);
         placeData.setLongitude(longitude);
         placeData.setLatitude(latitude);
