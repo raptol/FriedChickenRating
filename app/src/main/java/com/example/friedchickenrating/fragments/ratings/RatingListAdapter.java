@@ -68,7 +68,7 @@ public class RatingListAdapter extends RecyclerView.Adapter {
         RatingPlace place = getPlace(curRating.getPlaceid());
 
         ratingViewHolder.txtItemTitle.setText(curRating.getTitle());
-        ratingViewHolder.txtItemPlace.setText(place.getName());
+        ratingViewHolder.txtItemPlace.setText(place.getName().trim().replaceAll("\\s+", " ") );
         ratingViewHolder.ratingBar.setRating(curRating.getStaroverall());
 
         // download and display images

@@ -149,7 +149,7 @@ public class ViewRatingFragment extends Fragment {
 
 
                             binding.viewRatingTitle.setText(curRating.getTitle());
-                            binding.viewRatingPlaceName.setText(selectedPlace.getName());
+                            binding.viewRatingPlaceName.setText(selectedPlace.getName().trim().replaceAll("\\s+", " ") );
                             binding.viewRatingChickenType.setText(curRating.getType());
                             binding.ratingBarFlavor.setRating(curRating.getStarflavor());
                             binding.ratingBarCrunch.setRating(curRating.getStarcrunch());
@@ -277,27 +277,30 @@ public class ViewRatingFragment extends Fragment {
             public void onClick(View view) {
 
                 String contents =   "Title: " + binding.viewRatingTitle.getText().toString() + "\n" +
-                        "Restaurant: " + binding.viewRatingPlaceName.getText().toString() + "\n" +
-                        "Region: " + binding.viewRatingRegion.getText().toString() + "\n" +
-                        "Chicken Type: " + binding.viewRatingChickenType.getText().toString() + "\n" +
-                        "Flavor rating: " + binding.ratingBarFlavor.getRating() + "\n" +
-                        "Crunch rating: " + binding.ratingBarCrunch.getRating() + "\n" +
-                        "Spiciness rating: " + binding.ratingBarSpiciness.getRating() + "\n" +
-                        "Portion rating: " + binding.ratingBarPortion.getRating() + "\n" +
-                        "Price rating: " + binding.ratingBarPrice.getRating() + "\n" +
-                        "Overall rating: " + binding.ratingBarOverall.getRating() + "\n" +
-                        "Other Items: " + binding.viewRatingOtherItems.getText().toString() + "\n" +
-                        "Notes: " + binding.viewRatingNotes.getText().toString();
+                        "Restaurant: " + binding.viewRatingPlaceName.getText().toString().trim().replaceAll("\\s+", " ") + "\n" +
+                        "\tRegion: " + binding.viewRatingRegion.getText().toString() + "\n" +
+                        "\tChicken Type: " + binding.viewRatingChickenType.getText().toString() + "\n" +
+                        "\t- Flavor rating: " + binding.ratingBarFlavor.getRating() + "\n" +
+                        "\t - Crunch rating: " + binding.ratingBarCrunch.getRating() + "\n" +
+                        "\t - Spiciness rating: " + binding.ratingBarSpiciness.getRating() + "\n" +
+                        "\t - Portion rating: " + binding.ratingBarPortion.getRating() + "\n" +
+                        "\t - Price rating: " + binding.ratingBarPrice.getRating() + "\n" +
+                        "\t - Overall rating: " + binding.ratingBarOverall.getRating() + "\n" +
+                        "\tOther Items: " + binding.viewRatingOtherItems.getText().toString() + "\n" +
+                        "\tNotes: " + binding.viewRatingNotes.getText().toString() + "\n\n" +
+                        "Google map: https://www.google.com/maps/@?api=1&map_action=map&center="
+                            + selectedPlace.getLatitude() + "%2C"
+                            + selectedPlace.getLongitude() + "&zoom=17";
 
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, binding.viewRatingTitle.getText().toString());
                 intent.putExtra(Intent.EXTRA_TEXT, contents);
 
                 if(imageUri != null) {
                     intent.putExtra(Intent.EXTRA_STREAM, imageUri);
-                    intent.setType("image/*");
-                } else {
-                    intent.setType("text/plain");
+                    intent.setType("image/jpeg");
                 }
 
                 startActivity(Intent.createChooser(intent, "Share fried chicken"));
