@@ -1,5 +1,7 @@
 package com.example.friedchickenrating.fragments.roulette;
 
+import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,19 +18,33 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.bumptech.glide.Glide;
 import com.example.friedchickenrating.R;
+import com.example.friedchickenrating.User;
 import com.example.friedchickenrating.databinding.FragmentRouletteBinding;
 import com.example.friedchickenrating.fragments.maps.MapsFragment;
+import com.example.friedchickenrating.fragments.ratings.Rating;
+import com.example.friedchickenrating.fragments.ratings.RatingListAdapter;
 import com.example.friedchickenrating.fragments.ratings.RatingPlace;
+import com.example.friedchickenrating.fragments.recipes.Recipe;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class RouletteFragment extends Fragment implements Animation.AnimationListener {
@@ -39,6 +55,7 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     private FirebaseUser user;
 
     private List<Restaurant> restaurantList;
+    private List<RatingPlace> placeList;
     private RatingPlace selectedPlace;
 
     private static final String TAG = RouletteFragment.class.getSimpleName();
@@ -49,10 +66,10 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     private int degree = 0;
     private static final Random random = new Random();
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getDegreeForSlots();
     }
 
@@ -74,6 +91,7 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         user = auth.getCurrentUser();
 
         restaurantList = new ArrayList<>();
+        placeList = new ArrayList<>();
 
         Restaurant curRestaurant = rouletteViewModel.getSelectedRestaurant().getValue();
 
@@ -120,9 +138,8 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
 //                                });
 //                            }
 
-
 //                            binding.txvRouletteResult.setText(curRestaurant.getRestaurantName());
-                            binding.txvRouletteResult.setText(selectedPlace.getName());
+//                            binding.txvRouletteResult.setText(selectedPlace.getName());
 
                         }
                     });
@@ -149,7 +166,7 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
             public void onClick(View v) {
                 if(!isRotating) {
                     degree = random.nextInt(slots.length - 1);
-
+                    Log.d(TAG, "DEGREE " + degree);
                     RotateAnimation rotateAnimation = new RotateAnimation(0,
                             (360 * slots.length) + slotDegrees[degree],
                             RotateAnimation.RELATIVE_TO_SELF, 0.5f,
@@ -161,17 +178,41 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
                     binding.imgRouletteLarge.setAnimation(rotateAnimation);
                     binding.imgRouletteLarge.startAnimation(rotateAnimation);
 
-                    binding.txvRouletteResult.setText("Result: onClick " + degree);
+//                    binding.txvRouletteResult.setText("Result: onClick " + degree);
+
+//                    Query query;
+//                    query = db.collection("places")
+//                            .orderBy("name", Query.Direction.ASCENDING);
+//
+//                    query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onEvent(@Nullable QuerySnapshot value,
+//                                            @Nullable FirebaseFirestoreException error) {
+//                            if(error != null) {
+//                                Log.w(TAG, "Listen failed.", error);
+//                                return;
+//                            }
+//
+//                            Log.d(TAG, "excute fetch db, value.size: " + value.size());
+//
+//                            placeList.clear();
+//                            for(QueryDocumentSnapshot document: value) {
+//                                if (document != null) {
+//                                    Log.d(TAG, document.getId() + " => " + document.getData());
+//                                    RatingPlace rating = document.toObject(RatingPlace.class);
+//                                    placeList.add(rating);
+//                                    binding.txvRouletteResult.setText(document.getString("name"));
+//
+//                                }
+//                            }
+//                        }
+//                    });
                 }
             }
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
+
 
     @Override
     public void onAnimationStart(Animation animation) {
@@ -190,7 +231,49 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         this.isRotating = false;
 //        binding.btnSpin.setText("Spin");
         binding.btnSpin.setEnabled(true);
-        binding.txvRouletteResult.setText("Result: " + slots[slots.length - (degree + 1)]);
+        Query query;
+        query = db.collection("places");
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value,
+                                @Nullable FirebaseFirestoreException error) {
+                if(error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                Log.d(TAG, "excute fetch db, value.size: " + value.size());
+
+                placeList.clear();
+                for(QueryDocumentSnapshot document: value) {
+                    if (document != null) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        RatingPlace placeName = document.toObject(RatingPlace.class);
+                        placeList.add(placeName);
+                        Log.d(TAG, "SIZE " + placeList.size());
+//                        binding.txvRouletteResult.setText(document.getString("name"));
+//                        Log.d(TAG, "RESTAURANT NAME " + document.getString("name"));
+//                        binding.txvRouletteResult.setText(placeList.get(0).getName());
+//                        Log.d(TAG, "RESTAURANT NAME " + placeList.get(0).getName());
+//                        binding.txvRouletteResult.setText(placeList.get(degree).getName());
+//                        Log.d(TAG, "RESTAURANT NAME " + placeList.get(degree).getName());
+
+                         Random rand = new Random();
+                         Integer randomPlaceNum = rand.nextInt(placeList.size());
+                            Log.d(TAG, "RANDOMPLACENUM " + randomPlaceNum);
+//                        if(degree > placeList.size()  ) {
+                                    binding.txvRouletteResult.setText(placeList.get(randomPlaceNum).getName());
+//                                }
+//                                else {
+//                                    binding.txvRouletteResult.setText(placeList.get(degree).getName());
+//                                }
+
+                    }
+                }
+            }
+        });
+//        binding.txvRouletteResult.setText("Result: " + slots[slots.length - (degree + 1)]);
     }
 
     private void getDegreeForSlots() {
@@ -201,7 +284,12 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     }
 
     @Override
-    public void onAnimationRepeat(Animation animation) {
+    public void onAnimationRepeat(Animation animation) { }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
+
 }
