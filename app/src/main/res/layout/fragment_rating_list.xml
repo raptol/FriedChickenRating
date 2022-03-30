@@ -25,10 +25,20 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btnSortLocation"
+                    android:id="@+id/btnSortLatest"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="Latest"
+                    android:textSize="10sp" />
+
+                <Button
+                    android:id="@+id/btnSortLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:text="Location"
@@ -42,16 +52,6 @@
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:text="High"
-                    android:textSize="10sp" />
-
-                <Button
-                    android:id="@+id/btnSortLatest"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:text="Latest"
                     android:textSize="10sp" />
 
                 <Button
