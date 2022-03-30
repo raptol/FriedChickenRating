@@ -28,7 +28,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.friedchickenrating.MainActivity;
 import com.example.friedchickenrating.R;
+import com.example.friedchickenrating.UserProfileActivity;
 import com.example.friedchickenrating.databinding.FragmentNewRatingBinding;
 import com.example.friedchickenrating.fragments.maps.MapsFragment;
 import com.firebase.geofire.GeoFireUtils;
@@ -50,6 +52,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -64,16 +67,18 @@ public class NewRatingFragment extends Fragment {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
 
-    private ImageView imgViewNewPhoto;
-    private Uri filePath;
-    private String fileName;
-
     private RatingPlace placeData;
     private Boolean isEditing = false;
 
     private static final String TAG = NewRatingFragment.class.getSimpleName();
+
+    private ImageView imgViewPicture;
+    private Uri filePath;
+    private String fileName;
+    private boolean hasImageToUpload = false;
     static final int REQUEST_IMAGE_SELECT = 0;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,8 +100,9 @@ public class NewRatingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        imgViewPicture = binding.imgViewPicture;
+
         placeData = new RatingPlace();
-        imgViewNewPhoto = binding.imgViewPicture;
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -168,11 +174,21 @@ public class NewRatingFragment extends Fragment {
                     }
                 });
 
-        //event handler for upload picture
-        binding.btnUploadPicture.setOnClickListener(new View.OnClickListener() {
+        // Taking picture event handler for profile image
+        binding.btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //By choosing file
+                //By taking a picture
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        });
+
+        // Choosing picture event handler for profile image
+        binding.btnPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //By choosing a file
                 Intent choosingPictureIntent = new Intent();
                 choosingPictureIntent.setType("image/*");
                 choosingPictureIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -223,7 +239,7 @@ public class NewRatingFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if(imgViewNewPhoto.getDrawable() == null) {
+                if(imgViewPicture.getDrawable() == null) {
                     Toast.makeText(getContext(), "Please upload a picture of chicken menu.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -245,7 +261,7 @@ public class NewRatingFragment extends Fragment {
 
                 //upload image to Google Firebase Storage
                 Map<String, Object> photoValues = null;
-                if(filePath != null) {
+                if(hasImageToUpload) {
                     Date now = new Date();
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
                     fileName = formatter.format(now) + ".jpg";
@@ -307,7 +323,7 @@ public class NewRatingFragment extends Fragment {
                                                     Log.d(TAG, "Document ID:" + placeData.getPlaceid());
                                                     Toast.makeText(getContext(), "add new place success.", Toast.LENGTH_SHORT).show();
 
-                                                    if(filePath != null) {
+                                                    if(hasImageToUpload) {
                                                         uploadImageToFirebaseStorage();
                                                     } else {
                                                         NavHostFragment.findNavController(NewRatingFragment.this)
@@ -377,6 +393,10 @@ public class NewRatingFragment extends Fragment {
                 Bitmap bitmap = tempPhotoDrawable.getBitmap();
                 binding.imgViewPicture.setImageBitmap(bitmap);
                 binding.imgViewPicture.invalidate();
+
+                if(isEditing == false) {
+                    hasImageToUpload = true;
+                }
             }
         }
 
@@ -411,11 +431,17 @@ public class NewRatingFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         //By taking picture
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-//            imgViewNewPhoto.setImageBitmap(imageBitmap);
-//        }
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            if(data != null) {
+                Log.d(TAG, "uri:" + String.valueOf(filePath));
+
+                Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                imgViewPicture.setImageBitmap(imageBitmap);
+                hasImageToUpload = true;
+            }
+
+        }
 
         //By choosing file
         if (requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK) {
@@ -425,7 +451,8 @@ public class NewRatingFragment extends Fragment {
             try {
                 Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
                         this.getContext().getContentResolver(), filePath);
-                imgViewNewPhoto.setImageBitmap(imageBitmap);
+                imgViewPicture.setImageBitmap(imageBitmap);
+                hasImageToUpload = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -433,35 +460,103 @@ public class NewRatingFragment extends Fragment {
     }
 
     private void uploadImageToFirebaseStorage() {
-        if(filePath != null) {
+//        if(filePath != null) {
+//            final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
+//            progressDialog.setTitle("is uploading...");
+//            progressDialog.show();
+//
+//            FirebaseStorage storage = FirebaseStorage.getInstance();
+//            StorageReference storageReference = storage.getReference().child("images/" + fileName);
+//            storageReference.putFile(filePath)
+//                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                            progressDialog.dismiss();
+//
+//                            NavHostFragment.findNavController(NewRatingFragment.this)
+//                                    .navigate(R.id.action_nav_newRating_to_nav_ratings);
+//                        }
+//                    })
+//                    .addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            progressDialog.dismiss();
+//                        }
+//                    })
+//                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+//
+//                        }
+//                    });
+//        } else {
+//            Toast.makeText(this.getContext(), "Select image first.", Toast.LENGTH_SHORT).show();
+//        }
+
+        Log.d(TAG, "hasImageToUpload ==>" + hasImageToUpload);
+        if(hasImageToUpload) {
             final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
             progressDialog.setTitle("is uploading...");
             progressDialog.show();
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReference().child("images/" + fileName);
-            storageReference.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
 
-                            NavHostFragment.findNavController(NewRatingFragment.this)
-                                    .navigate(R.id.action_nav_newRating_to_nav_ratings);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+            Log.d(TAG, "filePath ==>" + filePath);
+            if(filePath != null) { // upload from choosing image
+                storageReference.putFile(filePath)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressDialog.dismiss();
 
-                        }
-                    });
+                                NavHostFragment.findNavController(NewRatingFragment.this)
+                                        .navigate(R.id.action_nav_newRating_to_nav_ratings);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                            }
+                        });
+            }else { // upload from taking picture
+                imgViewPicture.setDrawingCacheEnabled(true);
+                imgViewPicture.buildDrawingCache();
+                Bitmap bitmap = ((BitmapDrawable)imgViewPicture.getDrawable()).getBitmap();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                byte[] data = outputStream.toByteArray();
+
+                storageReference.putBytes(data)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressDialog.dismiss();
+
+                                NavHostFragment.findNavController(NewRatingFragment.this)
+                                        .navigate(R.id.action_nav_newRating_to_nav_ratings);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                            }
+                        });
+            }
         } else {
             Toast.makeText(this.getContext(), "Select image first.", Toast.LENGTH_SHORT).show();
         }
