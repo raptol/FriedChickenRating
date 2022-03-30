@@ -21,7 +21,7 @@
             android:icon="@drawable/ic_menu_maps"
             android:title="@string/menu_maps" />
         <item
-            android:id="@+id/nav_roulette"
+            android:id="@+id/rouletteFragment"
             android:icon="@drawable/ic_menu_roulette"
             android:title="@string/menu_roulette" />
         <item
