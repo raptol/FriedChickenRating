@@ -208,7 +208,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             String filename = String.valueOf(pictures.get("filename"));
                             Log.d(TAG, "filename: " + filename);
 
-                            if (!filename.isEmpty() && filename != null) {
+                            if (filename != null && !filename.isEmpty()) {
                                 long size;
                                 final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
                                 StorageReference storageReference
