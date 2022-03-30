@@ -75,6 +75,36 @@
                     android:text="My"
                     android:textSize="10sp" />
 
+                <Button
+                    android:id="@+id/btnSortMyFlavor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="My Flavor"
+                    android:textSize="10sp" />
+
+                <Button
+                    android:id="@+id/btnSortMyCulture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="My Culture"
+                    android:textSize="10sp" />
+
+                <Button
+                    android:id="@+id/btnSortMyHometown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="My Hometown"
+                    android:textSize="10sp" />
+
                 <ImageView
                     android:id="@+id/btnOpenMap"
                     android:layout_width="25dp"

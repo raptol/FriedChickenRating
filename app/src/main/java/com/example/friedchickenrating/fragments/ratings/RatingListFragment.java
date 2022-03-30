@@ -22,11 +22,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.example.friedchickenrating.R;
+import com.example.friedchickenrating.User;
 import com.example.friedchickenrating.databinding.FragmentRatingListBinding;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
@@ -38,6 +40,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,6 +59,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private FirebaseAuth auth;
     private FirebaseUser user;
 
+    private User loginUser;
     private List<Rating> ratingList;
     private List<RatingPlace> placeList;
     private RatingListAdapter ratingListAdapter;
@@ -67,6 +71,9 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private static final int SORT_OPTION_LATEST = 3;
     private static final int SORT_OPTION_RELEVANT = 4;
     private static final int SORT_OPTION_MY_RATING = 5;
+    private static final int SORT_OPTION_MY_FLAVOR = 6;
+    private static final int SORT_OPTION_MY_CULTURE = 7;
+    private static final int SORT_OPTION_MY_HOMETOWN = 8;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -101,6 +108,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
+        loginUser = new User();
         ratingList = new ArrayList<>();
         placeList = new ArrayList<>();
 
@@ -120,6 +128,9 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
 
         //display rating list
         displayRatingList(SORT_OPTION_LATEST); //default sorting option: latest
+
+        //Get Login User info
+        readLoginUserInfo();
 
         binding.btnSortLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +164,27 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
             @Override
             public void onClick(View view) {
                 displayRatingList(SORT_OPTION_MY_RATING);
+            }
+        });
+
+        binding.btnSortMyFlavor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_MY_FLAVOR);
+            }
+        });
+
+        binding.btnSortMyCulture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_MY_CULTURE);
+            }
+        });
+
+        binding.btnSortMyHometown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRatingList(SORT_OPTION_MY_HOMETOWN);
             }
         });
 
@@ -231,6 +263,33 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 readRatingList(query);
                 break;
 
+            case SORT_OPTION_MY_FLAVOR:
+                AbstractMap.SimpleEntry<String, Float> topPriorityPreference = getTopPriorityFactor();
+                if(topPriorityPreference != null) {
+                    query = db.collection("ratings")
+                            .whereGreaterThanOrEqualTo(
+                                    convertKeyPrefix(topPriorityPreference.getKey()),
+                                    topPriorityPreference.getValue());
+                    readPlaceList();
+                    //readRatingListByMyFactor(query);
+                    readRatingList(query);
+                }
+                break;
+
+            case SORT_OPTION_MY_CULTURE:
+                query = db.collection("users")
+                            .whereEqualTo("background", loginUser.getBackground());
+                readPlaceList();
+                readRatingListByMyFactor(query);
+                break;
+
+            case SORT_OPTION_MY_HOMETOWN:
+                query = db.collection("users")
+                        .whereEqualTo("hometown", loginUser.getHometown());
+                readPlaceList();
+                readRatingListByMyFactor(query);
+                break;
+
             default: // by location
                 readRatingListByCurrentLocation();
         }
@@ -263,14 +322,6 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                     }
                 });
     }
-
-//    public void readRatingListBySpecificPlace(RatingPlace place) {
-//        placeList.clear();
-//        placeList.add(place);
-//
-//        Query query = db.collection("ratings").whereEqualTo("placeid", place.getPlaceid());
-//        readRatingList(query);
-//    }
 
     private void readRatingList(Query query) {
         // Listen for realtime updates of the ratings
@@ -381,6 +432,113 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                         }
                     });
         }
+    }
+
+    private void readRatingListByMyFactor(Query query) {
+
+        //Get user list with my factor
+        List<String> sameFactorUserIds = new ArrayList<>();
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value,
+                                @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                Log.d(TAG, "excute fetch db, value.size: " + value.size());
+
+                sameFactorUserIds.clear();
+                for (QueryDocumentSnapshot document : value) {
+                    if (document != null) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        User sameFactorUser = document.toObject(User.class);
+
+                        //except for login user
+                        if(loginUser != null && !loginUser.getUid().equals(sameFactorUser.getUid())) {
+                            Log.d(TAG, "sameFactorUser: " + sameFactorUser.getName());
+                            sameFactorUserIds.add(sameFactorUser.getUid());
+                        }
+                    }
+                }
+
+                // rating list matched with places
+                Log.d(TAG, "userList.size: " + sameFactorUserIds.size());
+                if(sameFactorUserIds.size() > 0) {
+                    Query ratingQuery = db.collection("ratings").whereIn("userid", sameFactorUserIds);
+                    readRatingList(ratingQuery);
+                }else {
+                    placeList.clear();
+                    ratingList.clear();
+                    ratingListAdapter.setRatingList(ratingList, placeList);
+                }
+            }
+        });
+    }
+
+    private void readLoginUserInfo() {
+
+        //Get login user info
+        db.collection("users").document(user.getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        loginUser = document.toObject(User.class);
+
+                        Log.d(TAG, "loginUser: " + loginUser.getName());
+
+                    }else {
+                        Log.d(TAG, "No such user");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    private AbstractMap.SimpleEntry<String, Float> getTopPriorityFactor() {
+        AbstractMap.SimpleEntry<String, Float> topPriorityPreference = null;
+        float maxValue = 0;
+
+        if(loginUser.getPrefercrunch() > maxValue) {
+            maxValue = loginUser.getPrefercrunch();
+            topPriorityPreference = new AbstractMap.SimpleEntry<>("prefercrunch", maxValue);
+        }
+        if(loginUser.getPreferflavor() > maxValue) {
+            maxValue = loginUser.getPreferflavor();
+            topPriorityPreference = new AbstractMap.SimpleEntry<>("preferflavor", maxValue);
+        }
+        if(loginUser.getPreferportion() > maxValue) {
+            maxValue = loginUser.getPreferportion();
+            topPriorityPreference = new AbstractMap.SimpleEntry<>("preferportion", maxValue);
+        }
+        if(loginUser.getPreferprice() > maxValue) {
+            maxValue = loginUser.getPreferprice();
+            topPriorityPreference = new AbstractMap.SimpleEntry<>("preferprice", maxValue);
+        }
+        if(loginUser.getPreferspiciness() > maxValue) {
+            maxValue = loginUser.getPreferspiciness();
+            topPriorityPreference = new AbstractMap.SimpleEntry<>("preferspiciness", maxValue);
+        }
+
+        return topPriorityPreference;
+    }
+
+    private String convertKeyPrefix(String key) {
+        String prefixUserPreference = "prefer";
+        String prefixRatingFactor = "star";
+        String result = "";
+
+        result = prefixRatingFactor + key.substring(prefixUserPreference.length(), key.length());
+
+        Log.d(TAG, "==> Factor key: " + result);
+        return result;
     }
 
     @Override
