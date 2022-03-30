@@ -117,10 +117,12 @@ public class ViewRatingFragment extends Fragment {
 
                             // download and display images
                             Map<String, Object> pictures = curRating.getPictures();
-                            String filename = String.valueOf(pictures.get("filename"));
+                            String filename = null;
+                            if(pictures != null)
+                                filename = String.valueOf(pictures.get("filename"));
                             Log.d(TAG, "filename: " + filename);
 
-                            if (!filename.isEmpty() && filename != null) {
+                            if (filename != null && !filename.isEmpty()) {
                                 long size;
                                 final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
                                 StorageReference storageReference

@@ -40,13 +40,35 @@
                         android:layout_height="100dp"
                         tools:src="@tools:sample/avatars" />
 
-                    <Button
-                        android:id="@+id/btnUploadPicture"
-                        android:layout_width="100dp"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:text="Upload Picture"
-                        android:textSize="10sp" />
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="@+id/imgViewPicture"
+                        app:layout_constraintTop_toBottomOf="@+id/imgViewPicture">
+
+                        <ImageButton
+                            android:id="@+id/btnCamera"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30dp"
+                            app:srcCompat="@drawable/ic_icon_photo_camera" />
+
+                        <ImageButton
+                            android:id="@+id/btnPicture"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30dp"
+                            app:srcCompat="@drawable/ic_icon_image" />
+                    </LinearLayout>
+
+<!--                    <Button-->
+<!--                        android:id="@+id/btnUploadPicture"-->
+<!--                        android:layout_width="100dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="30dp"-->
+<!--                        android:text="Upload Picture"-->
+<!--                        android:textSize="10sp" />-->
                 </LinearLayout>
 
                 <LinearLayout

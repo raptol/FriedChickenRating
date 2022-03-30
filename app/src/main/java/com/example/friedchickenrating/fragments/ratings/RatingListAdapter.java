@@ -73,7 +73,9 @@ public class RatingListAdapter extends RecyclerView.Adapter {
 
         // download and display images
         Map<String, Object> pictures = curRating.getPictures();
-        String filename = String.valueOf(pictures.get("filename"));
+        String filename = null;
+        if(pictures != null)
+             filename = String.valueOf(pictures.get("filename"));
 
         Log.d(TAG, "filename: " + filename);
 
