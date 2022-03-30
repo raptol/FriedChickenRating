@@ -14,6 +14,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ShareCompat;
@@ -73,6 +74,21 @@ public class ViewRatingFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
+
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                Log.d(TAG, "Pressed Back button");
+//
+//                String parentScreen = ratingViewModel.getParentScreen().getValue();
+//                if(parentScreen != null && !parentScreen.isEmpty()) {
+//                    NavHostFragment.findNavController(ViewRatingFragment.this)
+//                            .navigate(R.id.action_nav_viewRatings_to_nav_ratings);
+//                }
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Nullable
@@ -80,9 +96,9 @@ public class ViewRatingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
         binding = FragmentViewRatingBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
+
         return rootView;
     }
 

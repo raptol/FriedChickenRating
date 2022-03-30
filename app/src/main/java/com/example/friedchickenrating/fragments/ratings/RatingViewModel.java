@@ -34,10 +34,15 @@ public class RatingViewModel extends ViewModel {
     private MutableLiveData<ImageView> selectedRatingImage = new MutableLiveData<>();
     private MutableLiveData<Uri> selectedRatingImageFilePath = new MutableLiveData<>();
     private MutableLiveData<Integer> mapRequestCode = new MutableLiveData<>();
+    private MutableLiveData<String> parentScreen = new MutableLiveData<>();
+    private MutableLiveData<Integer> filter = new MutableLiveData<>();
+    private MutableLiveData<Integer> selectedPosition = new MutableLiveData<>();
 
     private static final String TAG = RatingViewModel.class.getSimpleName();
 
     public RatingViewModel() {
+        setFilter(0);
+        setSelectedPosition(0);
     }
 
     public LiveData<RatingPlace> getSelectedRatingPlace() {
@@ -63,6 +68,19 @@ public class RatingViewModel extends ViewModel {
         return mapRequestCode;
     }
 
+    public LiveData<String> getParentScreen() {
+        return parentScreen;
+    }
+
+    public LiveData<Integer> getFilter() {
+        return filter;
+    }
+
+    public LiveData<Integer> getSelectedPosition() {
+        return selectedPosition;
+    }
+
+
     public void setSelectedRatingPlace(RatingPlace selectedRatingPlace) {
         this.selectedRatingPlace.setValue(selectedRatingPlace);
     }
@@ -85,6 +103,18 @@ public class RatingViewModel extends ViewModel {
 
     public void setMapRequestCode(Integer mapRequestCode) {
         this.mapRequestCode.setValue(mapRequestCode);
+    }
+
+    public void setParentScreen(String parentScreen) {
+        this.parentScreen.setValue(parentScreen);
+    }
+
+    public void setFilter(Integer filter) {
+        this.filter.setValue(filter);
+    }
+
+    public void setSelectedPosition(Integer position) {
+        this.selectedPosition.setValue(position);
     }
 
     public String getRegionFromLatLng(Context context, Double latitude, Double longitude) {

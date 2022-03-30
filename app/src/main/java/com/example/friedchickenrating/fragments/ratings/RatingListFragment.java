@@ -8,15 +8,19 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,6 +84,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private LatLng userLocation;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
+    private boolean isBackPressed = false;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,64 +133,70 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         binding.recyclerViewRatingList.setAdapter(ratingListAdapter);
 
         //display rating list
-        displayRatingList(SORT_OPTION_LATEST); //default sorting option: latest
+        int previousFilter = ratingViewModel.getFilter().getValue();
+        if( previousFilter != 0)
+            isBackPressed = true;
 
-        //Get Login User info
-        readLoginUserInfo();
+        if(!isBackPressed) {
+            displayRatingList(SORT_OPTION_LATEST, 0); //default sorting option: latest
+        }
+        else {
+            displayRatingList(previousFilter, ratingViewModel.getSelectedPosition().getValue()); //set previous filter
+        }
 
         binding.btnSortLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_LOCATION);
+                displayRatingList(SORT_OPTION_LOCATION, 0);
             }
         });
 
         binding.btnSortHighRates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_HIGH_STARS);
+                displayRatingList(SORT_OPTION_HIGH_STARS, 0);
             }
         });
 
         binding.btnSortLatest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_LATEST);
+                displayRatingList(SORT_OPTION_LATEST, 0);
             }
         });
 
         binding.btnSortRelevant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_RELEVANT);
+                displayRatingList(SORT_OPTION_RELEVANT, 0);
             }
         });
 
         binding.btnSortMyRates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_MY_RATING);
+                displayRatingList(SORT_OPTION_MY_RATING, 0);
             }
         });
 
         binding.btnSortMyFlavor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_MY_FLAVOR);
+                displayRatingList(SORT_OPTION_MY_FLAVOR, 0);
             }
         });
 
         binding.btnSortMyCulture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_MY_CULTURE);
+                displayRatingList(SORT_OPTION_MY_CULTURE, 0);
             }
         });
 
         binding.btnSortMyHometown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRatingList(SORT_OPTION_MY_HOMETOWN);
+                displayRatingList(SORT_OPTION_MY_HOMETOWN, 0);
             }
         });
 
@@ -223,15 +235,17 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     public void onListItemClick(Rating rating, int position) {
         ratingViewModel.setSelectedRating(rating);
         ratingViewModel.setSelectedRatingId(ratingList.get(position).getId());
+        ratingViewModel.setSelectedPosition(position);
 
         NavHostFragment.findNavController(RatingListFragment.this)
                 .navigate(R.id.action_nav_ratings_to_nav_viewRatings);
     }
 
-    private void displayRatingList(int sortOption) {
+    private void displayRatingList(int sortOption, int scrollToPosition) {
+
+        ratingViewModel.setFilter(sortOption);
 
         Query query;
-
         switch(sortOption) {
             case SORT_OPTION_HIGH_STARS:
                 query = db.collection("ratings")
@@ -264,38 +278,111 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 break;
 
             case SORT_OPTION_MY_FLAVOR:
-                AbstractMap.SimpleEntry<String, Float> topPriorityPreference = getTopPriorityFactor();
-                if(topPriorityPreference != null) {
-                    query = db.collection("ratings")
-                            .whereGreaterThanOrEqualTo(
-                                    convertKeyPrefix(topPriorityPreference.getKey()),
-                                    topPriorityPreference.getValue());
-                    readPlaceList();
-                    //readRatingListByMyFactor(query);
-                    readRatingList(query);
-                }
+                //Get login user info
+                db.collection("users").document(user.getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if(document.exists()) {
+                                loginUser = document.toObject(User.class);
+
+                                Log.d(TAG, "loginUser: " + loginUser.getName());
+
+                                //Read rating list by my flavor
+                                AbstractMap.SimpleEntry<String, Float> topPriorityPreference = getTopPriorityFactor();
+                                Log.d(TAG, "topPriorityPreference: " + topPriorityPreference);
+                                if(topPriorityPreference != null) {
+                                    Query query = db.collection("ratings")
+                                            .whereGreaterThanOrEqualTo(
+                                                    convertKeyPrefix(topPriorityPreference.getKey()),
+                                                    topPriorityPreference.getValue());
+                                    readPlaceList();
+                                    readRatingList(query);
+                                }
+
+                            }else {
+                                Log.d(TAG, "No such user");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
                 break;
 
             case SORT_OPTION_MY_CULTURE:
-                query = db.collection("users")
-                            .whereEqualTo("background", loginUser.getBackground());
-                readPlaceList();
-                readRatingListByMyFactor(query);
+                //Get login user info
+                db.collection("users").document(user.getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if(document.exists()) {
+                                loginUser = document.toObject(User.class);
+
+                                Log.d(TAG, "loginUser: " + loginUser.getName());
+
+                                //Read rating list by my background culture
+                                Log.d(TAG, "loginuser.getBackground: " + loginUser.getBackground());
+                                Query query = db.collection("users")
+                                        .whereEqualTo("background", loginUser.getBackground());
+                                readPlaceList();
+                                readRatingListByMyFactor(query);
+
+                            }else {
+                                Log.d(TAG, "No such user");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
                 break;
 
             case SORT_OPTION_MY_HOMETOWN:
-                query = db.collection("users")
-                        .whereEqualTo("hometown", loginUser.getHometown());
-                readPlaceList();
-                readRatingListByMyFactor(query);
+                //Get login user info
+                db.collection("users").document(user.getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if(document.exists()) {
+                                loginUser = document.toObject(User.class);
+
+                                Log.d(TAG, "loginUser: " + loginUser.getName());
+
+                                //Read rating list by hometown
+                                Log.d(TAG, "loginUser.getHometown(): " + loginUser.getHometown());
+                                Query query = db.collection("users")
+                                        .whereEqualTo("hometown", loginUser.getHometown());
+                                readPlaceList();
+                                readRatingListByMyFactor(query);
+
+                            }else {
+                                Log.d(TAG, "No such user");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
                 break;
 
             default: // by location
                 readRatingListByCurrentLocation();
         }
 
-        //Scroll to top
-        binding.recyclerViewRatingList.smoothScrollToPosition(0);
+        //Scroll to position
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                binding.recyclerViewRatingList.scrollToPosition(scrollToPosition);
+            }
+        }, 500);
     }
 
     private void readPlaceList() {
@@ -473,30 +560,6 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                     placeList.clear();
                     ratingList.clear();
                     ratingListAdapter.setRatingList(ratingList, placeList);
-                }
-            }
-        });
-    }
-
-    private void readLoginUserInfo() {
-
-        //Get login user info
-        db.collection("users").document(user.getUid())
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()) {
-                        loginUser = document.toObject(User.class);
-
-                        Log.d(TAG, "loginUser: " + loginUser.getName());
-
-                    }else {
-                        Log.d(TAG, "No such user");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
