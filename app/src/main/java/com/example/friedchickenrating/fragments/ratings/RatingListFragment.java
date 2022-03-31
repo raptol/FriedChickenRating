@@ -359,7 +359,6 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                                 Log.d(TAG, "loginUser.getHometown(): " + loginUser.getHometown());
                                 Query query = db.collection("users")
                                         .whereEqualTo("hometown", loginUser.getHometown());
-                                readPlaceList();
                                 readRatingListByMyFactor(query);
 
                             }else {
@@ -555,6 +554,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                 Log.d(TAG, "userList.size: " + sameFactorUserIds.size());
                 if(sameFactorUserIds.size() > 0) {
                     Query ratingQuery = db.collection("ratings").whereIn("userid", sameFactorUserIds);
+                    readPlaceList();
                     readRatingList(ratingQuery);
                 }else {
                     placeList.clear();

@@ -65,10 +65,17 @@ public class RatingListAdapter extends RecyclerView.Adapter {
 
         RatingViewHolder ratingViewHolder = (RatingViewHolder) holder;
         Rating curRating = ratingList.get(position);
+
+        Log.d(TAG, "placeid: " + curRating.getPlaceid());
         RatingPlace place = getPlace(curRating.getPlaceid());
+        Log.d(TAG, "after placeid: " + place.getPlaceid());
 
         ratingViewHolder.txtItemTitle.setText(curRating.getTitle());
-        ratingViewHolder.txtItemPlace.setText(place.getName().trim().replaceAll("\\s+", " ") );
+        if(place != null && place.getName() != null) {
+            ratingViewHolder.txtItemPlace.setText(place.getName().trim().replaceAll("\\s+", " "));
+        }else {
+            ratingViewHolder.txtItemPlace.setText("");
+        }
         ratingViewHolder.ratingBar.setRating(curRating.getStaroverall());
 
         // download and display images
