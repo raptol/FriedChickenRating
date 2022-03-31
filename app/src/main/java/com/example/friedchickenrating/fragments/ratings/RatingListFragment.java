@@ -10,6 +10,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -213,11 +216,8 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private boolean checkPermission() {
         int hasFineLocationPermission =
                 ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-        int hasCoarseLocationPermission =
-                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
 
@@ -225,11 +225,19 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     }
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions(getActivity(),
-                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                LOCATION_PERMISSION_REQUEST_CODE);
+        permissionResultCallback.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
     }
+
+    private ActivityResultLauncher<String> permissionResultCallback = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+                    if (result) { // permission granted
+                        displayRatingList(SORT_OPTION_LOCATION, 0);
+                    }
+                }
+            });
 
     @Override
     public void onListItemClick(Rating rating, int position) {
@@ -440,6 +448,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
         //Check permission to get current location
         if (!checkPermission()) {
             requestPermission();
+            return;
         }
 
         //Get current location
@@ -466,7 +475,7 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
             Log.d(TAG, "current location's latitude: " + userLocation.latitude + ", longitude: " + userLocation.longitude);
 
             final GeoLocation center = new GeoLocation(userLocation.latitude, userLocation.longitude);
-            final double radiusInMeter = 50 * 1000; //find places within 50km
+            final double radiusInMeter = 1 * 1000; //find places within 1km
 
             List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInMeter);
             final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
@@ -489,8 +498,12 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                         public void onComplete(@NonNull Task<List<Task<?>>> t) {
                             List<DocumentSnapshot> matchingPlaceDocs = new ArrayList<>();
 
+                            Log.d(TAG, "tasks size:" + tasks.size());
+
                             for (Task<QuerySnapshot> task : tasks) {
                                 QuerySnapshot snap = task.getResult();
+
+                                Log.d(TAG, "snap size:" + snap.size());
                                 for (DocumentSnapshot doc : snap.getDocuments()) {
                                     double latitude = doc.getDouble("latitude");
                                     double longitude = doc.getDouble("longitude");
@@ -510,10 +523,16 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
                                 }
                             }
 
+                            Log.d(TAG, "curLocPlaceIds size:" + curLocPlaceIds.size());
+
                             // rating list matched with places
                             if(curLocPlaceIds.size() > 0) {
                                 Query query = db.collection("ratings").whereIn("placeid", curLocPlaceIds);
                                 readRatingList(query);
+                            } else {
+                                placeList.clear();
+                                ratingList.clear();
+                                ratingListAdapter.setRatingList(ratingList, placeList);
                             }
                         }
                     });
