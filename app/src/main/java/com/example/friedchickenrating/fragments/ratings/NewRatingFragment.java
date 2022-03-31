@@ -460,39 +460,6 @@ public class NewRatingFragment extends Fragment {
     }
 
     private void uploadImageToFirebaseStorage() {
-//        if(filePath != null) {
-//            final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
-//            progressDialog.setTitle("is uploading...");
-//            progressDialog.show();
-//
-//            FirebaseStorage storage = FirebaseStorage.getInstance();
-//            StorageReference storageReference = storage.getReference().child("images/" + fileName);
-//            storageReference.putFile(filePath)
-//                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            progressDialog.dismiss();
-//
-//                            NavHostFragment.findNavController(NewRatingFragment.this)
-//                                    .navigate(R.id.action_nav_newRating_to_nav_ratings);
-//                        }
-//                    })
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            progressDialog.dismiss();
-//                        }
-//                    })
-//                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-//
-//                        }
-//                    });
-//        } else {
-//            Toast.makeText(this.getContext(), "Select image first.", Toast.LENGTH_SHORT).show();
-//        }
-
         Log.d(TAG, "hasImageToUpload ==>" + hasImageToUpload);
         if(hasImageToUpload) {
             final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
