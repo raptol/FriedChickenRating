@@ -75,20 +75,6 @@ public class ViewRatingFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
-
-//        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-//            @Override
-//            public void handleOnBackPressed() {
-//                Log.d(TAG, "Pressed Back button");
-//
-//                String parentScreen = ratingViewModel.getParentScreen().getValue();
-//                if(parentScreen != null && !parentScreen.isEmpty()) {
-//                    NavHostFragment.findNavController(ViewRatingFragment.this)
-//                            .navigate(R.id.action_nav_viewRatings_to_nav_ratings);
-//                }
-//            }
-//        };
-//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Nullable
@@ -231,7 +217,9 @@ public class ViewRatingFragment extends Fragment {
                                     Log.d(TAG, document.getId() + " => " + document.getData());
                                     favorite = document.toObject(Favorite.class);
 
-                                    showSelectedFavoriteButton();
+                                    if(!isFavorite) {
+                                        showSelectedFavoriteButton();
+                                    }
                                 }
                             }
                         }
