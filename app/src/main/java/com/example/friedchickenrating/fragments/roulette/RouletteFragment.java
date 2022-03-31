@@ -72,7 +72,6 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     private int degree = 0;
     private static final Random random = new Random();
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,40 +113,6 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
                                 return;
                             }
 
-//                            selectedPlace = value.toObject(RatingPlace.class);
-
-//                            // download and display images
-//                            Map<String, Object> pictures = curRestaurant.getPictures();
-//                            String filename = String.valueOf(pictures.get("filename"));
-//                            Log.d(TAG, "filename: " + filename);
-//
-//                            if (!filename.isEmpty() && filename != null) {
-//                                long size;
-//                                final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-//                                StorageReference storageReference
-//                                        = firebaseStorage.getReference().child("images").child(filename);
-//                                storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<Uri> task) {
-//                                        if (task.isSuccessful()) {
-//
-//                                            if(getActivity() != null) {
-//                                                Glide.with(getActivity())
-//                                                        .load(task.getResult())
-//                                                        .into(binding.imgViewPicture);
-//                                                binding.imgViewPicture.invalidate();
-//                                            }
-//                                        } else {
-//                                            Toast.makeText(getContext(),
-//                                                    "Fail to load image", Toast.LENGTH_SHORT).show();
-//                                        }
-//                                    }
-//                                });
-//                            }
-
-//                            binding.txvRouletteResult.setText(curRestaurant.getRestaurantName());
-//                            binding.txvRouletteResult.setText(selectedPlace.getName());
-
                         }
                     });
         }
@@ -158,23 +123,8 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
             @Override
             public void onClick(View view) {
 
-                rouletteViewModel.setSelectedRestaurant(curRestaurant);
-                rouletteViewModel.setSelectedRatingPlace(selectedPlace);
-                rouletteViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_VIEW_RATING);
-
-                NavHostFragment.findNavController(RouletteFragment.this)
-                        .navigate(R.id.action_rouletteFragment_to_nav_maps);
-            }
-        });
-
-
-        //event handler for open map button
-        binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
                 //store data before switching from new rating to map
-                String docId = ""; // New rating mode
+//                String docId = ""; // New rating mode
              //   if(isEditing) { // Edit rating mode
                 //    docId = ratingViewModel.getSelectedRating().getValue().getId();
 //                    docId = rouletteViewModel.getSelectedRatingPlace().getValue().getPlaceid();
@@ -189,24 +139,18 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
                         selectedPlace.getLongitude(),
                         selectedPlace.getGeohash(),
                         selectedPlace.getRegion());
-                Log.d(TAG, "SELECTED_PLACE ID" + selectedPlace.getPlaceid());
+
+//                rouletteViewModel.setSelectedRestaurant(curRestaurant);
+//                rouletteViewModel.setSelectedRatingPlace(selectedPlace);
 
                 rouletteViewModel.setSelectedRatingPlace(saveRatingPlaceData);
-//                ratingViewModel.setSelectedRatingImage(binding.imgViewPicture);
-//                ratingViewModel.setSelectedRatingImageFilePath(filePath);
-                rouletteViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_ADD_RATING);
+                rouletteViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_VIEW_RATING);
 
                 NavHostFragment.findNavController(RouletteFragment.this)
                         .navigate(R.id.action_rouletteFragment_to_nav_maps);
 
             }
         });
-
-
-
-
-
-
 
 
         //event handler for spin button
@@ -232,18 +176,15 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     }
 
 
-
     @Override
     public void onAnimationStart(Animation animation) {
-        binding.txvRouletteResult.setText("Result: ");
+        binding.txvRouletteResult.setText("Spinning... ");
         this.isRotating = false;
-//        binding.btnSpin.setText("Stop");
         binding.btnSpin.setEnabled(false);
         binding.btnSpin.setTextColor(Color.GRAY);
         Log.d(TAG, "onAnimationStart()");
     }
 
-    List<String> restaurantListString = new ArrayList<>();
     Random rand = new Random();
     Integer randomPlaceNum ;
 
@@ -251,7 +192,6 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     public void onAnimationEnd(Animation animation) {
         Log.d(TAG, "onAnimationEnd()");
         this.isRotating = false;
-//        binding.btnSpin.setText("Spin");
         binding.btnSpin.setEnabled(true);
         binding.btnSpin.setTextColor(Color.WHITE);
 
@@ -275,33 +215,25 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
                         Log.d(TAG, document.getId() + " => " + document.getData());
                         RatingPlace placeName = document.toObject(RatingPlace.class);
                         placeList.add(placeName);
-                        Log.d(TAG, "SIZE " + placeList.size());
 //                        binding.txvRouletteResult.setText(document.getString("name"));
 //                        Log.d(TAG, "RESTAURANT NAME " + document.getString("name"));
-//                        binding.txvRouletteResult.setText(placeList.get(degree).getName());
-//                        Log.d(TAG, "RESTAURANT NAME " + placeList.get(degree).getName());
 
                         randomPlaceNum = rand.nextInt(placeList.size());
-                        restaurantListString.add(document.getString("name"));
 
+                        Log.d(TAG, "RANDOMPLACE_NUM " + randomPlaceNum);
 
-
-                            Log.d(TAG, "RANDOMPLACENUM " + randomPlaceNum);
-//                                    binding.txvRouletteResult.setText(placeList.get(randomPlaceNum).getName());
-                        selectedPlace.setName(placeList.get(randomPlaceNum).getName());
-                        selectedPlace.setPlaceid(placeList.get(randomPlaceNum).getPlaceid());
-                        selectedPlace.setLatitude(placeList.get(randomPlaceNum).getLatitude());
-                        selectedPlace.setLongitude(placeList.get(randomPlaceNum).getLongitude());
-                        selectedPlace.setGeohash(placeList.get(randomPlaceNum).getGeohash());
-                        selectedPlace.setRegion(placeList.get(randomPlaceNum).getRegion());
-                        Log.d(TAG, "SELECTED_PLACE" + selectedPlace.getPlaceid());
                     }
                 }
-                Log.d(TAG, "RESTAURANTLIST" + restaurantListString);
-                binding.txvRouletteResult.setText(restaurantListString.get(randomPlaceNum));
-
-                //TODO add switch case to select restaurant depends on degree number
-
+                Log.d(TAG, "SIZE: " + placeList.size());
+                Log.d(TAG, "RESTAURANT_NAME: " + placeList.get(randomPlaceNum).getName());
+                selectedPlace.setName(placeList.get(randomPlaceNum).getName());
+                selectedPlace.setPlaceid(placeList.get(randomPlaceNum).getPlaceid());
+                selectedPlace.setLatitude(placeList.get(randomPlaceNum).getLatitude());
+                selectedPlace.setLongitude(placeList.get(randomPlaceNum).getLongitude());
+                selectedPlace.setGeohash(placeList.get(randomPlaceNum).getGeohash());
+                selectedPlace.setRegion(placeList.get(randomPlaceNum).getRegion());
+                Log.d(TAG, "SELECTED_PLACE_ID: " + selectedPlace.getPlaceid());
+                binding.txvRouletteResult.setText(placeList.get(randomPlaceNum).getName());
             }
         });
     }
@@ -321,5 +253,4 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         super.onDestroyView();
         binding = null;
     }
-
 }
