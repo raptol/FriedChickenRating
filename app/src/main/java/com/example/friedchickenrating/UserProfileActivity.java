@@ -54,6 +54,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -153,29 +154,71 @@ public class UserProfileActivity extends AppCompatActivity {
         backgroundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spnBackground.setAdapter(backgroundAdapter);
 
-        // Listen for realtime updates of the backgrounds
+        // If background data not exists, load data into Firestore DB
         db.collection("backgrounds")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException error) {
-                        if(error != null) {
-                            Log.w(TAG, "Listen failed.", error);
-                            return;
-                        }
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if(task.getResult().size() == 0) {
+                                //load initial data from file
+                                List<String> backgroundList =
+                                        Arrays.asList(getResources().getStringArray(R.array.backgrounds));
 
-                        backgroundCultureValues.clear();
-                        backgroundCultureValues.add(SPINNER_CHOOSE_MESSAGE);
-                        for(QueryDocumentSnapshot document: value) {
-                            if (document != null) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Background background = document.toObject(Background.class);
-                                backgroundCultureValues.add(background.getName());
-                                Log.d(TAG, "backgroundCulture: " + background.getName());
+                                //insert initial data into Firestore DB
+                                //Batch write
+                                if(backgroundList.size() > 0) {
+                                    backgroundCultureValues.clear();
+                                    backgroundCultureValues.add(SPINNER_CHOOSE_MESSAGE);
+
+                                    WriteBatch batch = db.batch();
+                                    for (int i = 0; i < backgroundList.size(); i++) {
+                                        String docId = db.collection("backgrounds").document().getId();
+                                        Background newBackgroundData = new Background(docId, backgroundList.get(i));
+                                        batch.set(db.collection("backgrounds").document(docId), newBackgroundData);
+
+                                        backgroundCultureValues.add(newBackgroundData.getName());
+                                    }
+                                    // Commit the batch
+                                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            backgroundAdapter.notifyDataSetChanged();
+                                            Log.d(TAG, "The background initial data was saved successfully.");
+                                        }
+                                    });
+                                }
+                            } else {
+                                // Listen for realtime updates of the backgrounds
+                                db.collection("backgrounds")
+                                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onEvent(@Nullable QuerySnapshot value,
+                                                                @Nullable FirebaseFirestoreException error) {
+                                                if(error != null) {
+                                                    Log.w(TAG, "Listen failed.", error);
+                                                    return;
+                                                }
+
+                                                backgroundCultureValues.clear();
+                                                backgroundCultureValues.add(SPINNER_CHOOSE_MESSAGE);
+                                                for (QueryDocumentSnapshot document : value) {
+                                                    if (document != null) {
+                                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                                        Background background = document.toObject(Background.class);
+                                                        backgroundCultureValues.add(background.getName());
+                                                        Log.d(TAG, "backgroundCulture: " + background.getName());
+                                                    }
+                                                }
+
+                                                backgroundAdapter.notifyDataSetChanged();
+                                            }
+                                        });
                             }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-
-                        backgroundAdapter.notifyDataSetChanged();
                     }
                 });
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="backgrounds">
+        <item>African</item>
+        <item>Australian</item>
+        <item>East Asian</item>
+        <item>East European</item>
+        <item>North American</item>
+        <item>South American</item>
+        <item>South Asian</item>
+        <item>West European</item>
+    </string-array>
+</resources>
