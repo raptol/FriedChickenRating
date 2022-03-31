@@ -93,6 +93,7 @@ public class SignupActivity extends AppCompatActivity {
                                 finish();
                             } else {
                                 Log.d(TAG, "Signup failed." + task.getException());
+                                Toast.makeText(getApplicationContext(), "Signup failed. Or, the email is already in use.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
