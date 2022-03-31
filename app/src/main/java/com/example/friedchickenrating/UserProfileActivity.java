@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -235,7 +236,14 @@ public class UserProfileActivity extends AppCompatActivity {
                         binding.editTxtName.setText(userData.getName());
                         binding.editTxtEmail.setText(userData.getEmail());
                         editTextHometownName.setText(userData.getHometown());
-                        binding.spnBackground.setSelection(backgroundAdapter.getPosition(userData.getBackground()));
+
+                        //wait for filling spinner
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                binding.spnBackground.setSelection(backgroundAdapter.getPosition(userData.getBackground()));
+                            }
+                        }, 200);
 
                         binding.ratingBarFlavor.setRating(userData.getPreferflavor());
                         binding.ratingBarCrunch.setRating(userData.getPrefercrunch());
