@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -218,7 +219,14 @@ public class ViewRatingFragment extends Fragment {
                                     favorite = document.toObject(Favorite.class);
 
                                     if(!isFavorite) {
-                                        showSelectedFavoriteButton();
+                                        //wait for binding my favorite button
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                showSelectedFavoriteButton();
+                                            }
+                                        }, 200);
+
                                     }
                                 }
                             }
