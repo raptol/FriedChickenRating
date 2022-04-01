@@ -350,6 +350,8 @@ public class ViewRatingFragment extends Fragment {
 
         //event handler for delete button
         binding.btnDeleteRating.setOnClickListener(new View.OnClickListener() {
+            int count = 0;
+
             @Override
             public void onClick(View view) {
                 //search favorite with deleted rating
@@ -360,43 +362,36 @@ public class ViewRatingFragment extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                    if(task.getResult().size() > 0) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.d(TAG, document.getId() + " => " + document.getData());
 
-                                        //delete favorite in the favorites collection
-                                        db.collection("favorites").document(document.getId())
-                                                .delete()
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-                                                        Log.d(TAG, "The favorite was successfully deleted!");
+                                            //delete favorite in the favorites collection
+                                            db.collection("favorites").document(document.getId())
+                                                    .delete()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            Log.d(TAG, "The favorite was successfully deleted!");
 
-                                                        //delete rating in the ratings collection
-                                                        db.collection("ratings").document(curRating.getId())
-                                                                .delete()
-                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void unused) {
-                                                                        Log.d(TAG, "The rating was successfully deleted!");
-                                                                        Toast.makeText(getContext(), "delete the rating success.", Toast.LENGTH_SHORT).show();
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Log.w(TAG, "Error deleting the rating", e);
-                                                                        Toast.makeText(getContext(), "delete the rating error.", Toast.LENGTH_SHORT).show();
-                                                                    }
-                                                                });
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.w(TAG, "Error deleting the favorite", e);
-                                                        Toast.makeText(getContext(), "delete the favorite error.", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
+                                                            count++;
+
+                                                            //delete rating in the ratings collection when all favorite was deleted
+                                                            if(count == task.getResult().size())
+                                                                deleteRating(curRating.getId());
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error deleting the favorite", e);
+                                                            Toast.makeText(getContext(), "delete the favorite error.", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        }
+                                    } else { //there is no favorite that is made by the rating to be deleted
+                                        //delete rating in the ratings collection
+                                        deleteRating(curRating.getId());
                                     }
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -429,15 +424,36 @@ public class ViewRatingFragment extends Fragment {
         });
     }
 
+    private void deleteRating(String docId) {
+
+        //delete rating in the ratings collection
+        db.collection("ratings").document(docId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "The rating was successfully deleted!");
+                        Toast.makeText(getContext(), "delete the rating success.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting the rating", e);
+                        Toast.makeText(getContext(), "delete the rating error.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void showSelectedFavoriteButton() {
         isFavorite = true;
-        if(binding.btnMyFavorite != null)
+        if(binding != null && binding.btnMyFavorite != null)
             binding.btnMyFavorite.setImageResource(R.drawable.home_favorite);
     }
 
     private void showNotSelectedFavoriteButton() {
         isFavorite = false;
-        if(binding.btnMyFavorite != null)
+        if(binding != null && binding.btnMyFavorite != null)
             binding.btnMyFavorite.setImageResource(R.drawable.ic_icon_favorite);
     }
 
