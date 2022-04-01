@@ -54,13 +54,14 @@ import java.util.Map;
 import java.util.Random;
 
 public class RouletteFragment extends Fragment implements Animation.AnimationListener {
-    private RouletteViewModel rouletteViewModel;
+    //private RouletteViewModel rouletteViewModel;
+    private RatingViewModel ratingViewModel;
     private FragmentRouletteBinding binding;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser user;
 
-    private List<Restaurant> restaurantList;
+    //private List<Restaurant> restaurantList;
     private List<RatingPlace> placeList;
     private RatingPlace selectedPlace;
 
@@ -81,7 +82,9 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rouletteViewModel = new ViewModelProvider(requireActivity()).get(RouletteViewModel.class);
+        //rouletteViewModel = new ViewModelProvider(requireActivity()).get(RouletteViewModel.class);
+        ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
+
         binding = FragmentRouletteBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
         return rootView;
@@ -95,60 +98,22 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        restaurantList = new ArrayList<>();
+        //restaurantList = new ArrayList<>();
         placeList = new ArrayList<>();
         selectedPlace = new RatingPlace();
 
-        Restaurant curRestaurant = rouletteViewModel.getSelectedRestaurant().getValue();
-
-        // Listen for realtime updates of the places
-        if(curRestaurant != null && curRestaurant.getPlaceid() != null) {
-            db.collection("places").document(curRestaurant.getPlaceid())
-                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable DocumentSnapshot value,
-                                            @Nullable FirebaseFirestoreException error) {
-                            if (error != null) {
-                                Log.w(TAG, "Listen failed.", error);
-                                return;
-                            }
-
-                        }
-                    });
-        }
-
+        //Restaurant curRestaurant = rouletteViewModel.getSelectedRestaurant().getValue();
 
         //event handler for open map button
         binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                //store data before switching from new rating to map
-//                String docId = ""; // New rating mode
-             //   if(isEditing) { // Edit rating mode
-                //    docId = ratingViewModel.getSelectedRating().getValue().getId();
-//                    docId = rouletteViewModel.getSelectedRatingPlace().getValue().getPlaceid();
-
-            //    }
-                RatingPlace saveRatingPlaceData = new RatingPlace(
-                        //docId,
-                        //binding.newRatingTitle.getText().toString(),
-                        selectedPlace.getPlaceid(),
-                        selectedPlace.getName(),
-                        selectedPlace.getLatitude(),
-                        selectedPlace.getLongitude(),
-                        selectedPlace.getGeohash(),
-                        selectedPlace.getRegion());
-
-//                rouletteViewModel.setSelectedRestaurant(curRestaurant);
-//                rouletteViewModel.setSelectedRatingPlace(selectedPlace);
-
-                rouletteViewModel.setSelectedRatingPlace(saveRatingPlaceData);
-                rouletteViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_VIEW_RATING);
+                ratingViewModel.setSelectedRatingPlace(selectedPlace);
+                ratingViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_VIEW_RATING);
 
                 NavHostFragment.findNavController(RouletteFragment.this)
                         .navigate(R.id.action_rouletteFragment_to_nav_maps);
-
             }
         });
 
@@ -215,25 +180,25 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
                         Log.d(TAG, document.getId() + " => " + document.getData());
                         RatingPlace placeName = document.toObject(RatingPlace.class);
                         placeList.add(placeName);
-//                        binding.txvRouletteResult.setText(document.getString("name"));
-//                        Log.d(TAG, "RESTAURANT NAME " + document.getString("name"));
-
-                        randomPlaceNum = rand.nextInt(placeList.size());
-
-                        Log.d(TAG, "RANDOMPLACE_NUM " + randomPlaceNum);
-
                     }
                 }
-                Log.d(TAG, "SIZE: " + placeList.size());
-                Log.d(TAG, "RESTAURANT_NAME: " + placeList.get(randomPlaceNum).getName());
-                selectedPlace.setName(placeList.get(randomPlaceNum).getName());
-                selectedPlace.setPlaceid(placeList.get(randomPlaceNum).getPlaceid());
-                selectedPlace.setLatitude(placeList.get(randomPlaceNum).getLatitude());
-                selectedPlace.setLongitude(placeList.get(randomPlaceNum).getLongitude());
-                selectedPlace.setGeohash(placeList.get(randomPlaceNum).getGeohash());
-                selectedPlace.setRegion(placeList.get(randomPlaceNum).getRegion());
-                Log.d(TAG, "SELECTED_PLACE_ID: " + selectedPlace.getPlaceid());
-                binding.txvRouletteResult.setText(placeList.get(randomPlaceNum).getName());
+
+                Log.d(TAG, "Place list SIZE: " + placeList.size());
+
+                if(placeList.size() > 0) {
+                    randomPlaceNum = rand.nextInt(placeList.size());
+                    Log.d(TAG, "RANDOMPLACE_NUM " + randomPlaceNum);
+
+                    selectedPlace = placeList.get(randomPlaceNum);
+                    Log.d(TAG, "SELECTED_PLACE_ID" + selectedPlace.getPlaceid());
+
+                    if(placeList != null && placeList.get(randomPlaceNum) != null &&
+                            placeList.get(randomPlaceNum).getName() != null) {
+                        binding.txvRouletteResult.setText(
+                                placeList.get(randomPlaceNum).getName()
+                                        .trim().replaceAll("\\s+", " "));
+                    }
+                }
             }
         });
     }
