@@ -15,7 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="16dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:orientation="vertical"
@@ -62,13 +62,13 @@
                             app:srcCompat="@drawable/ic_icon_image" />
                     </LinearLayout>
 
-<!--                    <Button-->
-<!--                        android:id="@+id/btnUploadPicture"-->
-<!--                        android:layout_width="100dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="30dp"-->
-<!--                        android:text="Upload Picture"-->
-<!--                        android:textSize="10sp" />-->
+                    <!--                    <Button-->
+                    <!--                        android:id="@+id/btnUploadPicture"-->
+                    <!--                        android:layout_width="100dp"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:layout_marginTop="30dp"-->
+                    <!--                        android:text="Upload Picture"-->
+                    <!--                        android:textSize="10sp" />-->
                 </LinearLayout>
 
                 <LinearLayout
@@ -83,7 +83,7 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:gravity="center"
-                        android:hint="Chicken restaurant name"
+                        android:hint="Restaurant name"
                         android:inputType="textPersonName"
                         android:minHeight="48dp"
                         tools:text="Pelocan Chicken" />
@@ -313,7 +313,7 @@
                     android:id="@+id/newRatingOtherItems"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
+                    android:layout_marginStart="38dp"
                     android:ems="10"
                     android:hint="Side menus"
                     android:inputType="textPersonName"
@@ -338,7 +338,7 @@
                     android:id="@+id/newRatingNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="65dp"
+                    android:layout_marginStart="74dp"
                     android:ems="10"
                     android:gravity="start|top"
                     android:hint="Comments"

@@ -6,20 +6,6 @@
     android:layout_height="match_parent"
     android:background="#353232">
 
-    <TextView
-        android:id="@+id/txvRoulette"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Click Spin to pick a Restaurant!"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/imgRouletteLarge"
         android:layout_width="300dp"
@@ -37,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Spin"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,9 +48,9 @@
             android:id="@+id/txvRouletteResult"
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_weight="4"
+            android:layout_weight="6"
             android:gravity="center_horizontal"
-            android:text="Restaurant Result"
+            android:text="Click Spin to Pick a Restaurant!"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             app:layout_constraintTop_toBottomOf="@+id/imgRouletteLarge"
@@ -89,11 +75,11 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txvRoulette"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/pointer" />
 </androidx.constraintlayout.widget.ConstraintLayout>

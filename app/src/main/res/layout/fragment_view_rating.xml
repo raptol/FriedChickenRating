@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,8 +12,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:orientation="vertical">
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="10dp">
 
             <TextView
                 android:id="@+id/viewRatingTitle"
@@ -38,6 +40,7 @@
                     android:layout_height="100dp"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.05"
+                    android:paddingLeft="80dp"
                     tools:src="@tools:sample/avatars" />
 
                 <LinearLayout
@@ -53,7 +56,8 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="2dp"
                         android:text="Edit"
-                        android:textSize="11sp" />
+                        android:textSize="11sp"
+                        app:cornerRadius="@dimen/button_corner_radius" />
 
                     <Button
                         android:id="@+id/btnDeleteRating"
@@ -62,7 +66,8 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="2dp"
                         android:text="Delete"
-                        android:textSize="11sp" />
+                        android:textSize="11sp"
+                        app:cornerRadius="@dimen/button_corner_radius" />
 
                 </LinearLayout>
 
@@ -87,7 +92,8 @@
                         android:layout_margin="2dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:paddingLeft="4dp"
+                        android:paddingLeft="60dp"
+                        android:textAlignment="center"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="Pelican Chicken" />
@@ -105,8 +111,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:layout_weight="1"
                     android:layout_marginTop="5dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -121,6 +127,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:paddingLeft="60dp"
                             android:textSize="16sp"
                             tools:text="Burnaby" />
 
@@ -131,6 +138,7 @@
                             android:layout_marginTop="5dp"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:paddingLeft="60dp"
                             android:textSize="16sp"
                             tools:text="Korean" />
 
@@ -140,9 +148,9 @@
                         android:id="@+id/btnMyFavorite"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_gravity="center_horizontal|center_vertical"
                         android:src="@drawable/ic_icon_favorite" />
 
                 </LinearLayout>
@@ -172,9 +180,9 @@
                         android:id="@+id/btnShare"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_gravity="center_horizontal|center_vertical"
                         android:src="@drawable/ic_icon_share" />
                 </LinearLayout>
 
@@ -337,6 +345,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
                     android:ems="10"
+                    android:paddingLeft="12dp"
                     tools:text="Other items..." />
             </LinearLayout>
 
@@ -361,6 +370,7 @@
                     android:layout_marginStart="65dp"
                     android:ems="10"
                     android:gravity="start|top"
+                    android:paddingLeft="16dp"
                     android:text="Notes..." />
             </LinearLayout>
 

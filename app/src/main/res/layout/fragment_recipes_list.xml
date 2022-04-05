@@ -84,11 +84,15 @@
 
     <Button
         android:id="@+id/btnAddRecipe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="64dp"
+        android:layout_height="74dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
+        android:elevation="8dp"
         android:text="Add Recipe"
+        android:textAlignment="center"
+        android:textSize="8sp"
+        app:cornerRadius="90dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="260dp"
-    android:layout_marginTop="5dp">
+    android:layout_height="270dp"
+    android:layout_marginTop="5dp"
+    app:cardCornerRadius="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#45F05545"
+
         android:orientation="vertical">
 
         <ImageView
@@ -16,6 +19,7 @@
             android:layout_width="330dp"
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
             android:scaleType="fitXY"
             tools:srcCompat="@tools:sample/avatars" />
 
@@ -37,7 +41,9 @@
                     android:layout_width="150dp"
                     android:layout_height="25dp"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="#E6393737"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtItemPlace"
@@ -46,6 +52,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_weight="1"
                     android:text="TextView"
+                    android:textColor="#E6393737"
                     android:textSize="10sp" />
             </LinearLayout>
 

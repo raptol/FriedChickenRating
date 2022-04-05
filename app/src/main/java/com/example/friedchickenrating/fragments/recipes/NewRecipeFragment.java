@@ -129,11 +129,22 @@ public class NewRecipeFragment extends Fragment {
                     }
                 });
 
-        //event handler for upload picture
-        binding.btnUploadPic.setOnClickListener(new View.OnClickListener() {
+
+        // Taking picture event handler for recipe image
+        binding.btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //By choosing file
+                //By taking a picture
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        });
+
+        // Choosing picture event handler for recipe image
+        binding.btnPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //By choosing a file
                 Intent choosingPictureIntent = new Intent();
                 choosingPictureIntent.setType("image/*");
                 choosingPictureIntent.setAction(Intent.ACTION_GET_CONTENT);
