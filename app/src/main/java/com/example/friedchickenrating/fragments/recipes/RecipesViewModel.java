@@ -16,13 +16,8 @@ public class RecipesViewModel extends ViewModel {
 
     private static final String TAG = RecipesViewModel.class.getSimpleName();
 
-    public RecipesViewModel() {
-//        mText = new MutableLiveData<>();
-//        mText.setValue("This is recipes fragment");
-    }
-//    public LiveData<String> getText() {
-//        return mText;
-//    }
+    public RecipesViewModel() { }
+
     public LiveData<Recipe> getSelectedRecipe() {
         return selectedRecipe;
     }

@@ -43,6 +43,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -59,6 +60,7 @@ public class NewRecipeFragment extends Fragment {
     private ImageView imgViewNewPhoto;
     private Uri filePath;
     private String fileName;
+    private boolean hasImageToUpload = false;
 
     private Recipe recipeData;
     private Boolean isEditing = false;
@@ -66,13 +68,11 @@ public class NewRecipeFragment extends Fragment {
     private static final String TAG = NewRecipeFragment.class.getSimpleName();
     static final int REQUEST_IMAGE_SELECT = 0;
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_MAP_PLACE_FOR_ADD_RATING = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setTitle(getString(R.string.menu_newRecipe));
-
     }
 
     @Nullable
@@ -180,7 +180,7 @@ public class NewRecipeFragment extends Fragment {
 
                 //upload image to Google Firebase Storage
                 Map<String, Object> photoValues = null;
-                if(filePath != null) {
+                if(hasImageToUpload) {
                     Date now = new Date();
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
                     fileName = formatter.format(now) + ".jpg";
@@ -224,7 +224,7 @@ public class NewRecipeFragment extends Fragment {
                                 Log.d(TAG, "Document ID:" + recipeDocId);
                                 Toast.makeText(getContext(), "add new recipe success.", Toast.LENGTH_SHORT).show();
 
-                                if(filePath != null) {
+                                if(hasImageToUpload) {
                                     uploadImageToFirebaseStorage();
                                 } else {
                                     NavHostFragment.findNavController(NewRecipeFragment.this)
@@ -259,11 +259,16 @@ public class NewRecipeFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         //By taking picture
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-//            imgViewNewPhoto.setImageBitmap(imageBitmap);
-//        }
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            if(data != null) {
+                Log.d(TAG, "uri:" + String.valueOf(filePath));
+
+                Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                imgViewNewPhoto.setImageBitmap(imageBitmap);
+                hasImageToUpload = true;
+            }
+        }
 
         //By choosing file
         if (requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK) {
@@ -274,6 +279,7 @@ public class NewRecipeFragment extends Fragment {
                 Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
                         this.getContext().getContentResolver(), filePath);
                 imgViewNewPhoto.setImageBitmap(imageBitmap);
+                hasImageToUpload = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -281,35 +287,69 @@ public class NewRecipeFragment extends Fragment {
     }
 
     private void uploadImageToFirebaseStorage() {
-        if(filePath != null) {
+        if(hasImageToUpload) {
             final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
             progressDialog.setTitle("is uploading...");
             progressDialog.show();
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReference().child("images/" + fileName);
-            storageReference.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
+            if(filePath != null) {
+                storageReference.putFile(filePath)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressDialog.dismiss();
 
-                            NavHostFragment.findNavController(NewRecipeFragment.this)
-                                    .navigate(R.id.action_nav_newRecipe_to_nav_recipes);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                NavHostFragment.findNavController(NewRecipeFragment.this)
+                                        .navigate(R.id.action_nav_newRecipe_to_nav_recipes);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
 
-                        }
-                    });
+                            }
+                        });
+            }
+            else { //upload from taking picture
+                imgViewNewPhoto.setDrawingCacheEnabled(true);
+                imgViewNewPhoto.buildDrawingCache();
+                Bitmap bitmap = ((BitmapDrawable)imgViewNewPhoto.getDrawable()).getBitmap();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                byte[] data = outputStream.toByteArray();
+
+                storageReference.putBytes(data)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressDialog.dismiss();
+
+                                NavHostFragment.findNavController(NewRecipeFragment.this)
+                                        .navigate(R.id.action_nav_newRecipe_to_nav_recipes);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                            }
+                        });
+            }
+
         } else {
             Toast.makeText(this.getContext(), "Select image first.", Toast.LENGTH_SHORT).show();
         }

@@ -113,7 +113,6 @@ public class ViewRecipeFragment extends Fragment {
         binding.viewRecipeTitle.setText(curRecipe.getRecipeTitle());
         binding.recipeIngredient1.setText(curRecipe.getRecipeIngredients());
         binding.txtRecipeStep1.setText(curRecipe.getRecipeSteps());
-//                            binding.txtRecipeStep2.setText(curRecipe.getRecipeSteps());
 
         //If login user is user who created current rating, enable Edit button
         //else, disable Edit button

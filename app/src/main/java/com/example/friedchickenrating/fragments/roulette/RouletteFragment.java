@@ -54,14 +54,12 @@ import java.util.Map;
 import java.util.Random;
 
 public class RouletteFragment extends Fragment implements Animation.AnimationListener {
-    //private RouletteViewModel rouletteViewModel;
     private RatingViewModel ratingViewModel;
     private FragmentRouletteBinding binding;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser user;
 
-    //private List<Restaurant> restaurantList;
     private List<RatingPlace> placeList;
     private RatingPlace selectedPlace;
 
@@ -70,8 +68,10 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     boolean isRotating = false;
     private static final String[] slots = {"1", "2", "3" ,"4" ,"5" , "6", "7", "8", "9"};
     private static final int[] slotDegrees = new int[slots.length];
-    private int degree = 0;
     private static final Random random = new Random();
+    private Random rand = new Random();
+    private int degree = 0;
+    private int randomPlaceNum ;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,7 +82,6 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //rouletteViewModel = new ViewModelProvider(requireActivity()).get(RouletteViewModel.class);
         ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
 
         binding = FragmentRouletteBinding.inflate(inflater, container, false);
@@ -98,11 +97,8 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        //restaurantList = new ArrayList<>();
         placeList = new ArrayList<>();
         selectedPlace = new RatingPlace();
-
-        //Restaurant curRestaurant = rouletteViewModel.getSelectedRestaurant().getValue();
 
         //event handler for open map button
         binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +112,6 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
                         .navigate(R.id.action_rouletteFragment_to_nav_maps);
             }
         });
-
 
         //event handler for spin button
         binding.btnSpin.setOnClickListener(new View.OnClickListener() {
@@ -140,7 +135,6 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         });
     }
 
-
     @Override
     public void onAnimationStart(Animation animation) {
         binding.txvRouletteResult.setText("Spinning... ");
@@ -150,8 +144,6 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         Log.d(TAG, "onAnimationStart()");
     }
 
-    Random rand = new Random();
-    Integer randomPlaceNum ;
 
     @Override
     public void onAnimationEnd(Animation animation) {
