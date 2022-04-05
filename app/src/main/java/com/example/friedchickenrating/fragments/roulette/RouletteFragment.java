@@ -65,7 +65,9 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
 
     private static final String TAG = RouletteFragment.class.getSimpleName();
 
-    boolean isRotating = false;
+    private boolean isRotating = false;
+    private boolean isClicked = false;
+
     private static final String[] slots = {"1", "2", "3" ,"4" ,"5" , "6", "7", "8", "9"};
     private static final int[] slotDegrees = new int[slots.length];
     private static final Random random = new Random();
@@ -101,17 +103,24 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
         selectedPlace = new RatingPlace();
 
         //event handler for open map button
-        binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            binding.btnOpenMap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                ratingViewModel.setSelectedRatingPlace(selectedPlace);
-                ratingViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_VIEW_RATING);
+                    ratingViewModel.setSelectedRatingPlace(selectedPlace);
+                    ratingViewModel.setMapRequestCode(MapsFragment.REQUEST_MAP_PLACE_FOR_VIEW_RATING);
 
-                NavHostFragment.findNavController(RouletteFragment.this)
-                        .navigate(R.id.action_rouletteFragment_to_nav_maps);
-            }
-        });
+                    if(isClicked) {
+                        NavHostFragment.findNavController(RouletteFragment.this)
+                            .navigate(R.id.action_rouletteFragment_to_nav_maps);
+                        isClicked = false;
+                    }
+                    else {
+                        Toast.makeText(getContext(), "Please Pick the Restaurant First.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
 
         //event handler for spin button
         binding.btnSpin.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +139,7 @@ public class RouletteFragment extends Fragment implements Animation.AnimationLis
                     rotateAnimation.setAnimationListener(RouletteFragment.this);
                     binding.imgRouletteLarge.setAnimation(rotateAnimation);
                     binding.imgRouletteLarge.startAnimation(rotateAnimation);
+                    isClicked = true;
                 }
             }
         });
