@@ -1,85 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#353232">
-
-    <ImageView
-        android:id="@+id/imgRouletteLarge"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgPointer"
-        app:srcCompat="@drawable/roulette5" />
-
-    <Button
-        android:id="@+id/btnSpin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Spin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgRouletteLarge">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/txvRouletteResult"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_weight="6"
-            android:gravity="center_horizontal"
-            android:text="Click Spin to Pick a Restaurant!"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            app:layout_constraintTop_toBottomOf="@+id/imgRouletteLarge"
-            tools:layout_editor_absoluteX="15dp" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#353232">
 
         <ImageView
-            android:id="@+id/btnOpenMap"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/home_map"
-            tools:layout_editor_absoluteX="294dp"
-            tools:layout_editor_absoluteY="482dp"
-            tools:layout_gravity="right"
-            tools:layout_weight="1" />
+            android:id="@+id/imgRouletteLarge"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.493"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgPointer"
+            app:srcCompat="@drawable/roulette5" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/btnSpin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Spin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgRouletteLarge">
+
+            <TextView
+                android:id="@+id/txvRouletteResult"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="6"
+                android:gravity="center_horizontal"
+                android:text="Click Spin to Pick a Restaurant!"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                app:layout_constraintTop_toBottomOf="@+id/imgRouletteLarge"
+                tools:layout_editor_absoluteX="15dp" />
+
+            <ImageView
+                android:id="@+id/btnOpenMap"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/home_map"
+                tools:layout_editor_absoluteX="294dp"
+                tools:layout_editor_absoluteY="482dp"
+                tools:layout_gravity="right"
+                tools:layout_weight="1" />
+
+        </LinearLayout>
 
 
-    <ImageView
-        android:id="@+id/imgPointer"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pointer" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/imgPointer"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/pointer" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
