@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -107,8 +108,7 @@ public class FavoriteListAdapter extends RecyclerView.Adapter  {
             });
         }
 
-
-        favoriteViewHolder.imgItemPhoto.setOnClickListener(new View.OnClickListener() {
+        favoriteViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mListener.onListItemClick(curFavorite, curRating, position);
@@ -154,6 +154,7 @@ public class FavoriteListAdapter extends RecyclerView.Adapter  {
     }
 
     public static class FavoriteViewHolder extends RecyclerView.ViewHolder {
+        private CardView cardView;
         private ImageView imgItemPhoto;
         private TextView txtItemTitle;
         private TextView txtItemPlace;
@@ -161,6 +162,7 @@ public class FavoriteListAdapter extends RecyclerView.Adapter  {
         public FavoriteViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            cardView = itemView.findViewById(R.id.cardView_favorite);
             imgItemPhoto = itemView.findViewById(R.id.imgItemPhoto);
             txtItemTitle = itemView.findViewById(R.id.txtItemTitle);
             txtItemPlace = itemView.findViewById(R.id.txtItemPlace);
