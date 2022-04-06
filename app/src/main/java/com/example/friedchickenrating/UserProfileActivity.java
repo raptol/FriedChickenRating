@@ -1,5 +1,7 @@
 package com.example.friedchickenrating;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,11 +22,13 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -92,6 +96,8 @@ public class UserProfileActivity extends AppCompatActivity {
     private boolean hasImageToUpload = false;
     static final int REQUEST_IMAGE_SELECT = 0;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private float savePreviousRatingValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -407,6 +413,60 @@ public class UserProfileActivity extends AppCompatActivity {
             startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
             finish();
         });
+
+        //Check rating value for priority
+        List<RatingBar> ratingBars = new ArrayList<>();
+        ratingBars.add(binding.ratingBarFlavor);
+        ratingBars.add(binding.ratingBarCrunch);
+        ratingBars.add(binding.ratingBarSpiciness);
+        ratingBars.add(binding.ratingBarPortion);
+        ratingBars.add(binding.ratingBarPrice);
+        Log.d(TAG, "ratingBars.size(): " + ratingBars.size());
+
+        for(int i = 0; i < ratingBars.size(); i++) {
+            ratingBars.get(i).setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                    Log.d(TAG, "curRatingValue: " + v);
+                    Log.d(TAG, "ratingBar value: " + ratingBar.getRating());
+
+                    if(b == true && checkDuplicateRating(ratingBars, ratingBar, v)) {
+                        //alert
+                        Toast.makeText(getApplicationContext(),
+                                "Please select different value for priority.", Toast.LENGTH_SHORT).show();
+
+                        //roll back into previous rating value
+                        ratingBar.setRating(savePreviousRatingValue);
+                    }
+                }
+            });
+
+            ratingBars.get(i).setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    savePreviousRatingValue = ((RatingBar)view).getRating();
+                    Log.d(TAG, "prevRatingValue: " + savePreviousRatingValue);
+
+                    return false;
+                }
+            });
+        }
+    }
+
+    private boolean checkDuplicateRating(List<RatingBar> ratingBars, RatingBar curRatingBar, float rating) {
+        boolean result = false;
+
+        if(ratingBars != null) {
+            for (int i = 0; i < ratingBars.size(); i++) {
+                if ( !ratingBars.get(i).equals(curRatingBar) &&
+                        ratingBars.get(i).getRating() == rating) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override

@@ -44,8 +44,8 @@
     <string name="profile_name">Name</string>
     <string name="profile_email">Email</string>
     <string name="profile_hometown">Hometown</string>
-    <string name="profile_background_culture">Background Culture</string>
-    <string name="profile_my_preferences">My Preferences about Chicken</string>
+    <string name="profile_background_culture">Background culture</string>
+    <string name="profile_my_preferences">My preferences about chicken by priority</string>
     <string name="profile_my_preferences_flavor">Flavor</string>
     <string name="profile_my_preferences_crunch">Crunch</string>
     <string name="profile_my_preferences_spiciness">Spiciness</string>
