@@ -392,6 +392,14 @@ public class UserProfileActivity extends AppCompatActivity {
                             Log.d(TAG, "User profile was successfully saved!");
 
                             if(hasImageToUpload) {
+                                //delete previous file
+                                Map<String, Object> photoValues = userData.getPictures();
+                                if(photoValues != null && !photoValues.isEmpty()) {
+                                    Log.d(TAG, "deleted filename: " + photoValues.get("filename").toString());
+                                    deletePreviousFileFromFirebaseStorage(photoValues.get("filename").toString());
+                                }
+
+                                //upload new file
                                 uploadImageToFirebaseStorage();
                             } else {
                                 startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
@@ -498,6 +506,30 @@ public class UserProfileActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void deletePreviousFileFromFirebaseStorage(String previousFile) {
+        if(previousFile != null && !previousFile.isEmpty()) {
+            final ProgressDialog progressDialog = new ProgressDialog(UserProfileActivity.this);
+            progressDialog.setTitle("is deleting previous image...");
+            progressDialog.show();
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference().child("images/" + previousFile);
+
+            // Delete the file
+            storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    progressDialog.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    progressDialog.dismiss();
+                }
+            });
         }
     }
 
