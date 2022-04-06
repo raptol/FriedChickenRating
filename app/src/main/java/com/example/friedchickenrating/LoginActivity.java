@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -53,6 +54,10 @@ public class LoginActivity extends AppCompatActivity {
             if(checkPasswordFormat() == false)
                 return;
 
+            final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
+            progressDialog.setTitle("is processing...");
+            progressDialog.show();
+
             binding.inputLayoutEmail.setErrorEnabled(false);
             binding.inputLayoutPassword.setErrorEnabled(false);
 
@@ -101,16 +106,22 @@ public class LoginActivity extends AppCompatActivity {
                                                 Log.d(TAG, "user name: " + userData.getName() + ", user email: " + userData.getEmail());
 
                                                 if(isFirstLogin) {
+                                                    progressDialog.dismiss();
+
                                                     Intent intent = new Intent(LoginActivity.this, UserProfileActivity.class);
                                                     intent.putExtra("isFirstLogin", true);
                                                     startActivity(intent);
                                                     finish();
                                                 } else {
+                                                    progressDialog.dismiss();
+
                                                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                                     finish();
                                                 }
 
                                             } else {
+                                                progressDialog.dismiss();
+
                                                 Log.d(TAG, "No such user data");
                                             }
                                         }
@@ -118,6 +129,8 @@ public class LoginActivity extends AppCompatActivity {
                                 });
 
                             } else {
+                                progressDialog.dismiss();
+
                                 Toast.makeText(LoginActivity.this, getString(R.string.login_failed),
                                         Toast.LENGTH_SHORT).show();
                             }
