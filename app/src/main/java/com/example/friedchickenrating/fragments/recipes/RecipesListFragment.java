@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentRecipesListBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.EventListener;
@@ -128,6 +129,19 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
                         .navigate(R.id.action_nav_recipes_to_nav_newRecipe);
             }
         });
+
+        //disable FAB for new rating
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        if(fab != null) {
+            fab.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
+        super.onStop();
     }
 
     private boolean checkPermission() {

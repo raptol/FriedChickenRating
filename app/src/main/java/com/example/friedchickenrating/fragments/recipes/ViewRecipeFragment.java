@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -164,6 +165,19 @@ public class ViewRecipeFragment extends Fragment {
                         .navigate(R.id.action_nav_viewRecipes_to_nav_recipes);
             }
         });
+
+        //disable FAB for new rating
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        if(fab != null) {
+            fab.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
+        super.onStop();
     }
 
     @Override
