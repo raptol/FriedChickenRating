@@ -484,7 +484,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                //                            progressDialog.dismiss();
+                                progressDialog.dismiss();
 
                                 startActivity((new Intent(UserProfileActivity.this, MainActivity.class)));
                                 finish();
@@ -493,7 +493,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                //                            progressDialog.dismiss();
+                                progressDialog.dismiss();
                             }
                         })
                         .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
