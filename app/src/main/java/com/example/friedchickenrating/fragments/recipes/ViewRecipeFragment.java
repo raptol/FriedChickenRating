@@ -1,5 +1,6 @@
 package com.example.friedchickenrating.fragments.recipes;
 
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -151,6 +152,16 @@ public class ViewRecipeFragment extends Fragment {
                             public void onSuccess(Void unused) {
                                 Log.d(TAG, "The recipe was successfully deleted!");
                                 Toast.makeText(getContext(), "delete the recipe success.", Toast.LENGTH_SHORT).show();
+
+                                //delete previous file
+                                Map<String, Object> photoValues = null;
+                                if(curRecipe != null) {
+                                    photoValues = curRecipe.getPictures();
+                                    if(photoValues != null && !photoValues.isEmpty()) {
+                                        Log.d(TAG, "deleted filename: " + photoValues.get("filename").toString());
+                                        deletePreviousFileFromFirebaseStorage(photoValues.get("filename").toString());
+                                    }
+                                }
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -170,6 +181,30 @@ public class ViewRecipeFragment extends Fragment {
         FloatingActionButton fab = getActivity().findViewById(R.id.fab);
         if(fab != null) {
             fab.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void deletePreviousFileFromFirebaseStorage(String previousFile) {
+        if(previousFile != null && !previousFile.isEmpty()) {
+            final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
+            progressDialog.setTitle("is deleting previous image...");
+            progressDialog.show();
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference().child("images/" + previousFile);
+
+            // Delete the file
+            storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    progressDialog.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    progressDialog.dismiss();
+                }
+            });
         }
     }
 

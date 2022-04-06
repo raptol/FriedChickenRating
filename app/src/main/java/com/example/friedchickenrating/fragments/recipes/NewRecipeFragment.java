@@ -225,6 +225,19 @@ public class NewRecipeFragment extends Fragment {
                                 Toast.makeText(getContext(), "add new recipe success.", Toast.LENGTH_SHORT).show();
 
                                 if(hasImageToUpload) {
+                                    if(isEditing) {
+                                        //delete previous file
+                                        Map<String, Object> photoValues = null;
+                                        Recipe selectedRecipe = recipesViewModel.getSelectedRecipe().getValue();
+                                        if(selectedRecipe != null) {
+                                            photoValues = selectedRecipe.getPictures();
+                                            if(photoValues != null && !photoValues.isEmpty()) {
+                                                Log.d(TAG, "deleted filename: " + photoValues.get("filename").toString());
+                                                deletePreviousFileFromFirebaseStorage(photoValues.get("filename").toString());
+                                            }
+                                        }
+                                    }
+
                                     uploadImageToFirebaseStorage();
                                 } else {
                                     NavHostFragment.findNavController(NewRecipeFragment.this)
@@ -283,6 +296,30 @@ public class NewRecipeFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void deletePreviousFileFromFirebaseStorage(String previousFile) {
+        if(previousFile != null && !previousFile.isEmpty()) {
+            final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
+            progressDialog.setTitle("is deleting previous image...");
+            progressDialog.show();
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference().child("images/" + previousFile);
+
+            // Delete the file
+            storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    progressDialog.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    progressDialog.dismiss();
+                }
+            });
         }
     }
 
