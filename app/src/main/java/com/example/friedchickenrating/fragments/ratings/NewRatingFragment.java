@@ -22,10 +22,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.example.friedchickenrating.MainActivity;
@@ -55,9 +57,11 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NewRatingFragment extends Fragment {
@@ -233,6 +237,40 @@ public class NewRatingFragment extends Fragment {
 
             }
         });
+
+        //event handler for ratingBar
+        List<RatingBar> ratingBars = new ArrayList<>();
+        ratingBars.add(binding.ratingBarFlavor);
+        ratingBars.add(binding.ratingBarCrunch);
+        ratingBars.add(binding.ratingBarSpiciness);
+        ratingBars.add(binding.ratingBarPortion);
+        ratingBars.add(binding.ratingBarPrice);
+        Log.d(TAG, "ratingBars.size(): " + ratingBars.size());
+
+        for(int i = 0; i < ratingBars.size(); i++) {
+            ratingBars.get(i).setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                    if(ratingBars != null) {
+                        float sum = 0;
+                        int countWithRatingValue = 0;
+                        for (int i = 0; i < ratingBars.size(); i++) {
+                            if(ratingBars.get(i).getRating() > 0) {
+                                sum += ratingBars.get(i).getRating();
+                                countWithRatingValue++;
+                            }
+                        }
+
+                        float overallByAverage = 0;
+                        if(sum > 0 && countWithRatingValue > 0) {
+                            overallByAverage = sum / countWithRatingValue;
+
+                            binding.ratingBarOverall.setRating(overallByAverage);
+                        }
+                    }
+                }
+            });
+        }
 
         //event handler for done button
         binding.btnDoneNewRating.setOnClickListener(new View.OnClickListener() {

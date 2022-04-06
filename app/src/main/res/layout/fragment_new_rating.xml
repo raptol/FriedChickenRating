@@ -296,7 +296,7 @@
                         android:layout_width="180dp"
                         android:layout_height="30dp"
                         android:layout_marginStart="10dp"
-                        android:isIndicator="false"
+                        android:isIndicator="true"
                         android:numStars="5"
                         tools:ignore="SpeakableTextPresentCheck"></RatingBar>
                 </LinearLayout>
