@@ -26,7 +26,7 @@
                 android:paddingLeft="4dp"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                tools:text="Spicy Chicken 15pcs" />
+                tools:text="@string/view_rating_menu_title_sample_text" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,6 +41,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.05"
                     android:paddingLeft="80dp"
+                    android:contentDescription="@string/view_rating_fried_chicken_image"
                     tools:src="@tools:sample/avatars" />
 
                 <LinearLayout
@@ -55,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="2dp"
-                        android:text="Edit"
+                        android:text="@string/view_rating_btn_edit"
                         android:textSize="11sp"
                         app:cornerRadius="@dimen/button_corner_radius" />
 
@@ -65,7 +66,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="2dp"
-                        android:text="Delete"
+                        android:text="@string/view_rating_btn_delete"
                         android:textSize="11sp"
                         app:cornerRadius="@dimen/button_corner_radius" />
 
@@ -96,7 +97,7 @@
                         android:textAlignment="center"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="Pelican Chicken" />
+                        tools:text="@string/view_rating_place_name_sample_text" />
 
                     <ImageView
                         android:id="@+id/btnOpenMap"
@@ -105,6 +106,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="20dp"
+                        android:contentDescription="@string/view_rating_open_a_map"
                         android:src="@drawable/home_map" />
                 </LinearLayout>
 
@@ -129,7 +131,7 @@
                             android:gravity="center"
                             android:paddingLeft="60dp"
                             android:textSize="16sp"
-                            tools:text="Burnaby" />
+                            tools:text="@string/view_rating_region_sample_text" />
 
                         <TextView
                             android:id="@+id/viewRatingChickenType"
@@ -140,7 +142,7 @@
                             android:gravity="center"
                             android:paddingLeft="60dp"
                             android:textSize="16sp"
-                            tools:text="Korean" />
+                            tools:text="@string/view_rating_chicken_type_sample_text" />
 
                     </LinearLayout>
 
@@ -151,6 +153,7 @@
                         android:layout_gravity="center_horizontal|center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
+                        android:contentDescription="@string/view_rating_favorite"
                         android:src="@drawable/ic_icon_favorite" />
 
                 </LinearLayout>
@@ -172,7 +175,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Ratings"
+                        android:text="@string/view_rating_ratings"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -183,6 +186,7 @@
                         android:layout_gravity="center_horizontal|center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
+                        android:contentDescription="@string/view_rating_share"
                         android:src="@drawable/ic_icon_share" />
                 </LinearLayout>
 
@@ -195,7 +199,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Flavor" />
+                        android:text="@string/view_rating_ratings_flavor" />
 
                     <RatingBar
                         android:id="@+id/ratingBarFlavor"
@@ -218,7 +222,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Crunch" />
+                        android:text="@string/view_rating_ratings_crunch" />
 
                     <RatingBar
                         android:id="@+id/ratingBarCrunch"
@@ -241,7 +245,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Spiciness" />
+                        android:text="@string/view_rating_ratings_spiciness" />
 
                     <RatingBar
                         android:id="@+id/ratingBarSpiciness"
@@ -264,7 +268,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Portion" />
+                        android:text="@string/view_rating_ratings_portion" />
 
                     <RatingBar
                         android:id="@+id/ratingBarPortion"
@@ -287,7 +291,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Price" />
+                        android:text="@string/view_rating_ratings_price" />
 
                     <RatingBar
                         android:id="@+id/ratingBarPrice"
@@ -310,7 +314,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Overall Value" />
+                        android:text="@string/view_rating_ratings_overall_value" />
 
                     <RatingBar
                         android:id="@+id/ratingBarOverall"
@@ -336,7 +340,7 @@
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Other Items"
+                    android:text="@string/view_rating_other_items"
                     android:textStyle="bold" />
 
                 <TextView
@@ -346,7 +350,7 @@
                     android:layout_marginStart="30dp"
                     android:ems="10"
                     android:paddingLeft="12dp"
-                    tools:text="Other items..." />
+                    tools:text="@string/view_rating_other_items_sample_text" />
             </LinearLayout>
 
             <LinearLayout
@@ -360,7 +364,7 @@
                     android:id="@+id/textView7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Notes"
+                    android:text="@string/view_rating_notes"
                     android:textStyle="bold" />
 
                 <TextView
@@ -371,7 +375,7 @@
                     android:ems="10"
                     android:gravity="start|top"
                     android:paddingLeft="16dp"
-                    android:text="Notes..." />
+                    android:text="@string/view_rating_notes_sample_text" />
             </LinearLayout>
 
             <Button
@@ -379,7 +383,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Show All Rating List of This Place" />
+                android:text="@string/view_rating_show_all" />
 
         </LinearLayout>
 

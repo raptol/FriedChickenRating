@@ -34,7 +34,7 @@
                     android:layout_marginStart="15dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="Latest"
+                    android:text="@string/recipes_list_filters_latest"
                     android:textSize="10sp" />
 
                 <Button
@@ -44,7 +44,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="Ascending"
+                    android:text="@string/recipes_list_filters_ascending"
                     android:textSize="10sp" />
 
                 <Button
@@ -54,7 +54,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="Descending"
+                    android:text="@string/recipes_list_filters_descending"
                     android:textSize="10sp" />
 
                 <Button
@@ -64,7 +64,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="My"
+                    android:text="@string/recipes_list_filters_my"
                     android:textSize="10sp" />
 
             </LinearLayout>
@@ -89,7 +89,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:elevation="8dp"
-        android:text="Add Recipe"
+        android:text="@string/recipes_list_btn_add_recipe"
         android:textAlignment="center"
         android:textSize="8sp"
         app:cornerRadius="90dp"

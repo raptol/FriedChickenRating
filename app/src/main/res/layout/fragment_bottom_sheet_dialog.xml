@@ -17,21 +17,21 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="20sp"
-            tools:text="TextView" />
+            tools:text="@string/bottom_sheet_place_name" />
 
         <TextView
             android:id="@+id/txtPlaceRegion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            tools:text="TextView" />
+            tools:text="@string/bottom_sheet_place_region" />
 
         <Button
             android:id="@+id/btnNewRatingFromBottomSheet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="New Rating" />
+            android:text="@string/bottom_sheet_btn_new_rating" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewBottomList"

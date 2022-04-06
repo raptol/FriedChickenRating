@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#45F05545"
-
         android:orientation="vertical">
 
         <ImageView
@@ -21,6 +20,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:scaleType="fitXY"
+            android:contentDescription="@string/rating_list_fried_chicken_image"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
@@ -41,7 +41,7 @@
                     android:layout_width="150dp"
                     android:layout_height="25dp"
                     android:layout_weight="1"
-                    android:text="TextView"
+                    android:text="@string/rating_list_menu_title"
                     android:textColor="#E6393737"
                     android:textStyle="bold" />
 
@@ -51,7 +51,7 @@
                     android:layout_height="30dp"
                     android:layout_marginBottom="5dp"
                     android:layout_weight="1"
-                    android:text="TextView"
+                    android:text="@string/rating_list_restaurant_name"
                     android:textColor="#E6393737"
                     android:textSize="10sp" />
             </LinearLayout>

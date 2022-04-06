@@ -21,6 +21,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
             android:scaleType="fitXY"
+            android:contentDescription="@string/favorite_fried_chicken_image"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
@@ -35,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:text="TextView"
+                android:text="@string/favorite_menu_title"
                 android:textStyle="bold" />
 
             <TextView
@@ -45,7 +46,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:text="TextView"
+                android:text="@string/favorite_restaurant_name"
                 android:textSize="10sp" />
         </LinearLayout>
 

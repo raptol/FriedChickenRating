@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".fragments.ratings.NewRatingFragment">
 
         <LinearLayout
@@ -38,6 +38,7 @@
                         android:id="@+id/imgViewPicture"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
+                        android:contentDescription="@string/new_rating_upload_a_image"
                         tools:src="@tools:sample/avatars" />
 
                     <LinearLayout
@@ -52,6 +53,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="30dp"
+                            android:contentDescription="@string/new_rating_taking_a_picture"
+                            android:minHeight="48dp"
                             app:srcCompat="@drawable/ic_icon_photo_camera" />
 
                         <ImageButton
@@ -59,6 +62,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="30dp"
+                            android:contentDescription="@string/new_rating_choosing_a_picture"
+                            android:minHeight="48dp"
                             app:srcCompat="@drawable/ic_icon_image" />
                     </LinearLayout>
 
@@ -72,7 +77,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:orientation="vertical">
@@ -83,10 +88,10 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:gravity="center"
-                        android:hint="Restaurant name"
+                        android:hint="@string/new_rating_restaurant_name"
                         android:inputType="textPersonName"
                         android:minHeight="48dp"
-                        tools:text="Pelocan Chicken" />
+                        tools:text="@string/new_rating_restaurant_name_sample_text" />
 
                     <EditText
                         android:id="@+id/newRatingRegion"
@@ -94,10 +99,10 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:gravity="center"
-                        android:hint="Region: Burnaby"
+                        android:hint="@string/new_rating_region"
                         android:inputType="textPersonName"
                         android:minHeight="48dp"
-                        tools:text="Burnaby" />
+                        tools:text="@string/new_rating_region_sample_text" />
 
                     <EditText
                         android:id="@+id/newRatingChickenType"
@@ -105,10 +110,10 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:gravity="center"
-                        android:hint="Type: Korean, Japanese"
+                        android:hint="@string/new_rating_chicken_type"
                         android:inputType="textPersonName"
                         android:minHeight="48dp"
-                        tools:text="Korean" />
+                        tools:text="@string/new_rating_chicken_type_sample_text" />
 
                     <EditText
                         android:id="@+id/newRatingTitle"
@@ -116,10 +121,10 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:gravity="center"
-                        android:hint="Chicken menu title"
+                        android:hint="@string/new_rating_chicken_menu_title"
                         android:inputType="textPersonName"
                         android:minHeight="48dp"
-                        tools:text="Spicy Chicken 15pcs" />
+                        tools:text="@string/new_rating_chicken_menu_title_sample_text" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -133,6 +138,7 @@
                         android:layout_height="30dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
+                        android:contentDescription="@string/new_rating_open_a_map"
                         android:src="@drawable/home_map" />
 
                     <Button
@@ -140,7 +146,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="90dp"
-                        android:text="Done" />
+                        android:text="@string/new_rating_btn_done" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -160,7 +166,7 @@
                     <TextView
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:text="Ratings" />
+                        android:text="@string/new_rating_ratings" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -172,7 +178,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Flavor" />
+                        android:text="@string/new_rating_flavor" />
 
                     <RatingBar
                         android:id="@+id/ratingBarFlavor"
@@ -194,7 +200,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Crunch" />
+                        android:text="@string/new_rating_crunch" />
 
                     <RatingBar
                         android:id="@+id/ratingBarCrunch"
@@ -216,7 +222,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Spiciness" />
+                        android:text="@string/new_rating_spiciness" />
 
                     <RatingBar
                         android:id="@+id/ratingBarSpiciness"
@@ -238,7 +244,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Portion" />
+                        android:text="@string/new_rating_portion" />
 
                     <RatingBar
                         android:id="@+id/ratingBarPortion"
@@ -260,7 +266,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Price" />
+                        android:text="@string/new_rating_price" />
 
                     <RatingBar
                         android:id="@+id/ratingBarPrice"
@@ -282,7 +288,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Overall Value" />
+                        android:text="@string/new_rating_overall_value" />
 
                     <RatingBar
                         android:id="@+id/ratingBarOverall"
@@ -307,7 +313,7 @@
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Other Items" />
+                    android:text="@string/new_rating_other_items" />
 
                 <EditText
                     android:id="@+id/newRatingOtherItems"
@@ -315,10 +321,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="38dp"
                     android:ems="10"
-                    android:hint="Side menus"
+                    android:hint="@string/new_rating_side_menus"
                     android:inputType="textPersonName"
                     android:minHeight="48dp"
-                    tools:text="Other items..." />
+                    tools:text="@string/new_rating_side_menus_sample_text" />
             </LinearLayout>
 
             <LinearLayout
@@ -332,7 +338,7 @@
                     android:id="@+id/textView7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Notes" />
+                    android:text="@string/new_rating_notes" />
 
                 <EditText
                     android:id="@+id/newRatingNotes"
@@ -341,10 +347,10 @@
                     android:layout_marginStart="74dp"
                     android:ems="10"
                     android:gravity="start|top"
-                    android:hint="Comments"
+                    android:hint="@string/new_rating_comments"
                     android:inputType="textMultiLine"
                     android:minHeight="48dp"
-                    tools:text="Notes..." />
+                    tools:text="@string/new_rating_notes_sample_text" />
             </LinearLayout>
 
         </LinearLayout>

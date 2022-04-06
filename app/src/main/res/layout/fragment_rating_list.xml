@@ -31,7 +31,7 @@
                     android:layout_marginStart="15dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="Latest"
+                    android:text="@string/rating_list_filters_latest"
                     android:textSize="10sp" />
 
                 <Button
@@ -41,7 +41,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="Location"
+                    android:text="@string/rating_list_filters_location"
                     android:textSize="10sp" />
 
                 <Button
@@ -51,7 +51,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="High"
+                    android:text="@string/rating_list_filters_high"
                     android:textSize="10sp" />
 
                 <Button
@@ -62,7 +62,7 @@
                     android:layout_weight="1"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="Relevant"
+                    android:text="@string/rating_list_filters_relevant"
                     android:textSize="10sp" />
 
                 <Button
@@ -72,7 +72,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="My"
+                    android:text="@string/rating_list_filters_my"
                     android:textSize="10sp" />
 
                 <Button
@@ -82,7 +82,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="My Flavor"
+                    android:text="@string/rating_list_filters_my_flavor"
                     android:textSize="10sp" />
 
                 <Button
@@ -92,7 +92,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="My Culture"
+                    android:text="@string/rating_list_filters_my_culture"
                     android:textSize="10sp" />
 
                 <Button
@@ -102,7 +102,7 @@
                     android:layout_marginStart="2dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:text="My Hometown"
+                    android:text="@string/rating_list_filters_my_hometown"
                     android:textSize="10sp" />
 
                 <ImageView

@@ -22,6 +22,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:scaleType="fitXY"
+            android:contentDescription="@string/recipe_list_image"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -29,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="TextView"
+            android:text="@string/recipe_list_menu_title"
             android:textColor="@color/grey"
             android:textStyle="bold" />
 

@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="User Profile"
+            android:text="@string/profile_title"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Welcome"
+            android:text="@string/profile_welcome"
             android:textColor="@color/quantum_googred"
             android:textSize="16sp"
             android:visibility="gone"
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Plase enter your hometown and preferences for chicken."
+            android:text="@string/profile_welcome_message"
             android:textColor="@color/quantum_orange"
             android:textSize="12sp"
             android:visibility="gone"
@@ -68,6 +68,7 @@
                 android:layout_height="70dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
+                android:contentDescription="@string/profile_image"
                 app:srcCompat="@mipmap/ic_launcher_round" />
         </androidx.cardview.widget.CardView>
 
@@ -109,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:enabled="false"
-                android:hint="Name"
+                android:hint="@string/profile_name"
                 android:inputType="textPersonName"
                 tools:ignore="SpeakableTextPresentCheck" />
 
@@ -133,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:enabled="false"
-                android:hint="Email"
+                android:hint="@string/profile_email"
                 android:inputType="textEmailAddress"
                 tools:ignore="SpeakableTextPresentCheck" />
 
@@ -145,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
-            android:text="Hometown"
+            android:text="@string/profile_hometown"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -177,7 +178,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
-            android:text="Background Culture"
+            android:text="@string/profile_background_culture"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -216,7 +217,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="My Preferences about Chicken"
+                    android:text="@string/profile_my_preferences"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -229,7 +230,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Flavor" />
+                    android:text="@string/profile_my_preferences_flavor" />
 
                 <RatingBar
                     android:id="@+id/ratingBarFlavor"
@@ -251,7 +252,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Crunch" />
+                    android:text="@string/profile_my_preferences_crunch" />
 
                 <RatingBar
                     android:id="@+id/ratingBarCrunch"
@@ -273,7 +274,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Spiciness" />
+                    android:text="@string/profile_my_preferences_spiciness" />
 
                 <RatingBar
                     android:id="@+id/ratingBarSpiciness"
@@ -295,7 +296,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Portion" />
+                    android:text="@string/profile_my_preferences_portion" />
 
                 <RatingBar
                     android:id="@+id/ratingBarPortion"
@@ -317,7 +318,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Price" />
+                    android:text="@string/profile_my_preferences_price" />
 
                 <RatingBar
                     android:id="@+id/ratingBarPrice"
@@ -340,7 +341,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/design_default_color_primary_dark"
-            android:text="Save"
+            android:text="@string/profile_btn_save"
             android:textColor="@android:color/white"
             app:cornerRadius="@dimen/button_corner_radius"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -355,7 +356,7 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="16dp"
             android:background="@color/design_default_color_primary_dark"
-            android:text="Close"
+            android:text="@string/profile_btn_close"
             android:textColor="@android:color/white"
             app:cornerRadius="@dimen/button_corner_radius"
             app:layout_constraintBottom_toBottomOf="parent"
