@@ -1,5 +1,6 @@
 package com.example.friedchickenrating.fragments.ratings;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -67,6 +68,7 @@ public class ViewRatingFragment extends Fragment {
     private Boolean isFavorite = false;
 
     private Uri imageUri;
+    private Rating curRating;
 
     private static final String TAG = ViewRatingFragment.class.getSimpleName();
 
@@ -98,8 +100,7 @@ public class ViewRatingFragment extends Fragment {
         user = auth.getCurrentUser();
 
         ratingList = new ArrayList<>();
-
-        Rating curRating = ratingViewModel.getSelectedRating().getValue();
+        curRating = ratingViewModel.getSelectedRating().getValue();
 
         Log.d(TAG, "curRating.id: " + curRating.getPlaceid());
         Log.d(TAG, "curRating.title: " + curRating.getTitle());
@@ -434,6 +435,16 @@ public class ViewRatingFragment extends Fragment {
                     public void onSuccess(Void unused) {
                         Log.d(TAG, "The rating was successfully deleted!");
                         Toast.makeText(getContext(), "delete the rating success.", Toast.LENGTH_SHORT).show();
+
+                        //delete previous file
+                        Map<String, Object> photoValues = null;
+                        if(curRating != null) {
+                            photoValues = curRating.getPictures();
+                            if(photoValues != null && !photoValues.isEmpty()) {
+                                Log.d(TAG, "deleted filename: " + photoValues.get("filename").toString());
+                                deletePreviousFileFromFirebaseStorage(photoValues.get("filename").toString());
+                            }
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -443,6 +454,30 @@ public class ViewRatingFragment extends Fragment {
                         Toast.makeText(getContext(), "delete the rating error.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void deletePreviousFileFromFirebaseStorage(String previousFile) {
+        if(previousFile != null && !previousFile.isEmpty()) {
+            final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
+            progressDialog.setTitle("is deleting previous image...");
+            progressDialog.show();
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference().child("images/" + previousFile);
+
+            // Delete the file
+            storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    progressDialog.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    progressDialog.dismiss();
+                }
+            });
+        }
     }
 
     private void showSelectedFavoriteButton() {
