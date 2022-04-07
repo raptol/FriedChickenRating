@@ -8,7 +8,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".UserProfileActivity">
 
         <TextView
@@ -55,10 +55,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="45dp"
-            android:layout_marginEnd="32dp"
             android:layout_marginTop="10dp"
-            app:cardCornerRadius="40dp"
+            android:layout_marginEnd="32dp"
             app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="40dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtWelcomMessage">
 
@@ -67,8 +67,8 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
                 android:contentDescription="@string/profile_image"
+                android:scaleType="centerCrop"
                 app:srcCompat="@mipmap/ic_launcher_round" />
         </androidx.cardview.widget.CardView>
 
@@ -84,13 +84,17 @@
                 android:id="@+id/btnCamera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_icon_photo_camera" />
+                android:contentDescription="@string/profile_taking_a_picture"
+                app:srcCompat="@drawable/ic_icon_photo_camera"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
             <ImageButton
                 android:id="@+id/btnPicture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_icon_image" />
+                android:contentDescription="@string/profile_choosing_a_picture"
+                app:srcCompat="@drawable/ic_icon_image"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -120,8 +124,8 @@
             android:id="@+id/inputLayoutEmail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginStart="32dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="32dp"
             android:enabled="false"
             app:layout_constraintEnd_toEndOf="parent"
@@ -337,7 +341,7 @@
             android:id="@+id/btnSave"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="64dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/design_default_color_primary_dark"
@@ -346,22 +350,47 @@
             app:cornerRadius="@dimen/button_corner_radius"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
+            app:layout_constraintTop_toBottomOf="@+id/cbDeleteUser" />
 
         <Button
             android:id="@+id/btnClose"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="64dp"
             android:layout_marginBottom="16dp"
             android:background="@color/design_default_color_primary_dark"
             android:text="@string/profile_btn_close"
             android:textColor="@android:color/white"
             app:cornerRadius="@dimen/button_corner_radius"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ratingBarContainer" />
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <CheckBox
+            android:id="@+id/cbDeleteUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/profile_delete_account"
+            app:layout_constraintBottom_toBottomOf="@+id/editTextConfirmEmail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ratingBarContainer" />
+
+        <EditText
+            android:id="@+id/editTextConfirmEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:ems="10"
+            android:hint="@string/profile_email_confirm"
+            android:inputType="textEmailAddress"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="@+id/ratingBarContainer"
+            app:layout_constraintStart_toEndOf="@+id/cbDeleteUser"
+            app:layout_constraintTop_toBottomOf="@+id/ratingBarContainer" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

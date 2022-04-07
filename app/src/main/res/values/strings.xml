@@ -41,6 +41,8 @@
     <string name="profile_welcome">Welcome</string>
     <string name="profile_welcome_message">Plase enter your hometown and preferences for chicken.</string>
     <string name="profile_image">User profile image</string>
+    <string name="profile_taking_a_picture">Taking a picture</string>
+    <string name="profile_choosing_a_picture">Choosing a picture</string>
     <string name="profile_name">Name</string>
     <string name="profile_email">Email</string>
     <string name="profile_hometown">Hometown</string>
@@ -53,6 +55,9 @@
     <string name="profile_my_preferences_price">Price</string>
     <string name="profile_btn_save">Save</string>
     <string name="profile_btn_close">Close</string>
+    <string name="profile_btn_delete_user">Delete User</string>
+    <string name="profile_delete_account">Delete account</string>
+    <string name="profile_email_confirm">Please enter email to confirm</string>
     <string name="home_welcome_message">Welcome to Fried Chicken Rater!</string>
     <string name="home_ratings">RATINGS</string>
     <string name="home_map">MAP</string>

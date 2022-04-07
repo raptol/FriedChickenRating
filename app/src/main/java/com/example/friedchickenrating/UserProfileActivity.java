@@ -26,6 +26,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -81,6 +83,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     private FirebaseFirestore db;
+    private FirebaseUser user;
 
     private static final String TAG = "UserProfile";
 
@@ -98,6 +101,7 @@ public class UserProfileActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private float savePreviousRatingValue;
+    private boolean isDeletion = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +112,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
+        user = auth.getCurrentUser();
 
         Bundle bundle = getIntent().getExtras();
         if(bundle != null) {
@@ -321,7 +325,43 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+        binding.cbDeleteUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if( binding.cbDeleteUser.isChecked() ) {
+                    isDeletion = true;
+                    binding.editTextConfirmEmail.setVisibility(View.VISIBLE);
+                    binding.btnSave.setText(R.string.profile_btn_delete_user);
+                } else {
+                    isDeletion = false;
+                    binding.editTextConfirmEmail.setVisibility(View.INVISIBLE);
+                    binding.btnSave.setText(R.string.profile_btn_save);
+                }
+            }
+        });
+
         binding.btnSave.setOnClickListener((View view) -> {
+
+            //if the event is deletion of user account
+            if(isDeletion) {
+
+                //confirm deletion by user email
+                if( !binding.editTextConfirmEmail.getText().toString().isEmpty() &&
+                        binding.editTextConfirmEmail.getText().toString().equals(user.getEmail()) ) {
+
+                    //delete all data and files created by user
+                    deleteAllDataCreatedByUserAccount();
+
+                    Toast.makeText(getApplicationContext(), "The user account is removed successfully.", Toast.LENGTH_SHORT).show();
+
+                    startActivity((new Intent(UserProfileActivity.this, LoginActivity.class)));
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please check the email again.", Toast.LENGTH_SHORT).show();
+                }
+
+                return;
+            }
 
             String hometown = null;
             Double latitude = 0.0;
@@ -396,7 +436,7 @@ public class UserProfileActivity extends AppCompatActivity {
                                 Map<String, Object> photoValues = userData.getPictures();
                                 if(photoValues != null && !photoValues.isEmpty()) {
                                     Log.d(TAG, "deleted filename: " + photoValues.get("filename").toString());
-                                    deletePreviousFileFromFirebaseStorage(photoValues.get("filename").toString());
+                                    deleteFileFromFirebaseStorage(photoValues.get("filename").toString());
                                 }
 
                                 //upload new file
@@ -509,25 +549,25 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void deletePreviousFileFromFirebaseStorage(String previousFile) {
-        if(previousFile != null && !previousFile.isEmpty()) {
-            final ProgressDialog progressDialog = new ProgressDialog(UserProfileActivity.this);
-            progressDialog.setTitle("is deleting previous image...");
-            progressDialog.show();
+    private void deleteFileFromFirebaseStorage(String deleteFileName) {
+        if(deleteFileName != null && !deleteFileName.isEmpty()) {
+//            final ProgressDialog progressDialog = new ProgressDialog(UserProfileActivity.this);
+//            progressDialog.setTitle("is deleting image...");
+//            progressDialog.show();
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageReference = storage.getReference().child("images/" + previousFile);
+            StorageReference storageReference = storage.getReference().child("images/" + deleteFileName);
 
             // Delete the file
             storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    progressDialog.dismiss();
+//                    progressDialog.dismiss();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    progressDialog.dismiss();
+//                    progressDialog.dismiss();
                 }
             });
         }
@@ -600,4 +640,85 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    void deleteAllDataCreatedByUserAccount() {
+
+        //delete recipes data that user created
+        deleteDataAndFilesOfEachCollection("recipes", "userid", user.getUid());
+
+        //delete favorite data that user created
+        deleteDataAndFilesOfEachCollection("favorites", "userid", user.getUid());
+
+        //delete ratings data that user created
+        deleteDataAndFilesOfEachCollection("ratings", "userid", user.getUid());
+
+        //delete users data
+        deleteDataAndFilesOfEachCollection("users", "uid", user.getUid());
+
+        //delete user account from Firebase Authentication
+        FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d(TAG, "The user from Firebase Authentication was successfully deleted!");
+            }
+        });
+    }
+
+    void deleteDataAndFilesOfEachCollection(String collectionName, String userKeyword, String userId) {
+        if(collectionName == null || userKeyword == null || userId == null) {
+            return;
+        }
+
+        //search for documents to delete in the collection
+        db.collection(collectionName)
+                .whereEqualTo(userKeyword, userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if(task.getResult().size() > 0) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    Log.d(TAG, "collectionName: " + collectionName);
+
+                                    //Get filename from the document
+                                    Map<String, Object> docMap = document.getData();
+                                    Map<String, Object> photoValues = null;
+                                    for(Map.Entry<String, Object> entry: docMap.entrySet()) {
+                                        if(entry.getKey().equals("pictures")) {
+                                            photoValues = (Map<String, Object>) entry.getValue();
+                                            Log.d(TAG, "photoValues: " + photoValues);
+                                            break;
+                                        }
+                                    }
+
+                                    //delete related image file
+                                    if(photoValues != null) {
+                                        Log.d(TAG, "related filename: " + photoValues.get("filename").toString());
+                                        deleteFileFromFirebaseStorage(photoValues.get("filename").toString());
+                                    }
+
+                                    //delete the documents in the collection
+                                    db.collection(collectionName).document(document.getId())
+                                            .delete()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    Log.d(TAG, "onComplete ==> The data of the " + collectionName + " was successfully deleted!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error deleting the data of the " + collectionName, e);
+                                                }
+                                            });
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
 }
