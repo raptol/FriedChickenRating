@@ -383,7 +383,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="1dp"
-            android:ems="10"
             android:hint="@string/profile_email_confirm"
             android:inputType="textEmailAddress"
             android:textSize="14sp"
