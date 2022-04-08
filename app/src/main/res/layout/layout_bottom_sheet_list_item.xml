@@ -11,15 +11,25 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgItemPhoto"
+        <androidx.cardview.widget.CardView
             android:layout_width="330dp"
             android:layout_height="200dp"
+            app:cardBackgroundColor="@color/white"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
-            android:scaleType="fitXY"
-            android:contentDescription="@string/bottom_sheet_fried_chicken_picture"
-            tools:srcCompat="@tools:sample/avatars" />
+            app:cardCornerRadius="4dp" >
+
+            <ImageView
+                android:id="@+id/imgItemPhoto"
+                android:layout_width="330dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/bottom_sheet_fried_chicken_picture"
+                tools:srcCompat="@tools:sample/avatars" />
+        </androidx.cardview.widget.CardView>
+
+
 
         <LinearLayout
             android:layout_width="match_parent"

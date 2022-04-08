@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="270dp"
     android:layout_marginTop="5dp"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="4dp"
+    android:elevation="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,15 +14,26 @@
         android:background="#45F05545"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgItemPhoto"
+        <androidx.cardview.widget.CardView
             android:layout_width="330dp"
             android:layout_height="200dp"
+            app:cardBackgroundColor="@color/white"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
-            android:scaleType="fitXY"
-            android:contentDescription="@string/rating_list_fried_chicken_image"
-            tools:srcCompat="@tools:sample/avatars" />
+            app:cardCornerRadius="4dp" >
+
+            <ImageView
+                android:id="@+id/imgItemPhoto"
+                android:layout_width="330dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/rating_list_fried_chicken_image"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        </androidx.cardview.widget.CardView>
+
+
 
         <LinearLayout
             android:layout_width="match_parent"

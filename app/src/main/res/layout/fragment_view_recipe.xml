@@ -34,27 +34,36 @@
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/imgViewRecipePicture"
-                    android:layout_width="match_parent"
+                <androidx.cardview.widget.CardView
+                    android:layout_width="200dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0.05"
-                    android:paddingLeft="70dp"
-                    android:contentDescription="@string/view_recipe_picture"
-                    tools:src="@tools:sample/avatars" />
+                    app:cardBackgroundColor="@color/white"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="80dp"
+                    app:cardCornerRadius="4dp" >
+
+                    <ImageView
+                        android:id="@+id/imgViewRecipePicture"
+                        android:layout_width="200dp"
+                        android:layout_height="100dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/view_recipe_picture"
+                        android:scaleType="center"
+                        tools:src="@tools:sample/avatars" />
+                </androidx.cardview.widget.CardView>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:layout_gravity="right">
 
                     <Button
                         android:id="@+id/btnEditRecipe"
                         android:layout_width="90dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_gravity="right"
                         android:layout_marginTop="2dp"
                         android:text="@string/view_recipe_btn_edit"
                         android:textSize="11sp"
@@ -64,7 +73,7 @@
                         android:id="@+id/btnDeleteRecipe"
                         android:layout_width="90dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_gravity="right"
                         android:layout_marginTop="2dp"
                         android:text="@string/view_recipe_btn_delete"
                         android:textSize="11sp"
