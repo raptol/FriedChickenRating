@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -251,7 +252,12 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
 
     private void displayRatingList(int sortOption, int scrollToPosition) {
 
+
+
         ratingViewModel.setFilter(sortOption);
+
+        //set background color of the filter buttons
+        switchFilterBackgroundColor(sortOption);
 
         Query query;
         switch(sortOption) {
@@ -621,6 +627,49 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
 
         Log.d(TAG, "==> Factor key: " + result);
         return result;
+    }
+
+    private void switchFilterBackgroundColor(int filter) {
+        float opaque = 1.0f; //non-transparent
+
+        //recover the button color of the filters
+        binding.btnSortLatest.setAlpha(opaque);
+        binding.btnSortLocation.setAlpha(opaque);
+        binding.btnSortHighRates.setAlpha(opaque);
+        binding.btnSortRelevant.setAlpha(opaque);
+        binding.btnSortMyRates.setAlpha(opaque);
+        binding.btnSortMyFlavor.setAlpha(opaque);
+        binding.btnSortMyCulture.setAlpha(opaque);
+        binding.btnSortMyHometown.setAlpha(opaque);
+
+        //set background color of the filter that is selected
+        opaque = 0.5f; //transparent
+        switch(filter) {
+            case SORT_OPTION_LOCATION:
+                binding.btnSortLocation.setAlpha(opaque);
+                break;
+            case SORT_OPTION_HIGH_STARS:
+                binding.btnSortHighRates.setAlpha(opaque);
+                break;
+            case SORT_OPTION_RELEVANT:
+                binding.btnSortRelevant.setAlpha(opaque);
+                break;
+            case SORT_OPTION_MY_RATING:
+                binding.btnSortMyRates.setAlpha(opaque);
+                break;
+            case SORT_OPTION_MY_FLAVOR:
+                binding.btnSortMyFlavor.setAlpha(opaque);
+                break;
+            case SORT_OPTION_MY_CULTURE:
+                binding.btnSortMyCulture.setAlpha(opaque);
+                break;
+            case SORT_OPTION_MY_HOMETOWN:
+                binding.btnSortMyHometown.setAlpha(opaque);
+                break;
+            default:
+                binding.btnSortLatest.setAlpha(opaque); // LATEST
+                break;
+        }
     }
 
     @Override
