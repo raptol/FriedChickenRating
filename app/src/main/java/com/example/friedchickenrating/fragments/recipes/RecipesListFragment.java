@@ -3,6 +3,7 @@ package com.example.friedchickenrating.fragments.recipes;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,8 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
     private static final int SORT_OPTION_TITLE_DESCENDING = 3;
     private static final int SORT_OPTION_MY_RECIPES = 4;
 
+    private boolean isBackPressed = false;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,34 +92,43 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
         binding.recyclerViewRecipeList.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
         binding.recyclerViewRecipeList.setAdapter(recipesListAdapter);
 
-        //display recipe list
-        displayRecipeList(SORT_OPTION_LATEST); //default sorting option: latest
+        //display rating list
+        int previousFilter = recipesViewModel.getFilter().getValue();
+        if( previousFilter != 0)
+            isBackPressed = true;
+
+        if(!isBackPressed) {
+            displayRecipeList(SORT_OPTION_LATEST, 0); //default sorting option: latest
+        }
+        else {
+            displayRecipeList(previousFilter, recipesViewModel.getSelectedPosition().getValue()); //set previous filter
+        }
 
         binding.btnSortLatest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRecipeList(SORT_OPTION_LATEST);
+                displayRecipeList(SORT_OPTION_LATEST, 0);
             }
         });
 
         binding.btnSortAscTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRecipeList(SORT_OPTION_TITLE_ASCENDING);
+                displayRecipeList(SORT_OPTION_TITLE_ASCENDING, 0);
             }
         });
 
         binding.btnSortDescTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRecipeList(SORT_OPTION_TITLE_DESCENDING);
+                displayRecipeList(SORT_OPTION_TITLE_DESCENDING, 0);
             }
         });
 
         binding.btnSortMyRecipes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayRecipeList(SORT_OPTION_MY_RECIPES);
+                displayRecipeList(SORT_OPTION_MY_RECIPES, 0);
             }
         });
 
@@ -144,36 +156,21 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
         super.onStop();
     }
 
-    private boolean checkPermission() {
-        int hasFineLocationPermission =
-                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-        int hasCoarseLocationPermission =
-                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(getActivity(),
-                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                LOCATION_PERMISSION_REQUEST_CODE);
-    }
-
     @Override
     public void onListItemClick(Recipe recipe, int position) {
         recipesViewModel.setSelectedRecipe(recipe);
         recipesViewModel.setSelectedRecipeId(recipeList.get(position).getRecipeId());
+        recipesViewModel.setSelectedPosition(position);
 
         NavHostFragment.findNavController(RecipesListFragment.this).navigate(R.id.action_nav_recipes_to_nav_viewRecipes);
     }
 
-    private void displayRecipeList(int sortOption) {
+    private void displayRecipeList(int sortOption, int scrollToPosition) {
+
+        recipesViewModel.setFilter(sortOption);
+
+        //set background color of the filter buttons
+        switchFilterBackgroundColor(sortOption);
 
         Query query;
 
@@ -203,8 +200,14 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
                 readRecipeList(query);
         }
 
-        //Scroll to top
-        binding.recyclerViewRecipeList.smoothScrollToPosition(0);
+        //Scroll to position
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                binding.recyclerViewRecipeList.scrollToPosition(scrollToPosition);
+            }
+        }, 500);
+
     }
 
     private void readRecipeList(Query query){
@@ -230,6 +233,33 @@ public class RecipesListFragment extends Fragment implements RecipesListAdapter.
                 recipesListAdapter.setRecipeList(recipeList);
             }
         });
+    }
+
+    private void switchFilterBackgroundColor(int filter) {
+        float opaque = 1.0f; //non-transparent
+
+        //recover the button color of the filters
+        binding.btnSortLatest.setAlpha(opaque);
+        binding.btnSortAscTitle.setAlpha(opaque);
+        binding.btnSortDescTitle.setAlpha(opaque);
+        binding.btnSortMyRecipes.setAlpha(opaque);
+
+        //set background color of the filter that is selected
+        opaque = 0.5f; //transparent
+        switch(filter) {
+            case SORT_OPTION_TITLE_ASCENDING:
+                binding.btnSortAscTitle.setAlpha(opaque);
+                break;
+            case SORT_OPTION_TITLE_DESCENDING:
+                binding.btnSortDescTitle.setAlpha(opaque);
+                break;
+            case SORT_OPTION_MY_RECIPES:
+                binding.btnSortMyRecipes.setAlpha(opaque);
+                break;
+            default:
+                binding.btnSortLatest.setAlpha(opaque); // LATEST
+                break;
+        }
     }
 
     @Override

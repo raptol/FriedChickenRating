@@ -13,10 +13,15 @@ public class RecipesViewModel extends ViewModel {
     private MutableLiveData<String> selectedRecipeId = new MutableLiveData<>();
     private MutableLiveData<ImageView> selectedRecipeImage = new MutableLiveData<>();
     private MutableLiveData<Uri> selectedRatingImageFilePath = new MutableLiveData<>();
+    private MutableLiveData<Integer> filter = new MutableLiveData<>();
+    private MutableLiveData<Integer> selectedPosition = new MutableLiveData<>();
 
     private static final String TAG = RecipesViewModel.class.getSimpleName();
 
-    public RecipesViewModel() { }
+    public RecipesViewModel() {
+        setFilter(0);
+        setSelectedPosition(0);
+    }
 
     public LiveData<Recipe> getSelectedRecipe() {
         return selectedRecipe;
@@ -29,6 +34,12 @@ public class RecipesViewModel extends ViewModel {
     }
     public LiveData<Uri> getSelectedRecipeImageFilePath() {
         return selectedRatingImageFilePath;
+    }
+    public LiveData<Integer> getFilter() {
+        return filter;
+    }
+    public LiveData<Integer> getSelectedPosition() {
+        return selectedPosition;
     }
 
     public void setSelectedRecipe(Recipe selectedRecipe) {
@@ -45,5 +56,13 @@ public class RecipesViewModel extends ViewModel {
 
     public void setSelectedRatingImageFilePath(Uri selectedRatingImageFilePath) {
         this.selectedRatingImageFilePath.setValue(selectedRatingImageFilePath);
+    }
+
+    public void setFilter(Integer filter) {
+        this.filter.setValue(filter);
+    }
+
+    public void setSelectedPosition(Integer position) {
+        this.selectedPosition.setValue(position);
     }
 }
