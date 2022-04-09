@@ -38,6 +38,7 @@
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         app:cardBackgroundColor="@color/white"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="6dp"
                         app:cardCornerRadius="4dp" >
 
@@ -63,7 +64,7 @@
                             android:id="@+id/btnCamera"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
+                            android:layout_marginTop="20dp"
                             android:contentDescription="@string/new_rating_taking_a_picture"
                             android:minHeight="48dp"
                             app:srcCompat="@drawable/ic_icon_photo_camera" />
@@ -72,7 +73,7 @@
                             android:id="@+id/btnPicture"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
+                            android:layout_marginTop="20dp"
                             android:contentDescription="@string/new_rating_choosing_a_picture"
                             android:minHeight="48dp"
                             app:srcCompat="@drawable/ic_icon_image" />
