@@ -124,7 +124,8 @@ public class UserProfileActivity extends AppCompatActivity {
         }
 
         // Initiate the SDK for Places
-        String apiKey = getString(R.string.google_maps_key);
+//        String apiKey = getString(R.string.google_maps_key);
+        String apiKey = BuildConfig.apiKey;
         if(!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), apiKey);
         }
