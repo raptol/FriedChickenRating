@@ -217,8 +217,14 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     private boolean checkPermission() {
         int hasFineLocationPermission =
                 ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int hasCoarseLocationPermission =
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+        int hasBackgroundLocationPermission =
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                hasBackgroundLocationPermission == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
 
@@ -226,19 +232,42 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
     }
 
     private void requestPermission() {
-        permissionResultCallback.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionResultCallback.launch(new String[] {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        });
     }
 
-    private ActivityResultLauncher<String> permissionResultCallback = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
-                @Override
-                public void onActivityResult(Boolean result) {
-                    if (result) { // permission granted
-                        displayRatingList(SORT_OPTION_LOCATION, 0);
-                    }
+//    private ActivityResultLauncher<String> permissionResultCallback = registerForActivityResult(
+//            new ActivityResultContracts.RequestPermission(),
+//            new ActivityResultCallback<Boolean>() {
+//                @Override
+//                public void onActivityResult(Boolean result) {
+//                    if (result) { // permission granted
+//                        displayRatingList(SORT_OPTION_LOCATION, 0);
+//                    }
+//                }
+//            });
+
+    private ActivityResultLauncher<String[]> permissionResultCallback = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                Boolean fineLocationGranted = result.getOrDefault(
+                        Manifest.permission.ACCESS_FINE_LOCATION, false);
+                Boolean coarseLocationGranted = result.getOrDefault(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,false);
+                if (fineLocationGranted != null && fineLocationGranted) {
+                    // Precise location access granted.
+                    displayRatingList(SORT_OPTION_LOCATION, 0);
+                } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                    // Only approximate location access granted.
+                    displayRatingList(SORT_OPTION_LOCATION, 0);
+                } else {
+                    // No location access granted.
+                    requestPermission();
                 }
-            });
+            }
+    );
 
     @Override
     public void onListItemClick(Rating rating, int position) {
@@ -468,10 +497,18 @@ public class RatingListFragment extends Fragment implements RatingListAdapter.It
             }
         };
 
+        //Get current location
         locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
 
         Location lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(lastUserKnownLocation == null)
+            lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        Log.d(TAG, "lastUserKnownLocation: " + lastUserKnownLocation);
+
         if(lastUserKnownLocation != null) {
             userLocation = new LatLng(lastUserKnownLocation.getLatitude(), lastUserKnownLocation.getLongitude());
 

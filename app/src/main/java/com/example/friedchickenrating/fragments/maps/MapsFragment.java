@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -20,13 +22,16 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.friedchickenrating.BuildConfig;
 import com.example.friedchickenrating.R;
 import com.example.friedchickenrating.databinding.FragmentMapsBinding;
 import com.example.friedchickenrating.fragments.ratings.Rating;
@@ -38,7 +43,9 @@ import com.firebase.geofire.GeoQueryBounds;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.OnMapsSdkInitializedCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -69,7 +76,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MapsFragment extends Fragment {
+@RequiresApi(api = Build.VERSION_CODES.N)
+public class MapsFragment extends Fragment implements OnMapsSdkInitializedCallback {
 
     private RatingViewModel ratingViewModel;
     private FragmentMapsBinding binding;
@@ -105,6 +113,9 @@ public class MapsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        MapsInitializer.initialize(getContext(), MapsInitializer.Renderer.LATEST, this);
+
         ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -117,7 +128,8 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(mapReadyCallback);
 
             // Initiate the SDK for Places
-            String apiKey = getString(R.string.google_maps_key);
+//            String apiKey = getString(R.string.google_maps_key);
+            String apiKey = BuildConfig.apiKey;
             if (!Places.isInitialized()) {
                 Places.initialize(getContext(), apiKey);
             }
@@ -195,21 +207,47 @@ public class MapsFragment extends Fragment {
         }
     };
 
+//    private boolean checkPermission() {
+//        int hasFineLocationPermission =
+//                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+//
+//        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
+
     private boolean checkPermission() {
         int hasFineLocationPermission =
                 ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int hasCoarseLocationPermission =
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+        int hasBackgroundLocationPermission =
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                hasBackgroundLocationPermission == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
 
         return false;
     }
 
+//    private void requestPermission() {
+//        permissionResultCallback.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
+//    }
+
     private void requestPermission() {
-        permissionResultCallback.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionResultCallback.launch(new String[] {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        });
     }
 
+    @SuppressLint("MissingPermission")
     private void enableMyLocation() {
 
         if (checkPermission()) {
@@ -230,40 +268,59 @@ public class MapsFragment extends Fragment {
                     }
                 });
 
-                //Get current location
-                locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+                //Get GPS status
+                boolean checkGPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-                Location lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if(lastUserKnownLocation != null) {
-                    currentUserLocation = new LatLng(lastUserKnownLocation.getLatitude(), lastUserKnownLocation.getLongitude());
-                    prevUserLocation = currentUserLocation;
+                //Get network provider status
+                boolean checkNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-                    Log.d(TAG, "onLocationChanged, initialUserLocation: " + prevUserLocation);
+                Log.d(TAG, "checkGPS: " + checkGPS + ", checkNetwork: " + checkNetwork);
 
-                    //Request to point a place from View Rating
-                    Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
-                    if (requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_VIEW_RATING) {
+                if(!checkGPS && !checkNetwork) {
+                    Toast.makeText(getContext(), "No service provider is available", Toast.LENGTH_SHORT).show();
+                }else {
+                    //Get current location
+                    locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+                    locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
 
-                        RatingPlace place = ratingViewModel.getSelectedRatingPlace().getValue();
+                    Location lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if(lastUserKnownLocation == null)
+                        lastUserKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-                        Log.d(TAG, "selcted place: " + place.getPlaceid());
-                        Log.d(TAG, "latitude: " + place.getLatitude() + ", longitude: " + place.getLongitude());
-                        LatLng placeLocation = new LatLng(place.getLatitude(), place.getLongitude());
+                    Log.d(TAG, "lastUserKnownLocation: " + lastUserKnownLocation);
 
-                        Log.d(TAG, "map: " + map);
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 20));
+                    if(lastUserKnownLocation != null) {
+                        currentUserLocation = new LatLng(lastUserKnownLocation.getLatitude(), lastUserKnownLocation.getLongitude());
+                        prevUserLocation = currentUserLocation;
 
-                        MarkerOptions markerOptions = new MarkerOptions().position(placeLocation);
-                        markerOptions.title(place.getName());
+                        Log.d(TAG, "onLocationChanged, initialUserLocation: " + prevUserLocation);
 
-                        Marker marker = map.addMarker(markerOptions);
-                        marker.setSnippet(place.getPlaceid());
-                        marker.setZIndex(10);
-                    } else {
+                        //Request to point a place from View Rating
+                        Integer requestCode = ratingViewModel.getMapRequestCode().getValue();
+                        if (requestCode != null && requestCode == REQUEST_MAP_PLACE_FOR_VIEW_RATING) {
 
-                        //map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentUserLocation, 17));
+                            RatingPlace place = ratingViewModel.getSelectedRatingPlace().getValue();
+
+                            Log.d(TAG, "selcted place: " + place.getPlaceid());
+                            Log.d(TAG, "latitude: " + place.getLatitude() + ", longitude: " + place.getLongitude());
+                            LatLng placeLocation = new LatLng(place.getLatitude(), place.getLongitude());
+
+                            Log.d(TAG, "map: " + map);
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 20));
+
+                            MarkerOptions markerOptions = new MarkerOptions().position(placeLocation);
+                            markerOptions.title(place.getName());
+
+                            Marker marker = map.addMarker(markerOptions);
+                            marker.setSnippet(place.getPlaceid());
+                            marker.setZIndex(10);
+                        } else {
+
+                            //map.addMarker(new MarkerOptions().position(userLocation).title("your Location"));
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentUserLocation, 17));
+                        }
                     }
                 }
 
@@ -544,21 +601,51 @@ public class MapsFragment extends Fragment {
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    private ActivityResultLauncher<String> permissionResultCallback = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
-                @Override
-                public void onActivityResult(Boolean result) {
-                    if (result) { // permission granted
-                        enableMyLocation();
-                    }
-                }
-            });
+//    private ActivityResultLauncher<String> permissionResultCallback = registerForActivityResult(
+//            new ActivityResultContracts.RequestPermission(),
+//            new ActivityResultCallback<Boolean>() {
+//                @Override
+//                public void onActivityResult(Boolean result) {
+//                    if (result) { // permission granted
+//                        enableMyLocation();
+//                    }
+//                }
+//            });
 
+    private ActivityResultLauncher<String[]> permissionResultCallback = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                Boolean fineLocationGranted = result.getOrDefault(
+                        Manifest.permission.ACCESS_FINE_LOCATION, false);
+                Boolean coarseLocationGranted = result.getOrDefault(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,false);
+                if (fineLocationGranted != null && fineLocationGranted) {
+                    // Precise location access granted.
+                    enableMyLocation();
+                } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                    // Only approximate location access granted.
+                    enableMyLocation();
+                } else {
+                    // No location access granted.
+                    requestPermission();
+                }
+            }
+    );
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onMapsSdkInitialized(@NonNull MapsInitializer.Renderer renderer) {
+        switch (renderer) {
+            case LATEST:
+                Log.d(TAG, "The latest version of the renderer is used.");
+                break;
+            case LEGACY:
+                Log.d(TAG, "The legacy version of the renderer is used.");
+                break;
+        }
     }
 }
